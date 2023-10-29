@@ -1,0 +1,138 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:3000",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "plotly.js": "^2.27.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-plotly.js": "^2.6.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "rules": {
+      "no-console": [
+        "warn",
+        {
+          "allow": [
+            "error"
+          ]
+        }
+      ],
+      "one-var": [
+        "warn",
+        "never"
+      ],
+      "no-undef": "warn",
+      "prefer-const": "warn",
+      "no-extra-parens": "warn",
+      "block-scoped-var": "warn",
+      "curly": [
+        "warn",
+        "multi-line"
+      ],
+      "no-await-in-loop": "warn",
+      "no-cond-assign": [
+        "error",
+        "always"
+      ],
+      "no-debugger": "warn",
+      "default-case": "warn",
+      "dot-location": [
+        "warn",
+        "object"
+      ],
+      "eqeqeq": "warn",
+      "no-alert": "warn",
+      "no-eq-null": "warn",
+      "no-eval": "warn",
+      "no-implicit-coercion": "warn",
+      "no-lone-blocks": "error",
+      "no-loop-func": "warn",
+      "no-multi-str": "warn",
+      "no-self-compare": "warn",
+      "strict": [
+        "warn",
+        "global"
+      ],
+      "no-lonely-if": "warn",
+      "array-bracket-spacing": [
+        "error",
+        "never"
+      ],
+      "array-bracket-newline": [
+        "error",
+        "consistent"
+      ],
+      "indent": [
+        "error",
+        2
+      ],
+      "comma-spacing": [
+        "error",
+        {
+          "before": false,
+          "after": true
+        }
+      ],
+      "comma-style": [
+        "error",
+        "last"
+      ],
+      "brace-style": [
+        "error"
+      ],
+      "max-len": [
+        "error",
+        100
+      ],
+      "no-inline-comments": "error",
+      "jsx-quotes": [
+        "error",
+        "prefer-double"
+      ],
+      "no-tabs": "error",
+      "quotes": [
+        "error",
+        "single",
+        {
+          "allowTemplateLiterals": true
+        }
+      ],
+      "space-infix-ops": "error",
+      "space-unary-ops": "error",
+      "semi": "error",
+      "semi-spacing": "error"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "^8.52.0"
+  }
+}
