@@ -1,0 +1,13 @@
+{
+  "name": "520-project-mojtahedi-proctor-litovchenko",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bin/www",
+    "build": "cd client && npm install && npm run build && cd ../server && npm install"
+  },
+  "author": "Seyed Amirreza Mojtahedi, Thomas Proctor, Marko Litovchenko",
+  "license": "ISC"
+}
