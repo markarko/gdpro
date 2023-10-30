@@ -9,5 +9,8 @@
     "build": "cd client && npm install && npm run build && cd ../server && npm install"
   },
   "author": "Seyed Amirreza Mojtahedi, Thomas Proctor, Marko Litovchenko",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
 }
