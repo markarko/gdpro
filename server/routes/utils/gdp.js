@@ -2,11 +2,12 @@
  * Checks if a string contains only alphabetic characters
  *
  * @param {string} str - The string to be checked for alphabetic characters
- * @returns {boolean} Returns true if the string contains only alphabetic characters, false otherwise
+ * @returns {boolean} Returns true if the string contains only alphabetic characters,
+ * false otherwise
  */
 function containsOnlyLetters(str) {
-    let regex = /^[a-zA-Z]+$/;
-    return regex.test(str);
+  const regex = /^[a-zA-Z]+$/;
+  return regex.test(str);
 }
 
 /**
@@ -17,7 +18,7 @@ function containsOnlyLetters(str) {
  * @param {string} error - Error message to send
  */
 function sendError(res, status, error) {
-    res.status(status).send({ error: error });
+  res.status(status).send({ error: error });
 }
 
 /**
@@ -28,11 +29,11 @@ function sendError(res, status, error) {
  * @param {any} data - Data to send
  */
 function sendData(res, status, data) {
-    res.status(status).send({ data: data });
+  res.status(status).send({ data: data });
 }
 
 module.exports = {
-    sendData,
-    sendError,
-    containsOnlyLetters
-}
+  sendData,
+  sendError,
+  containsOnlyLetters
+};

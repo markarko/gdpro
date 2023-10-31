@@ -1,6 +1,6 @@
-const express = require('express')
-const router = express.Router()
-const { sendData, sendError, containsOnlyLetters } = require('./utils/gdp.js')
+const express = require('express');
+const router = express.Router();
+const { sendData, sendError, containsOnlyLetters } = require('./utils/gdp.js');
 
 /**
  * Middleware for validating the 'country' parameter in the route
@@ -11,13 +11,13 @@ const { sendData, sendError, containsOnlyLetters } = require('./utils/gdp.js')
  * @param {string} country - The 'country' parameter from the URL
  */
 router.param('country', (req, res, next, country) => {
-    if (!containsOnlyLetters(country)) {
-        sendError(res, 400, 'The country name cannot contain numbers or special characters');
-        return;
-    }
+  if (!containsOnlyLetters(country)) {
+    sendError(res, 400, 'The country name cannot contain numbers or special characters');
+    return;
+  }
 
-    req.params.country = country.toLowerCase();
-    next();
+  req.params.country = country.toLowerCase();
+  next();
 });
 
 /**
@@ -28,8 +28,13 @@ router.param('country', (req, res, next, country) => {
  * @param {Object} res - Express response object
  */
 router.get('/countries/:country', (req, res) => {
-    const country = req.params.country;
-    sendData(res, 200, country);
+  // mock data that will be replaced when the db queries are implemented
+  const data = {
+    'country' : req.params.country,
+    'gdp' : 12382
+  };
+
+  sendData(res, 200, data);
 });
 
 module.exports = router;
