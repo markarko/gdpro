@@ -1,25 +1,20 @@
 const express = require('express')
 const router = express.Router()
+const { sendData, sendError, containsOnlyLetters } = require('./utils/gdp.js')
 
-router.get('/', (req, res) => {
-    const data = [
-        {
-            'id' : 1,
-            'country' : 'USA',
-            'gdp' : 20412
-        },
-        {
-            'id' : 2,
-            'country' : 'China',
-            'gdp' : 14092
-        },
-        {
-            'id' : 3,
-            'country' : 'Canada',
-            'gdp' : 11212
-        }
-    ]
-    res.send(data);
+router.param('country', (req, res, next, country) => {
+    if (!containsOnlyLetters(country)) {
+        sendError(res, 400, 'The country name cannot contain numbers or special characters');
+        return;
+    }
+
+    req.params.country = country.toLowerCase();
+    next();
+});
+
+router.get('/countries/:country', (req, res) => {
+    const country = req.params.country;
+    sendData(res, 200, country);
 })
 
 module.exports = router;
