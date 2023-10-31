@@ -50,4 +50,29 @@ async function datasetToJson(fileName) {
     return await csvToJson(filePath);
 }
 
+/**
+ * Populates the database with some initial data
+ * 
+ * @param {string} dbName - The name of the database to be populated
+ * @param {string} collectionName - The name of the collection in that database to be populated
+ * @param {Array<Object>} data - The json data to be inserted into the collection
+ */
+async function seedDatabase(dbName, collectionName, data) {
+    let db;
+    try {
+      const db = new DB();
+      await db.connect(dbName, collectionName);
+      const num = await db.createMany(data);
+      console.log(`Inserted ${num} rows`);
+    } catch (e) {
+      console.error('Could not seed');
+      console.dir(e);
+    } finally {
+      if (db) {
+        db.close();
+      }
+      process.exit();
+    }
+}
+
 module.exports = datasetToJson;
