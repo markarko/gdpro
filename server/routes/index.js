@@ -17,7 +17,8 @@ app.use(express.static('public'));
   let db;
   try {
     const dbName = 'gdpro';
-    const collectionName = 'gdp';
+    // TODO: modify database to handle multiple collections
+    const collectionName = 'gdp-per-capita-worldbank.csv';
     db = new DB();
     await db.connect(dbName, collectionName);
     app.listen(port, () => console.log('Listening on port ' + port));
