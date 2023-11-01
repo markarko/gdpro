@@ -36,12 +36,12 @@ class DB {
     return await instance.collection.find().toArray();
   }
 
-  async create(quote) {
-    return await instance.collection.insertOne(quote);
+  async create(data) {
+    return await instance.collection.insertOne(data);
   }
 
-  async createMany(quotes) {
-    return await instance.collection.insertMany(quotes);
+  async createMany(multipleData) {
+    return await instance.collection.insertMany(multipleData);
   }
 
   async open(dbname, collName) {
