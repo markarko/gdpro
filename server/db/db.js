@@ -31,17 +31,60 @@ class DB {
     await instance.client.close();
     instance = null;
   }
-
   async readAll() {
-    return await instance.collection.find().toArray();
+    try {
+      const result = await instance.collection.find({}, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readAll:', error);
+    }
   }
-
-  async create(data) {
-    return await instance.collection.insertOne(data);
+    
+  async readAllCountryData(country) {
+    try {
+      const result = await instance.collection.find({ country: country },
+        { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readAllCountryData:', error);
+    }
   }
-
-  async createMany(multipleData) {
-    return await instance.collection.insertMany(multipleData);
+    
+  async readAllYearData(year) {
+    try {
+      const result = await instance.collection.find({ year: year },
+        { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readAllYearData:', error);
+    }
+  }
+    
+  async readDataByYearRange(startYear, endYear) {
+    try {
+      const result = await instance.collection.find({
+        year: { $gte: startYear, $lte: endYear }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readDataByYearRange:', error);
+    }
+  }
+    
+  async createRecord(jsonRecord) {
+    try {
+      await instance.collection.insertOne(jsonRecord);
+    } catch (error) {
+      console.error('Error in createRecord:', error);
+    }
+  }
+    
+  async createMany(jsonRecordsArray) {
+    try {
+      await instance.collection.insertMany(jsonRecordsArray, { ordered: true });
+    } catch (error) {
+      console.error('Error in createMany:', error);
+    }
   }
 
   async open(dbname, collName) {
