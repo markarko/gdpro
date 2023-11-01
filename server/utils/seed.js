@@ -89,4 +89,5 @@ async function seedDatabase(dbName, collectionName, data) {
 })();
 
 // No need for this as this should be a standalone script
+module.exports = {csvToJson};
 /* module.exports = datasetToJson; */
