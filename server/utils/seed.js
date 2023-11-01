@@ -36,7 +36,17 @@ async function csvToJson(filePath) {
   }
 
   const stream = fs.createReadStream(filePath);
-  return await streamToPromise(stream);
+  const result = await streamToPromise(stream);
+  const cleanedResult = result.map(obj => {
+    const cleanedObj = {};
+    Object.keys(obj).forEach(key => {
+      const cleanedKey = cleanKey(key);
+      cleanedObj[cleanedKey] = obj[key];
+    });
+    return cleanedObj;
+  });
+
+  return cleanedResult;
 }
 
 /**
@@ -77,6 +87,11 @@ async function seedDatabase(dbName, collectionName, data) {
     }
     process.exit();
   }
+}
+
+function cleanKey(key) {
+  // Replace non-printable characters with an empty string
+  return key.replace(/[^\x20-\x7E]/g, '');
 }
 
 (async () => {
