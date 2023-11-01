@@ -1,4 +1,4 @@
-Entity,Code,Year,"GDP per capita, PPP (constant 2017 international $)"
+country,code,year,gdp
 Afghanistan,AFG,1990,943.367
 Afghanistan,AFG,1991,953.134
 Afghanistan,AFG,1992,1003.536
