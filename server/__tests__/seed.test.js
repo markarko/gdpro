@@ -6,8 +6,8 @@ test('csvToJson converts a gdp.csv file to JSON array', async () => {
   const result = await csvToJson(filePath);
   expect(result).toEqual([
     {
-      'Code': 'AFG',
       'Entity': 'Afghanistan',
+      'Code': 'AFG',
       'GDP per capita, PPP (constant 2017 international $)': '943.367',
       'Year': '1990',
     },
