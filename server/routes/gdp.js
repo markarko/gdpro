@@ -1,15 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { 
-  sendData, 
-  sendError, 
-  containsOnlyLetters, 
-  filterByStartYear,
-  filterByEndYear,
-  validateStartYear,
-  validateEndYear,
-  startYearGreaterThanEndYear 
-} = require('./utils/gdp.js');
+const gdpUtils = require('./utils/gdp.js');
 const DB = require('../db/db.js');
 const db = new DB();
 
@@ -23,8 +14,8 @@ const db = new DB();
  */
 router.param('country', (req, res, next, country) => {
   // TODO: decode url (spaces are replaced with %20)
-  if (!containsOnlyLetters(country)) {
-    sendError(res, 400, 'The country name cannot contain numbers or special characters');
+  if (!gdpUtils.containsOnlyLetters(country)) {
+    gdpUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
     return;
   }
 
@@ -44,9 +35,9 @@ router.get('/countries/:country', async (req, res) => {
   const endYear = req.query.endYear;
 
   try {
-    validateStartYear(res, startYear);
-    validateEndYear(res, endYear);
-    startYearGreaterThanEndYear(res, startYear, endYear);
+    gdpUtils.validateStartYear(res, startYear);
+    gdpUtils.validateEndYear(res, endYear);
+    gdpUtils.startYearGreaterThanEndYear(res, startYear, endYear);
   } catch {
     return;
   }
@@ -54,7 +45,7 @@ router.get('/countries/:country', async (req, res) => {
   const data = await db.readAllCountryData(req.params.country);
 
   if (!data.length) {
-    sendError(res, 404, `No data found for ${req.params.country}`);
+    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
     return;
   }
 
@@ -62,8 +53,8 @@ router.get('/countries/:country', async (req, res) => {
     return { year : row.year, gdp : row.gdp };
   });
 
-  results = filterByStartYear(startYear, results);
-  results = filterByEndYear(endYear, results);
+  results = gdpUtils.filterByStartYear(startYear, results);
+  results = gdpUtils.filterByEndYear(endYear, results);
 
   const responseBody = {
     country: data[0].country,
@@ -71,7 +62,7 @@ router.get('/countries/:country', async (req, res) => {
     results : results
   };
 
-  sendData(res, 200, responseBody);
+  gdpUtils.sendData(res, 200, responseBody);
 });
 
 module.exports = router;

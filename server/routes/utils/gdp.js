@@ -32,22 +32,45 @@ function sendData(res, status, data) {
   res.status(status).send({ data: data });
 }
 
-function filterByStartYear(startYear, results) {
+/**
+ * Filters an array of objects by the start year
+ *
+ * @param {number} startYear - The start year to filter by
+ * @param {Array<Object>} arr - An array of objects to be filtered
+ * Each object must have a 'year' property
+ * @returns {Array<Object>} - The filtered array
+ */
+function filterByStartYear(startYear, arr) {
   if (!startYear) {
-    return results;
+    return arr;
   }
   startYear = parseInt(startYear);
-  return results.filter(row => row.year >= startYear);
+  return arr.filter(obj => obj.year >= startYear);
 }
 
-function filterByEndYear(endYear, results) {
+/**
+ * Filters an array of results by the end year
+ *
+ * @param {number} endYear - The end year to filter by
+ * @param {Array<Object>} arr - An array of objects to be filtered
+ * Each object must have a 'year' property
+ * @returns {Array<Object>} - The filtered array
+ */
+function filterByEndYear(endYear, arr) {
   if (!endYear) {
-    return results;
+    return arr;
   }
   endYear = parseInt(endYear);
-  return results.filter(row => row.year <= endYear);
+  return arr.filter(obj => obj.year <= endYear);
 }
 
+/**
+ * Validates whether the start year parameter is a number
+ *
+ * @param {Object} res - The express response object
+ * @param {number} startYear - The start year parameter to validate
+ * @throws {Error} - If the start year parameter is not a number
+ */
 function validateStartYear(res, startYear) {
   if (startYear && isNaN(startYear)) {
     sendError(res, 400, 'The startYear parameter must be a number');
@@ -55,14 +78,29 @@ function validateStartYear(res, startYear) {
   }
 }
 
-function validateEndYear(res, endYear){
+/**
+ * Validates whether the end year parameter is a number
+ *
+ * @param {Object} res - The express response object
+ * @param {number} endYear - The end year parameter to validate
+ * @throws {Error} - If the end year parameter is not a number
+ */
+function validateEndYear(res, endYear) {
   if (endYear && isNaN(endYear)) {
     sendError(res, 400, 'The endYear parameter must be a number');
     throw new Error();
   }
 }
 
-function startYearGreaterThanEndYear(res, startYear, endYear){
+/**
+ * Validates the order of start year and end year parameters
+ *
+ * @param {Object} res - The express response object
+ * @param {number} startYear - The start year parameter
+ * @param {number} endYear - The end year parameter
+ * @throws {Error} - If the start year parameter is greater than the end year parameter
+ */
+function validateYearRange(res, startYear, endYear) {
   if (startYear && endYear && startYear > endYear) {
     sendError(res, 400, 'The startYear parameter cannot be greater than the endYear parameter');
     throw new Error();
@@ -77,5 +115,5 @@ module.exports = {
   filterByEndYear,
   validateStartYear,
   validateEndYear,
-  startYearGreaterThanEndYear
+  startYearGreaterThanEndYear: validateYearRange
 };
