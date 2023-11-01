@@ -7,8 +7,24 @@ import { useState } from 'react';
 
 const country = 'canada';
 
+
 const DataDisplay = (props) => {
-  const [data, setData] = useState([]); 
+  const [data, setData] = useState({
+    'data' : {
+      'code': 'CAN',
+      'country' : 'Canada',
+      'results' : [
+        {
+          year : 1990,
+          gdp : 5723
+        },
+        {
+          year : 1991,
+          gdp : 3723
+        }
+      ]
+    }
+  }); 
 
   // Fetch data from api using await and useffect
   useEffect(() => {
