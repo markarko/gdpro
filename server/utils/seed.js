@@ -65,11 +65,12 @@ async function seedDatabase(dbName, collectionName, data) {
   try {
     const db = new DB();
     await db.connect(dbName, collectionName);
-    const num = await db.createMany(data);
+    const num = data.length;
+    await db.createMany(data);
     console.log(`Inserted ${num} rows`);
   } catch (e) {
     console.error('Could not seed');
-    console.dir(e);
+    console.error(e);
   } finally {
     if (db) {
       db.close();
@@ -77,6 +78,15 @@ async function seedDatabase(dbName, collectionName, data) {
     process.exit();
   }
 }
+
+(async () => {
+  // Code not tested
+  const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];
+  for (const fileName of filesNames) {
+    const data = await datasetToJson(fileName);
+    seedDatabase('GDPRO', fileName, data);
+  }
+})();
 
 // No need for this as this should be a standalone script
 /* module.exports = datasetToJson; */
