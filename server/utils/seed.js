@@ -82,11 +82,15 @@ async function seedDatabase(dbName, collectionName, data) {
 }
 
 (async () => {
-  // Code not tested
   const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];
   for (const fileName of filesNames) {
     const data = await datasetToJson(fileName);
-    seedDatabase('GDPRO', fileName, data);
+    const filteredData = data.filter(row => !row.country.includes('FAO')).map(row => {
+      const rowCopy = Object.assign(row);
+      rowCopy.country = row.country.toLowerCase();
+      return row;
+    });
+    seedDatabase('gdpro', fileName, filteredData);
   }
 })();
 
