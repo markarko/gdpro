@@ -32,8 +32,50 @@ function sendData(res, status, data) {
   res.status(status).send({ data: data });
 }
 
+function filterByStartYear(startYear, results) {
+  if (!startYear) {
+    return results;
+  }
+  startYear = parseInt(startYear);
+  return results.filter(row => row.year >= startYear);
+}
+
+function filterByEndYear(endYear, results) {
+  if (!endYear) {
+    return results;
+  }
+  endYear = parseInt(endYear);
+  return results.filter(row => row.year <= endYear);
+}
+
+function validateStartYear(res, startYear) {
+  if (startYear && isNaN(startYear)) {
+    sendError(res, 400, 'The startYear parameter must be a number');
+    throw new Error();
+  }
+}
+
+function validateEndYear(res, endYear){
+  if (endYear && isNaN(endYear)) {
+    sendError(res, 400, 'The endYear parameter must be a number');
+    throw new Error();
+  }
+}
+
+function startYearGreaterThanEndYear(res, startYear, endYear){
+  if (startYear && endYear && startYear > endYear) {
+    sendError(res, 400, 'The startYear parameter cannot be greater than the endYear parameter');
+    throw new Error();
+  }
+}
+
 module.exports = {
   sendData,
   sendError,
-  containsOnlyLetters
+  containsOnlyLetters,
+  filterByStartYear,
+  filterByEndYear,
+  validateStartYear,
+  validateEndYear,
+  startYearGreaterThanEndYear
 };

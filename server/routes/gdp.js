@@ -1,6 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { sendData, sendError, containsOnlyLetters } = require('./utils/gdp.js');
+const { 
+  sendData, 
+  sendError, 
+  containsOnlyLetters, 
+  filterByStartYear,
+  filterByEndYear,
+  validateStartYear,
+  validateEndYear,
+  startYearGreaterThanEndYear 
+} = require('./utils/gdp.js');
 const DB = require('../db/db.js');
 const db = new DB();
 
@@ -31,6 +40,17 @@ router.param('country', (req, res, next, country) => {
  * @param {Object} res - Express response object
  */
 router.get('/countries/:country', async (req, res) => {
+  const startYear = req.query.startYear;
+  const endYear = req.query.endYear;
+
+  try {
+    validateStartYear(res, startYear);
+    validateEndYear(res, endYear);
+    startYearGreaterThanEndYear(res, startYear, endYear);
+  } catch {
+    return;
+  }
+
   const data = await db.readAllCountryData(req.params.country);
 
   if (!data.length) {
@@ -38,9 +58,12 @@ router.get('/countries/:country', async (req, res) => {
     return;
   }
 
-  const results = data.map(row => { 
+  let results = data.map(row => { 
     return { year : row.year, gdp : row.gdp };
   });
+
+  results = filterByStartYear(startYear, results);
+  results = filterByEndYear(endYear, results);
 
   const responseBody = {
     country: data[0].country,
