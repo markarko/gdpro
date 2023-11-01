@@ -37,23 +37,26 @@ const DataDisplay = (props) => {
   }, []);
 
   return (
-    <Table striped>
+    <div>
       <h1>{data['data']['country']}</h1>
-      <thead>
-        <tr>
-          <th>Year</th>
-          <th>gdp</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data['data']['results'].map((item, index) => 
-          <tr key={index}>
-            <td>{item.year}</td>
-            <td>{item.gdp}</td>
+      <Table striped>
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>gdp</th>
           </tr>
-        )}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+          {data['data']['results'].map((item, index) => 
+            <tr key={index}>
+              <td>{item.year}</td>
+              <td>{item.gdp}</td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+    </div>
+
   );
 };
 
