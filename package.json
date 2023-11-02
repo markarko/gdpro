@@ -11,6 +11,10 @@
   "author": "Seyed Amirreza Mojtahedi, Thomas Proctor, Marko Litovchenko",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "supertest": "^6.3.3"
   }
 }

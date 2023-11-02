@@ -1,4 +1,4 @@
-Entity,Code,Year,Total | 00002901 || Food available for consumption | 0674pc || grams of protein per day per capita
+country,code,year,gppd
 Afghanistan,AFG,1961,86.49284
 Afghanistan,AFG,1962,84.580055
 Afghanistan,AFG,1963,78.65725

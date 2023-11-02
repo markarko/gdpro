@@ -10,6 +10,8 @@ const fsPromises = fs.promises;
  * @param {Object} stream - The stream to be parsed
  * @returns {Promise<Array<Object>>} - A promise that resolves with an array 
  * of objects representing the parsed CSV rows
+ * @returns {Promise<Array<Object>>} - A promise that resolves with an array of objects
+ * representing the parsed CSV rows
  * @throws {Error} If an error occurs during the parsing of the stream
  */
 async function streamToPromise(stream) {
@@ -36,7 +38,17 @@ async function csvToJson(filePath) {
   }
 
   const stream = fs.createReadStream(filePath);
-  return await streamToPromise(stream);
+  const result = await streamToPromise(stream);
+  const cleanedResult = result.map(obj => {
+    const cleanedObj = {};
+    Object.keys(obj).forEach(key => {
+      const cleanedKey = cleanKey(key);
+      cleanedObj[cleanedKey] = obj[key];
+    });
+    return cleanedObj;
+  });
+
+  return cleanedResult;
 }
 
 /**
@@ -66,7 +78,7 @@ async function seedDatabase(dbName, collectionName, data) {
     const db = new DB();
     await db.connect(dbName, collectionName);
     const num = data.length;
-    await db.createMany(data);
+    await db.createMany(collectionName, data);
     console.log(`Inserted ${num} rows`);
   } catch (e) {
     console.error('Could not seed');
@@ -79,14 +91,24 @@ async function seedDatabase(dbName, collectionName, data) {
   }
 }
 
+function cleanKey(key) {
+  // Replace non-printable characters with an empty string
+  return key.replace(/[^\x20-\x7E]/g, '');
+}
+
 (async () => {
-  // Code not tested
   const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];
   for (const fileName of filesNames) {
     const data = await datasetToJson(fileName);
-    seedDatabase('GDPRO', fileName, data);
+    const filteredData = data.filter(row => !row.country.includes('FAO')).map(row => {
+      const rowCopy = Object.assign(row);
+      rowCopy.country = row.country.toLowerCase();
+      return row;
+    });
+    seedDatabase('gdpro', fileName, filteredData);
   }
 })();
 
 // No need for this as this should be a standalone script
+module.exports = {csvToJson};
 /* module.exports = datasetToJson; */

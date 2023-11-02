@@ -11,12 +11,11 @@ class DB {
       instance = this;
       this.client = new MongoClient(dbUrl);
       this.db = null;
-      this.collection = null;
     }
     return instance;
   }
 
-  async connect(dbname, collName) {
+  async connect(dbname) {
     if (instance.db){
       return;
     }
@@ -24,25 +23,27 @@ class DB {
     instance.db = await instance.client.db(dbname);
     // Send a ping to confirm a successful connection
     await instance.client.db(dbname).command({ ping: 1 });
-    instance.collection = await instance.db.collection(collName);
   }
 
   async close() {
     await instance.client.close();
     instance = null;
   }
-  async readAll() {
+
+  async readAll(collName) {
     try {
-      const result = await instance.collection.find({}, { projection: { _id: 0 }}).toArray();
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({}, { projection: { _id: 0 }}).toArray();
       return result;
     } catch (error) {
       console.error('Error in readAll:', error);
     }
   }
-    
-  async readAllCountryData(country) {
+
+  async readAllCountryData(collName, country) {
     try {
-      const result = await instance.collection.find({ country: country },
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({ country: country },
         { projection: { _id: 0 }}).toArray();
       return result;
     } catch (error) {
@@ -50,9 +51,10 @@ class DB {
     }
   }
     
-  async readAllYearData(year) {
+  async readAllYearData(collName, year) {
     try {
-      const result = await instance.collection.find({ year: year },
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({ year: year },
         { projection: { _id: 0 }}).toArray();
       return result;
     } catch (error) {
@@ -60,9 +62,10 @@ class DB {
     }
   }
     
-  async readDataByYearRange(startYear, endYear) {
+  async readDataByYearRange(collName, startYear, endYear) {
     try {
-      const result = await instance.collection.find({
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
         year: { $gte: startYear, $lte: endYear }
       }, { projection: { _id: 0 }}).toArray();
       return result;
@@ -71,17 +74,19 @@ class DB {
     }
   }
     
-  async createRecord(jsonRecord) {
+  async createRecord(collName, jsonRecord) {
     try {
-      await instance.collection.insertOne(jsonRecord);
+      const collection = await instance.db.collection(collName);
+      await collection.insertOne(jsonRecord);
     } catch (error) {
       console.error('Error in createRecord:', error);
     }
   }
     
-  async createMany(jsonRecordsArray) {
+  async createMany(collName, jsonRecordsArray) {
     try {
-      await instance.collection.insertMany(jsonRecordsArray, { ordered: true });
+      const collection = await instance.db.collection(collName);
+      await collection.insertMany(jsonRecordsArray, { ordered: true });
     } catch (error) {
       console.error('Error in createMany:', error);
     }
