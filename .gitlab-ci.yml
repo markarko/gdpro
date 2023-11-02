@@ -39,3 +39,17 @@ lint-client:
   script:
     - cd client && ./node_modules/eslint/bin/eslint.js --ext js,jsx,mjs,cjs .
   allow_failure: false
+
+build-frontend:
+  stage: build
+  script:
+    - cd client && npm run build
+  only:
+    refs:
+      - main
+      - staging
+  artifacts:
+    expire_in: 1 days
+    when: on_success
+    paths:
+      - client/build

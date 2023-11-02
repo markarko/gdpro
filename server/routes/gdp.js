@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const gdpUtils = require('./utils/gdp.js');
+const gdpUtils = require('./utils/apiUtils.js');
 const DB = require('../db/db.js');
 const db = new DB();
+const gdpCollName = 'gdp-per-capita-worldbank.csv';
 
 /**
  * Middleware for validating the 'country' parameter in the route
@@ -35,21 +36,21 @@ router.get('/countries/:country', async (req, res) => {
   const endYear = req.query.endYear;
 
   try {
-    gdpUtils.validateStartYear(res, startYear);
-    gdpUtils.validateEndYear(res, endYear);
-    gdpUtils.startYearGreaterThanEndYear(res, startYear, endYear);
+    gdpUtils.validateYear(res, startYear, 'startYear');
+    gdpUtils.validateYear(res, endYear, 'endYear');
+    gdpUtils.validateYearRange(res, startYear, endYear);
   } catch {
     return;
   }
 
-  const data = await db.readAllCountryData(req.params.country);
+  const data = await db.readAllCountryData(gdpCollName, req.params.country);
 
   if (!data.length) {
     gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
     return;
   }
 
-  let results = data.map(row => { 
+  let results = data.sort((a, b) => a.year - b.year).map(row => { 
     return { year : row.year, gdp : row.gdp };
   });
 
