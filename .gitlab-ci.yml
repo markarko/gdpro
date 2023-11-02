@@ -59,4 +59,4 @@ test-server:
   script:
    - cd server
    - npm run test
-  allow_failiure: true
+  allow_failure: true
