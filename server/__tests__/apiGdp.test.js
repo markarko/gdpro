@@ -41,6 +41,7 @@ describe('GET /api/v1/gdp/countries/Canada?startYear=2000', () => {
   });
 });
 
+
 describe('GET /api/v1/gdp/countries/Canada?startYear=2050', () => {
   test('responds with empty results', async () => {
     const url = '/api/v1/gdp/countries/Canada?startYear=2050';

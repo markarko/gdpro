@@ -99,6 +99,15 @@ class DB {
       await instance.close();
     }
   }
+
+  async index (collName) {
+    try {
+      const collection = await instance.db.collection(collName);
+      await collection.createIndex({ country: 1 });
+    } catch (error) {
+      console.error('Error in index:', error);
+    }
+  }
 }
 
 module.exports = DB;
