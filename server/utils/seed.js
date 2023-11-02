@@ -80,7 +80,7 @@ async function seedDatabase(dbName, collectionName, data) {
     const num = data.length;
     await db.createMany(collectionName, data);
     console.log(`Inserted ${num} rows`);
-    await db.index('country');
+    await db.index(collectionName);
   } catch (e) {
     console.error('Could not seed');
     console.error(e);
@@ -106,7 +106,7 @@ function cleanKey(key) {
       rowCopy.country = row.country.toLowerCase();
       return row;
     });
-    seedDatabase('gdpro', fileName, filteredData);
+    seedDatabase('GDPRO', fileName, filteredData);
     
   }
 })();
