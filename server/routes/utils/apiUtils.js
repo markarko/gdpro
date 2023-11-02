@@ -65,29 +65,15 @@ function filterByEndYear(endYear, arr) {
 }
 
 /**
- * Validates whether the start year parameter is a number
+ * Validates whether the year parameter is a number
  *
  * @param {Object} res - The express response object
- * @param {number} startYear - The start year parameter to validate
- * @throws {Error} - If the start year parameter is not a number
+ * @param {number} year - The year parameter to validate
+ * @throws {Error} - If the year parameter is not a number
  */
-function validateStartYear(res, startYear) {
-  if (startYear && isNaN(startYear)) {
-    sendError(res, 400, 'The startYear parameter must be a number');
-    throw new Error();
-  }
-}
-
-/**
- * Validates whether the end year parameter is a number
- *
- * @param {Object} res - The express response object
- * @param {number} endYear - The end year parameter to validate
- * @throws {Error} - If the end year parameter is not a number
- */
-function validateEndYear(res, endYear) {
-  if (endYear && isNaN(endYear)) {
-    sendError(res, 400, 'The endYear parameter must be a number');
+function validateYear(res, year, paramName) {
+  if (year && isNaN(year)) {
+    sendError(res, 400, `The ${paramName} parameter must be a number`);
     throw new Error();
   }
 }
@@ -113,7 +99,6 @@ module.exports = {
   containsOnlyLetters,
   filterByStartYear,
   filterByEndYear,
-  validateStartYear,
-  validateEndYear,
-  startYearGreaterThanEndYear: validateYearRange
+  validateYear,
+  validateYearRange
 };
