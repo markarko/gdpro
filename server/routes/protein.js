@@ -52,7 +52,7 @@ router.get('/countries/:country', async (req, res) => {
   }
 
   let results = data.sort((a, b) => a.year - b.year).map(row => { 
-    return { year : row.year, gdp : row.gdp };
+    return { year : row.year, gppd : row.gppd };
   });
 
   results = apiUtils.filterByStartYear(startYear, results);
