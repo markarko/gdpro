@@ -78,7 +78,7 @@ async function seedDatabase(dbName, collectionName, data) {
     const db = new DB();
     await db.connect(dbName, collectionName);
     const num = data.length;
-    await db.createMany(data);
+    await db.createMany(collectionName, data);
     console.log(`Inserted ${num} rows`);
   } catch (e) {
     console.error('Could not seed');
