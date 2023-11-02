@@ -38,10 +38,37 @@ The open data used in this app is provided by Our World in Data. The data is sto
 
 ## Setup
 
+To install all the dependencies and build the React app run:
+
+```
+npm run build
+```
+
 ## To run the app
 
 ### Just the client
 
+If `client/package.json` has a `proxy` line, remove it. 
+
+```
+cd ./client
+npm start
+```
+
 ### Just the server
 
+```
+node ./server/bin/www
+```
+
 ### Client and Server
+
+```
+node ./server/bin/www
+```
+in another terminal:
+
+```
+cd ./client
+npm start
+``` 
