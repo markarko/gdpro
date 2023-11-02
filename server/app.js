@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const mainRouter = express.Router();
 const gdpRouter = require('./routes/gdp');
@@ -11,6 +12,6 @@ mainRouter.use('/protein/', proteinRouter);
 
 app.use('/api/v1', mainRouter);
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 module.exports = app;
