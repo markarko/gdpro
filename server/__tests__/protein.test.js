@@ -7,7 +7,7 @@ jest.mock('../db/db', () => {
     }
   
     async readAllCountryData() {
-      return [{ 'country' : 'canada', 'code' : 'CAN', 'year' : '2021', 'gppd' : '50' }];
+      return [{ 'country' : 'Iran', 'code' : 'CAN', 'year' : '2021', 'gppd' : '50' }];
     }
   }
   
