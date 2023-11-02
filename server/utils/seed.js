@@ -80,6 +80,7 @@ async function seedDatabase(dbName, collectionName, data) {
     const num = data.length;
     await db.createMany(data);
     console.log(`Inserted ${num} rows`);
+    await db.index('country');
   } catch (e) {
     console.error('Could not seed');
     console.error(e);
@@ -106,6 +107,7 @@ function cleanKey(key) {
       return row;
     });
     seedDatabase('gdpro', fileName, filteredData);
+    
   }
 })();
 
