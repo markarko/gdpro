@@ -53,3 +53,10 @@ build-frontend:
     when: on_success
     paths:
       - client/build
+
+test-server:
+  stage: test
+  script:
+   - cd server
+   - npm run test
+  allow_failure: true
