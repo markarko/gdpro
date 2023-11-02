@@ -36,7 +36,17 @@ async function csvToJson(filePath) {
   }
 
   const stream = fs.createReadStream(filePath);
-  return await streamToPromise(stream);
+  const result = await streamToPromise(stream);
+  const cleanedResult = result.map(obj => {
+    const cleanedObj = {};
+    Object.keys(obj).forEach(key => {
+      const cleanedKey = cleanKey(key);
+      cleanedObj[cleanedKey] = obj[key];
+    });
+    return cleanedObj;
+  });
+
+  return cleanedResult;
 }
 
 /**
@@ -79,6 +89,11 @@ async function seedDatabase(dbName, collectionName, data) {
   }
 }
 
+function cleanKey(key) {
+  // Replace non-printable characters with an empty string
+  return key.replace(/[^\x20-\x7E]/g, '');
+}
+
 (async () => {
   // Code not tested
   const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];
@@ -89,4 +104,5 @@ async function seedDatabase(dbName, collectionName, data) {
 })();
 
 // No need for this as this should be a standalone script
+module.exports = {csvToJson};
 /* module.exports = datasetToJson; */
