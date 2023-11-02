@@ -1,33 +1,17 @@
 const app = require('../app');
 const request = require('supertest');
-const DB = require('../db/db'); 
-let db = null;
 
-beforeAll(async () => {
-  try {
-    const dbName = 'gdpro';
-    const collectionName = 'daily-per-capita-protein-supply.csv';
-    db = new DB();
-    await db.connect(dbName, collectionName);
-  } catch (e) {
-    console.error('Could not connect');
-    console.error(e);
-    if (db) {
-      db.close();
+jest.mock('../db/db', () => {
+  class DB {
+    constructor() {
     }
-    process.exit();
-  }
-});
-
-afterAll(async () => {
-  try {
-    if (db) {
-      await db.close();
+  
+    async readAllCountryData() {
+      return [{ 'country' : 'canada', 'code' : 'CAN', 'year' : '2021', 'gppd' : '50' }];
     }
-  } catch (e) {
-    console.error('Could not close connection');
-    console.error(e);
   }
+  
+  return DB;
 });
 
 it('should get protein for a country', async () => {
