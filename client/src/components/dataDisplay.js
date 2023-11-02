@@ -1,6 +1,3 @@
-// React component for displaying data from an API
-
-
 import React, { useEffect } from 'react';
 import { Table } from 'reactstrap';
 import { useState } from 'react';
@@ -29,7 +26,7 @@ const DataDisplay = (props) => {
   // Fetch data from api using await and useffect
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/countries/${country}`);
+      const response = await fetch(`/api/v1/gdp/countries/${country}`);
       const body = await response.json();
       setData(body);
     }
