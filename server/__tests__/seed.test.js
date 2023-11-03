@@ -1,4 +1,4 @@
-const {csvToJson} = require('../utils/seed');
+const {csvToJson} = require('../utils/parsing');
 const path = require('path');
 
 test('csvToJson converts a gdp.csv file to JSON array', async () => {
