@@ -1,9 +1,95 @@
+/**
+ * Express router for managing protein data by country.
+ * @module proteinRouter
+ */
+
 const express = require('express');
 const router = express.Router();
 const apiUtils = require('./utils/apiUtils.js');
 const DB = require('../db/db.js');
 const db = new DB();
-const proteinCollName = 'daily-per-capita-protein-supply.csv';
+const proteinCollName = 'daily-per-capita-protein-supply';
+
+/**
+ * @swagger
+ * tags:
+ *   name: Protein
+ *   description: The protein managing API
+ * /api/v1/protein/countries/{country}:
+ *   get:
+ *     summary: Gets all the data for a specific country
+ *     tags: [Protein]
+ *     parameters:
+ *       - in: path
+ *         name: country
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The country name
+ *       - in: query
+ *         name: startYear
+ *         schema:
+ *           type: string
+ *         description: The start year for the data
+ *       - in: query
+ *         name: endYear
+ *         schema:
+ *           type: string
+ *         description: The end year for the data
+ *     responses:
+ *       200:
+ *         description: The fetched country data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/daily-per-capita-protein-supply'
+ *       400:
+ *         description: Invalid country name or year range
+ *       404:
+ *         description: No data found for the specified country
+ *       500:
+ *         description: Some server error
+ *
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     daily-per-capita-protein-supply:
+ *       type: object
+ *       required:
+ *         - country
+ *         - code
+ *         - results
+ *       properties:
+ *         country:
+ *           type: string
+ *           description: The country name
+ *         code:
+ *           type: string
+ *           description: The country code
+ *         results:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               year:
+ *                 type: string
+ *                 description: The year
+ *               gppd:
+ *                 type: string
+ *                 description: Grams of protein supply per person per day
+ *       example:
+ *         data:
+ *           country: Canada
+ *           code: CAN
+ *           results:
+ *             - year: "1961"
+ *               gppd: "78.3"
+ *             - year: "1962"
+ *               gppd: "59.5"
+ */
 
 /**
  * Middleware for validating the 'country' parameter in the route

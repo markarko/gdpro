@@ -1,5 +1,4 @@
-const {datasetToJson} = require('./parsing.js');
-const {seedDatabase} = require('../db/db.js');
+const {datasetToJson, seedDatabase} = require('./parsing.js');
 
 (async () => {
   const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];
@@ -10,8 +9,6 @@ const {seedDatabase} = require('../db/db.js');
       rowCopy.country = row.country.toLowerCase();
       return row;
     });
-    seedDatabase('GDPRO', fileName, filteredData); 
+    seedDatabase('gdpro', fileName.split('.')[0], filteredData); 
   }
 })();
-
-// No need for this as this should be a standalone script
