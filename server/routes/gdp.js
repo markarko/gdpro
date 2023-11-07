@@ -3,7 +3,7 @@ const router = express.Router();
 const gdpUtils = require('./utils/apiUtils.js');
 const DB = require('../db/db.js');
 const db = new DB();
-const gdpCollName = 'gdp-per-capita-worldbank.csv';
+const gdpCollName = 'gdp-per-capita-worldbank';
 
 
 

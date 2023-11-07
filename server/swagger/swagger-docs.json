@@ -17,6 +17,10 @@
         {
             "name": "Protein",
             "description": "The protein managing API"
+        },
+        {
+            "name": "GDP",
+            "description": "The GDP managing API"
         }
     ],
     "paths": {
@@ -217,6 +221,109 @@
                     },
                     "404": {
                         "description": "No data found for the specified year"
+                    },
+                    "500": {
+                        "description": "Some server error"
+                    }
+                }
+            }
+        },
+        "/api/v1/gdp/countries/{country}": {
+            "get": {
+                "summary": "Gets all the data for a specific country",
+                "tags": [
+                    "GDP"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "The country name"
+                    },
+                    {
+                        "in": "query",
+                        "name": "startYear",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The start year for the data"
+                    },
+                    {
+                        "in": "query",
+                        "name": "endYear",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The end year for the data"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The fetched country data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "country": {
+                                                    "type": "string",
+                                                    "description": "The country name"
+                                                },
+                                                "code": {
+                                                    "type": "string",
+                                                    "description": "The country code"
+                                                },
+                                                "results": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "year": {
+                                                                "type": "string",
+                                                                "description": "The year"
+                                                            },
+                                                            "gdp": {
+                                                                "type": "string",
+                                                                "description": "GDP per capita"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "example": {
+                                        "data": {
+                                            "country": "canada",
+                                            "code": "CAN",
+                                            "results": [
+                                                {
+                                                    "year": "2007",
+                                                    "gdp": "18205"
+                                                },
+                                                {
+                                                    "year": "2020",
+                                                    "gdp": "47823"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid country name or year range"
+                    },
+                    "404": {
+                        "description": "No data found for the specified country"
                     },
                     "500": {
                         "description": "Some server error"
