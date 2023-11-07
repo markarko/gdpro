@@ -9,6 +9,6 @@ const {datasetToJson, seedDatabase} = require('./parsing.js');
       rowCopy.country = row.country.toLowerCase();
       return row;
     });
-    seedDatabase('gdpro', fileName.split('.')[0], filteredData); 
+    seedDatabase('GDPRO', fileName.split('.')[0], filteredData); 
   }
 })();
