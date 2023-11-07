@@ -42,14 +42,106 @@ const proteinCollName = 'daily-per-capita-protein-supply';
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/daily-per-capita-protein-supply'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     country:
+ *                       type: string
+ *                       description: The country name
+ *                     code:
+ *                       type: string
+ *                       description: The country code
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           year:
+ *                             type: string
+ *                             description: The year
+ *                           gppd:
+ *                             type: string
+ *                             description: Grams of protein supply per person per day
+ *               example:
+ *                 data:
+ *                   country: Canada
+ *                   code: CAN
+ *                   results:
+ *                     - year: "1961"
+ *                       gppd: "78.3"
+ *                     - year: "1962"
+ *                       gppd: "59.5"
  *       400:
  *         description: Invalid country name or year range
  *       404:
  *         description: No data found for the specified country
  *       500:
  *         description: Some server error
- *
+ * /api/v1/protein/{year}:
+ *   get:
+ *     summary: Gets all the data for a specific year
+ *     tags: [Protein]
+ *     parameters:
+ *       - in: path
+ *         name: year
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The year
+ *       - in: query
+ *         name: country
+ *         schema:
+ *           type: string
+ *         description: The country data for the year
+ *     responses:
+ *       200:
+ *         description: The fetched country data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     country:
+ *                       type: string
+ *                       description: The country name
+ *                     code:
+ *                       type: string
+ *                       description: The country code
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           year:
+ *                             type: string
+ *                             description: The year
+ *                           gppd:
+ *                             type: string
+ *                             description: Grams of protein supply per person per day
+ *               example:
+ *                 data:
+ *                   year: 2005
+ *                   results:
+ *                     - country: "Iran"
+ *                       code: "IRN"
+ *                       gppd: "78.3"
+ *                     - country: "China"
+ *                       code: "CHN"
+ *                       gppd: "60.5"
+ *                     - country: "Germany"
+ *                       code: "GER"
+ *                       gppd: "75.21"
+ *       400:
+ *         description: Invalid year or country name
+ *       404:
+ *         description: No data found for the specified year
+ *       500:
+ *         description: Some server error 
  */
 
 /**
@@ -81,14 +173,10 @@ const proteinCollName = 'daily-per-capita-protein-supply';
  *                 type: string
  *                 description: Grams of protein supply per person per day
  *       example:
- *         data:
- *           country: Canada
- *           code: CAN
- *           results:
- *             - year: "1961"
- *               gppd: "78.3"
- *             - year: "1962"
- *               gppd: "59.5"
+ *         country: Canada
+ *         code: CAN
+ *         year: "1961"
+ *         gppd: "78.3"
  */
 
 /**
