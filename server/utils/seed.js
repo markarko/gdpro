@@ -1,5 +1,4 @@
-const {datasetToJson} = require('./parsing.js');
-const {seedDatabase} = require('../db/db.js');
+const {datasetToJson, seedDatabase} = require('./parsing.js');
 
 (async () => {
   const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];

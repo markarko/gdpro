@@ -66,4 +66,74 @@ router.get('/countries/:country', async (req, res) => {
   gdpUtils.sendData(res, 200, responseBody);
 });
 
+// filter by a range of years
+router.get('/countries/:country/yearRange', async (req, res) => {
+  const startYear = req.query.startYear;
+  const endYear = req.query.endYear;
+
+  try {
+    gdpUtils.validateYear(res, startYear, 'startYear');
+    gdpUtils.validateYear(res, endYear, 'endYear');
+    gdpUtils.validateYearRange(res, startYear, endYear);
+  } catch {
+    return;
+  }
+
+  const data = await db.readAllCountryData(gdpCollName, req.params.country);
+
+  if (!data.length) {
+    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
+  let results = data.sort((a, b) => a.year - b.year).map(row => { 
+    return { year : row.year, gdp : row.gdp };
+  });
+
+  results = gdpUtils.filterByStartYear(startYear, results);
+  results = gdpUtils.filterByEndYear(endYear, results);
+
+  const responseBody = {
+    country: data[0].country,
+    code: data[0].code,
+    results : results
+  };
+
+  gdpUtils.sendData(res, 200, responseBody);
+});
+
+// Filter through countries with a range of gdp using apiUtils
+router.get('/countries/:country/gdpRange', async (req, res) => {
+  console.log('in gdpRange');
+  const startGdp = req.query.startGdp;
+  const endGdp = req.query.endGdp;
+
+  console.log('imthere');
+  const data = await db.readAll('gdp-per-capita-worldbank.csv');
+
+  if (!data.length) {
+    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
+  let results = data.sort((a, b) => a.gdp - b.gdp).map(row => { 
+    return { year : row.year, gdp : row.gdp };
+  });
+
+  results = gdpUtils.filterByStartGdp(startGdp, results);
+  results = gdpUtils.filterByEndGdp(endGdp, results);
+
+  const responseBody = {
+    country: data[0].country,
+    code: data[0].code,
+    results : results
+  };
+
+  gdpUtils.sendData(res, 200, responseBody);
+});
+
+// give me an example of a url for the above
+// /api/v1/gdp/countries/canada/gdpRange?startGdp=1000&endGdp=2000
+
+
 module.exports = router;
