@@ -1,9 +1,14 @@
+/**
+ * Express router for managing protein data by country.
+ * @module proteinRouter
+ */
+
 const express = require('express');
 const router = express.Router();
 const apiUtils = require('./utils/apiUtils.js');
 const DB = require('../db/db.js');
 const db = new DB();
-const proteinCollName = 'daily-per-capita-protein-supply.csv';
+const proteinCollName = 'daily-per-capita-protein-supply';
 
 /**
  * Middleware for validating the 'country' parameter in the route

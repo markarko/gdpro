@@ -1,0 +1,379 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "GDPro Express API with Swagger",
+        "version": "0.1.0",
+        "description": "GDPro's Express APIs documentation with Swagger."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000"
+        }
+    ],
+    "apis": [
+        "./server/routes/*.js"
+    ],
+    "tags": [
+        {
+            "name": "Protein",
+            "description": "The protein managing API"
+        },
+        {
+            "name": "GDP",
+            "description": "The GDP managing API"
+        }
+    ],
+    "paths": {
+        "/api/v1/protein/countries/{country}": {
+            "get": {
+                "summary": "Gets all the data for a specific country",
+                "tags": [
+                    "Protein"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "The country name"
+                    },
+                    {
+                        "in": "query",
+                        "name": "startYear",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The start year for the data"
+                    },
+                    {
+                        "in": "query",
+                        "name": "endYear",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The end year for the data"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The fetched country data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "country": {
+                                                    "type": "string",
+                                                    "description": "The country name"
+                                                },
+                                                "code": {
+                                                    "type": "string",
+                                                    "description": "The country code"
+                                                },
+                                                "results": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "year": {
+                                                                "type": "string",
+                                                                "description": "The year"
+                                                            },
+                                                            "gppd": {
+                                                                "type": "string",
+                                                                "description": "Grams of protein supply per person per day"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "example": {
+                                        "data": {
+                                            "country": "canada",
+                                            "code": "CAN",
+                                            "results": [
+                                                {
+                                                    "year": "1961",
+                                                    "gppd": "78.3"
+                                                },
+                                                {
+                                                    "year": "1962",
+                                                    "gppd": "59.5"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid country name or year range"
+                    },
+                    "404": {
+                        "description": "No data found for the specified country"
+                    },
+                    "500": {
+                        "description": "Some server error"
+                    }
+                }
+            }
+        },
+        "/api/v1/protein/{year}": {
+            "get": {
+                "summary": "Gets all the data for a specific year",
+                "tags": [
+                    "Protein"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "year",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "The year"
+                    },
+                    {
+                        "in": "query",
+                        "name": "country",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The country data for the year"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The fetched country data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "country": {
+                                                    "type": "string",
+                                                    "description": "The country name"
+                                                },
+                                                "code": {
+                                                    "type": "string",
+                                                    "description": "The country code"
+                                                },
+                                                "results": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "year": {
+                                                                "type": "string",
+                                                                "description": "The year"
+                                                            },
+                                                            "gppd": {
+                                                                "type": "string",
+                                                                "description": "Grams of protein supply per person per day"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "example": {
+                                        "data": {
+                                            "year": 2005,
+                                            "results": [
+                                                {
+                                                    "country": "iran",
+                                                    "code": "IRN",
+                                                    "gppd": "78.3"
+                                                },
+                                                {
+                                                    "country": "china",
+                                                    "code": "CHN",
+                                                    "gppd": "60.5"
+                                                },
+                                                {
+                                                    "country": "germany",
+                                                    "code": "GER",
+                                                    "gppd": "75.21"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid year or country name"
+                    },
+                    "404": {
+                        "description": "No data found for the specified year"
+                    },
+                    "500": {
+                        "description": "Some server error"
+                    }
+                }
+            }
+        },
+        "/api/v1/gdp/countries/{country}": {
+            "get": {
+                "summary": "Gets all the data for a specific country",
+                "tags": [
+                    "GDP"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "country",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "The country name"
+                    },
+                    {
+                        "in": "query",
+                        "name": "startYear",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The start year for the data"
+                    },
+                    {
+                        "in": "query",
+                        "name": "endYear",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "The end year for the data"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The fetched country data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "country": {
+                                                    "type": "string",
+                                                    "description": "The country name"
+                                                },
+                                                "code": {
+                                                    "type": "string",
+                                                    "description": "The country code"
+                                                },
+                                                "results": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "year": {
+                                                                "type": "string",
+                                                                "description": "The year"
+                                                            },
+                                                            "gdp": {
+                                                                "type": "string",
+                                                                "description": "GDP per capita"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "example": {
+                                        "data": {
+                                            "country": "canada",
+                                            "code": "CAN",
+                                            "results": [
+                                                {
+                                                    "year": "2007",
+                                                    "gdp": "18205"
+                                                },
+                                                {
+                                                    "year": "2020",
+                                                    "gdp": "47823"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid country name or year range"
+                    },
+                    "404": {
+                        "description": "No data found for the specified country"
+                    },
+                    "500": {
+                        "description": "Some server error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "daily-per-capita-protein-supply": {
+                "type": "object",
+                "required": [
+                    "country",
+                    "code",
+                    "results"
+                ],
+                "properties": {
+                    "country": {
+                        "type": "string",
+                        "description": "The country name"
+                    },
+                    "code": {
+                        "type": "string",
+                        "description": "The country code"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "year": {
+                                    "type": "string",
+                                    "description": "The year"
+                                },
+                                "gppd": {
+                                    "type": "string",
+                                    "description": "Grams of protein supply per person per day"
+                                }
+                            }
+                        }
+                    }
+                },
+                "example": {
+                    "country": "canada",
+                    "code": "CAN",
+                    "year": "1961",
+                    "gppd": "78.3"
+                }
+            }
+        }
+    }
+}
