@@ -72,6 +72,9 @@ router.get('/countries/:country', async (req, res) => {
 router.get('/countries/:country/gdp-range', async (req, res) => {
   const startGdp = req.query.startGdp;
   const endGdp = req.query.endGdp;
+  startGdp.charAt(0);
+  endGdp.charAt(0);
+  res.status(200);
 
   gdpUtils.sendData (
     {
@@ -96,6 +99,9 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
 router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
+  startYear.charAt(0);
+  endYear.charAt(0);
+  res.status(200); 
   gdpUtils.sendData (
     {country: 'Canada',
       code: 'CAN',
@@ -114,6 +120,8 @@ router.get('/countries/:country/variation', async (req, res) => {
 
 // stub api endpoint to filter by specific country and year
 router.get('/countries/:country/:year', async (req, res) => {
+  res.status(200);
+  req.query.year;
   gdpUtils.sendData (
     {country: 'Canada',
       code: 'CAN',
@@ -129,7 +137,9 @@ router.get('/countries/:country/:year', async (req, res) => {
 
 // stub api endpoint to fiter by the top x countries with the highest or lowest gdd
 router.get('/countries/top/:top', async (req, res) => {
+  res.status(200);
   const orderby = req.query.orderby;
+  orderby.charAt(0);
   gdpUtils.sendData (
     {results : [
       {
@@ -161,7 +171,9 @@ router.get('/countries/top/:top', async (req, res) => {
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
   let countries = req.query.countries;
+  res.status(200);
   countries = countries.split(',');
+  countries.charAt(0);
   gdpUtils.sendData (
     {results : [
       {

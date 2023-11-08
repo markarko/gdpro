@@ -76,6 +76,9 @@ router.get('/countries/:country', async (req, res) => {
 router.get('/countries/:country', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
+  startYear.charAt(0);
+  endYear.charAt(0);
+  res.status(200);
   apiUtils.sendData(
     {
       country: 'Canada',
@@ -98,6 +101,9 @@ router.get('/countries/:country', async (req, res) => {
 router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
+  res.status(200);
+  startYear.charAt(0);
+  endYear.charAt(0);
   apiUtils.sendData (
     {country: 'Canada',
       code: 'CAN',
@@ -117,6 +123,8 @@ router.get('/countries/:country/variation', async (req, res) => {
 // stub api endpoint to fiter by the top x countries with the highest or lowest protein intake
 router.get('/countries/top/:top', async (req, res) => {
   const orderby = req.query.orderby;
+  res.status(200);
+  orderby.charAt(0);
   apiUtils.sendData (
     {results : [
       {
@@ -145,6 +153,9 @@ router.get('/countries/top/:top', async (req, res) => {
 router.get('/countries/:country/protein', async (req, res) => {
   const startProtein = req.query.startProtein;
   const endProtein = req.query.endProtein;
+  startProtein.charAt(0);
+  endProtein.charAt(0);
+  res.status(200);
   apiUtils.sendData(
     {
       country: 'Canada',
@@ -165,6 +176,9 @@ router.get('/countries/:country/protein', async (req, res) => {
 
 // stub api endpoint to filter by specific country and year
 router.get('/countries/:country/:year', async (req, res) => {
+  req.query.year;
+  res.status(200);
+
   apiUtils.sendData (
     {country: 'Canada',
       code: 'CAN',
@@ -182,6 +196,8 @@ router.get('/countries/', async (req, res) => {
   // get all countries given in the query
   let countries = req.query.countries;
   countries = countries.split(',');
+  res.status(200);
+  countries.charAt(0);
   apiUtils.sendData (
     {results : [
       {
