@@ -104,32 +104,25 @@ router.get('/countries/:country/yearRange', async (req, res) => {
 
 // Filter through countries with a range of gdp using apiUtils
 router.get('/countries/:country/gdpRange', async (req, res) => {
-  console.log('in gdpRange');
   const startGdp = req.query.startGdp;
   const endGdp = req.query.endGdp;
 
-  console.log('imthere');
-  const data = await db.readAll('gdp-per-capita-worldbank.csv');
-
-  if (!data.length) {
-    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
-    return;
-  }
-
-  let results = data.sort((a, b) => a.gdp - b.gdp).map(row => { 
-    return { year : row.year, gdp : row.gdp };
-  });
-
-  results = gdpUtils.filterByStartGdp(startGdp, results);
-  results = gdpUtils.filterByEndGdp(endGdp, results);
-
-  const responseBody = {
-    country: data[0].country,
-    code: data[0].code,
-    results : results
-  };
-
-  gdpUtils.sendData(res, 200, responseBody);
+  gdpUtils.sendData (
+    {
+      country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          gdp : 5723
+        },
+        {
+          year : 1991,
+          gdp : 5777
+        }
+      ]
+  
+    });
 });
 
 
@@ -190,6 +183,52 @@ router.get('/countries/countryRange', async (req, res) => {
         code: 'USA',
         year : 1995,
         gdp : 4321
+      }
+    ]}
+  );
+});
+
+// stub api endpoint to filter by specific country and year
+router.get('/countries/:country/:year', async (req, res) => {
+  gdpUtils.sendData (
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          gdp : 5723
+        }
+      ]}
+  );
+});
+
+
+// stub api endpoint to fiter by the top x countries with the highest or lowest gdd
+router.get('/countries/topX', async (req, res) => {
+  const x = req.query.x;
+  const type = req.query.type;
+  gdpUtils.sendData (
+    {results : [
+      {
+        country: 'Canada',
+        code: 'CAN',
+        year : 2003,
+        gdp : 1234,
+        position: 1
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 1995,
+        gdp : 4321,
+        position: 2
+      },
+      {
+        country: 'Mexico',
+        code: 'MEX',
+        year : 1995,
+        gdp : 4322,
+        position: 3
       }
     ]}
   );
