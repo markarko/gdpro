@@ -66,44 +66,8 @@ router.get('/countries/:country', async (req, res) => {
   gdpUtils.sendData(res, 200, responseBody);
 });
 
-// filter by a range of years
-router.get('/countries/:country/yearRange', async (req, res) => {
-  const startYear = req.query.startYear;
-  const endYear = req.query.endYear;
-
-  try {
-    gdpUtils.validateYear(res, startYear, 'startYear');
-    gdpUtils.validateYear(res, endYear, 'endYear');
-    gdpUtils.validateYearRange(res, startYear, endYear);
-  } catch {
-    return;
-  }
-
-  const data = await db.readAllCountryData(gdpCollName, req.params.country);
-
-  if (!data.length) {
-    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
-    return;
-  }
-
-  let results = data.sort((a, b) => a.year - b.year).map(row => { 
-    return { year : row.year, gdp : row.gdp };
-  });
-
-  results = gdpUtils.filterByStartYear(startYear, results);
-  results = gdpUtils.filterByEndYear(endYear, results);
-
-  const responseBody = {
-    country: data[0].country,
-    code: data[0].code,
-    results : results
-  };
-
-  gdpUtils.sendData(res, 200, responseBody);
-});
-
 // Filter through countries with a range of gdp using apiUtils
-router.get('/countries/:country/gdpRange', async (req, res) => {
+router.get('/countries/:country/gdp-range', async (req, res) => {
   const startGdp = req.query.startGdp;
   const endGdp = req.query.endGdp;
 
@@ -127,7 +91,7 @@ router.get('/countries/:country/gdpRange', async (req, res) => {
 
 
 // stub api endpoint for growth / decline of gdp over all the years
-router.get('/countries/:country/growthDecline', async (req, res) => {
+router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
   gdpUtils.sendData (
@@ -143,48 +107,6 @@ router.get('/countries/:country/growthDecline', async (req, res) => {
           gdpGrowth : -2
         }
       ]}
-  );
-});
-
-// Stub api endpoint for filtering by a specific value of gdp
-router.get('/countries/:country/gdpValue', async (req, res) => {
-  const gdpValue = req.query.gdpValue;
-  gdpUtils.sendData (
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          gdp : 5723
-        },
-        {
-          year : 1991,
-          gdp : 5723
-        }
-      ]}
-  );
-});
-
-// stub api endpoint for filtering by a range of countries
-router.get('/countries/countryRange', async (req, res) => {
-  // get all countries given in the query
-  let countries = req.query.countries;
-  countries = countries.split(',');
-  gdpUtils.sendData (
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        year : 2003,
-        gdp : 1234
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 1995,
-        gdp : 4321
-      }
-    ]}
   );
 });
 
@@ -204,9 +126,8 @@ router.get('/countries/:country/:year', async (req, res) => {
 
 
 // stub api endpoint to fiter by the top x countries with the highest or lowest gdd
-router.get('/countries/topX', async (req, res) => {
-  const x = req.query.x;
-  const type = req.query.type;
+router.get('/countries/top/:top', async (req, res) => {
+  const orderby = req.query.orderby;
   gdpUtils.sendData (
     {results : [
       {
@@ -234,6 +155,27 @@ router.get('/countries/topX', async (req, res) => {
   );
 });
 
-
+// stub api endpoint for filtering by a range of countries
+router.get('/countries/', async (req, res) => {
+  // get all countries given in the query
+  let countries = req.query.countries;
+  countries = countries.split(',');
+  gdpUtils.sendData (
+    {results : [
+      {
+        country: 'Canada',
+        code: 'CAN',
+        year : 2003,
+        gdp : 1234
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 1995,
+        gdp : 4321
+      }
+    ]}
+  );
+});
 
 module.exports = router;
