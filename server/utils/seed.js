@@ -9,8 +9,6 @@ const {datasetToJson, seedDatabase} = require('./parsing.js');
       rowCopy.country = row.country.toLowerCase();
       return row;
     });
-    seedDatabase('GDPRO', fileName, filteredData); 
+    seedDatabase('GDPRO', fileName.split('.')[0], filteredData); 
   }
 })();
-
-// No need for this as this should be a standalone script

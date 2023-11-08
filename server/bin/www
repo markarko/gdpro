@@ -6,11 +6,9 @@ const port = process.env.PORT || 3000;
 (async () => {
   let db;
   try {
-    const dbName = 'gdpro';
-    // TODO: modify database to handle multiple collections
-    const collectionName = 'gdp-per-capita-worldbank.csv';
+    const dbName = 'GDPRO';
     db = new DB();
-    await db.connect(dbName, collectionName);
+    await db.connect(dbName);
     app.listen(port, () => console.log('Listening on port ' + port));
   } catch (e) {
     console.error('Could not connect');
