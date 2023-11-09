@@ -1,4 +1,4 @@
-import Select from './SelectFilter';
+import Select from './Select';
 
 export default function CountryFilter({ countries }) {
   return (
