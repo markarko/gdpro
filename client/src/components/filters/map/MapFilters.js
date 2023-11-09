@@ -1,8 +1,8 @@
 import './MapFilters.css';
 import Select from '../Select';
-import CountryFilter from '../country_filter/CountryFilter';
+import CountryFilter from '../country/CountryFilter';
 import SelectedCountries from '../selected_countries/SelectedCountries';
-import TopCountriesFilter from '../TopCountriesFilter';
+import TopCountriesFilter from '../top_countries/TopCountriesFilter';
 
 export default function MapFilters({ years, countries }) {
   return(
@@ -11,6 +11,7 @@ export default function MapFilters({ years, countries }) {
       <CountryFilter countries={countries} />
       <SelectedCountries countries={countries.slice(2)}/>
       <TopCountriesFilter />
+      <button>Apply</button>
     </div>
   );
 }

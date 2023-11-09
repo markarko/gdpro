@@ -1,0 +1,9 @@
+.MapFilters {
+    width: 500px;
+    padding: 1vh;
+    border: 1px solid black;
+}
+
+.MapFilters > * {
+    margin: 1vh;
+}
