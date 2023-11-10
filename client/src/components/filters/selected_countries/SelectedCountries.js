@@ -1,21 +1,25 @@
 import './SelectedCountries.css';
 
-export default function SelectedCountries({ selectedCountries }) {
+export default function SelectedCountries({ selectedCountries, setSelectedCountries }) {
+  const removeCountry = (country) => {
+    setSelectedCountries(selectedCountries.filter(c => c !== country));
+  };
+
   return (
     <div className="SelectedCountries">
       {selectedCountries.map(country => <SelectedCountry
         key={country}
         country={country}
-        selectedCounties={selectedCountries} />)}
+        removeCountry={removeCountry} />)}
     </div>
   );
 }
 
-function SelectedCountry({ country }) {
+function SelectedCountry({ country, removeCountry }) {
   return (
     <div className="SelectedCountry">
       <div>{country}</div>
-      <button>X</button>
+      <button onClick={e => removeCountry(country)}>X</button>
     </div>
   );
 }
