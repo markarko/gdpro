@@ -1,5 +1,5 @@
 import './TopCountriesFilter.css';
-import Select from '../Select';
+import Select from '../select/Select';
 
 export default function TopCountriesFilter() {
   const topRange = [3, 4, 5, 6, 7, 8, 9, 10];

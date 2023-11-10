@@ -1,5 +1,5 @@
 import './CountryFilter.css';
-import Select from '../Select';
+import Select from '../select/Select';
 
 export default function CountryFilter({ countries, selectedCountries, setSelectedCounties }) {
   const addCountry = () => {

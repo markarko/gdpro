@@ -1,5 +1,5 @@
 import './MapFilters.css';
-import Select from '../Select';
+import Select from '../select/Select';
 import CountryFilter from '../country/CountryFilter';
 import SelectedCountries from '../selected_countries/SelectedCountries';
 import TopCountriesFilter from '../top_countries/TopCountriesFilter';
