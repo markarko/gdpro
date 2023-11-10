@@ -1,48 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import PlotDisplay from './plotDisplay';
 
-const PlotController = (props) => {
-  const [newData, setNewData] = useState([]);
-  const [country, setCountry] = useState([]);
-  useEffect(() => {
-    fetch('/api/v1/protein/countries/canada')
-      .then(res => res.json())
-      .then(data => setNewData(data['data']['results']));
-
-      
-    fetch('/api/v1/gdp/countries/canada')
-      .then(res => res.json())
-      .then(data => setCountry(data['data']['results']));
-
-    console.log(newData);
-  }
-  , []);
-
-
+const PlotController = ({ gdp, protein, title }) => {
   let data = [];
-  // implement new data into the plot
-  if (newData.length !== 0) {
-    console.log(newData);
-    data = [
-      {
-        x: newData.map(row => row.year),
-        y: newData.map(row => row.gppd),
-        name: 'Protein consumption',
-        type: 'scatter',
-        marker: {color: 'red'},
-      },
-      {
-        x: country.map(row => row.year),
-        y: country.map(row => row.gdp / 1000),
-        name: 'GDP (in thousands)',
-        type: 'scatter',
-        yaxis: 'y2',
-        marker: {color: 'blue'},
-      }
-    ];
+
+  if (protein) {
+    let newProtein = {
+      x: protein.map(row => row.year),
+      y: protein.map(row => row.gppd),
+      name: 'Protein consumption',
+      type: 'scatter',
+      marker: {color: 'red'},
+    };
+    data.push(newProtein);
   }
+
+  if (gdp) {
+    let newGdp = {
+      x: gdp.map(row => row.year),
+      y: gdp.map(row => row.gdp),
+      name: 'GDP per capita',
+      type: 'scatter',
+      yaxis: 'y2',
+      marker: {color: 'blue'},
+    };
+    data.push(newGdp);
+  }
+
   const layout = {  
-    title: 'GDP vs Protein Consumption',
+    title: title,
     xaxis: {
       title: 'Year',
       showgrid: false,
@@ -50,7 +36,7 @@ const PlotController = (props) => {
     },
     yaxis: {
       title: 'Protein Consumption (g)',
-      showline: false
+      showline: false,
     },
     yaxis2: {
       title: 'GDP (in thousands)',
