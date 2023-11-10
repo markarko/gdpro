@@ -1,8 +1,13 @@
 import './SelectedCountries.css';
 
-export default function SelectedCountries({ selectedCountries, setSelectedCountries }) {
-  const removeCountry = (country) => {
-    setSelectedCountries(selectedCountries.filter(c => c !== country));
+export default function SelectedCountries({ basicFilters, setBasicFilters }) {
+  const selectedCountries = basicFilters['countries'];
+
+  const removeCountry = (country) => {  
+    setBasicFilters((prevFilters) => ({
+      ...prevFilters,
+      countries: selectedCountries.filter(c => c !== country),
+    }));
   };
 
   return (

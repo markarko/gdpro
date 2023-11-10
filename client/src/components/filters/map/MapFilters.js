@@ -1,26 +1,28 @@
 import './MapFilters.css';
-import Select from '../select/Select';
-import CountryFilter from '../country/CountryFilter';
-import SelectedCountries from '../selected_countries/SelectedCountries';
-import TopCountriesFilter from '../top_countries/TopCountriesFilter';
+import TopCountriesFilter from './top_countries/TopCountriesFilter';
+import BasicFilters from './basic/BasicFilters';
 import { useState } from 'react';
 
-export default function MapFilters({ years, countries }) {
-  const [selectedCountries, setSelectedCountries] = useState([]);
+export default function MapFilters({ years, validCountries }) {
+  const [basicFilters, setBasicFilters] = useState({
+    year: 1990,
+    countries: [],
+  });
+
+  const applyFilters = e => {
+    e.preventDefault();
+  };
 
   return(
-    <div className="MapFilters">
-      <Select options={years} labelText="Select the year: " />
-      <CountryFilter
-        countries={countries}
-        selectedCountries={selectedCountries}
-        setSelectedCounties={setSelectedCountries} />
-      <SelectedCountries
-        selectedCountries={selectedCountries}
-        setSelectedCountries={setSelectedCountries} />
+    <form className="MapFilters" onSubmit={applyFilters}>
+      <BasicFilters
+        years={years}
+        validCountries={validCountries}
+        basicFilters={basicFilters}
+        setBasicFilters={setBasicFilters} />
       <TopCountriesFilter />
       <button>Apply</button>
-    </div>
+    </form>
   );
 }
 
