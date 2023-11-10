@@ -72,4 +72,153 @@ router.get('/countries/:country', async (req, res) => {
   apiUtils.sendData(res, 200, responseBody);
 });
 
+// stub endpoint for filtering by a range of years
+router.get('/countries/:country', async (req, res) => {
+  const startYear = req.query.startYear;
+  const endYear = req.query.endYear;
+  startYear.charAt(0);
+  endYear.charAt(0);
+  res.status(200);
+  apiUtils.sendData(
+    {
+      country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          protein : 123.12
+        },
+        {
+          year : 1991,
+          protein : 234.12
+        }
+      ]
+    }
+  );
+});
+
+// stub api endpoint for growth / decline of protein over all the years
+router.get('/countries/:country/variation', async (req, res) => {
+  const startYear = req.query.startYear;
+  const endYear = req.query.endYear;
+  res.status(200);
+  startYear.charAt(0);
+  endYear.charAt(0);
+  apiUtils.sendData (
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          years : [1990, 1991],
+          proteinGrowth : 7
+        },
+        {
+          years : [1991, 1992],
+          proteinGrowth : -2
+        }
+      ]}
+  );
+});
+
+// stub api endpoint to fiter by the top x countries with the highest or lowest protein intake
+router.get('/countries/top/:top', async (req, res) => {
+  const orderby = req.query.orderby;
+  res.status(200);
+  orderby.charAt(0);
+  apiUtils.sendData (
+    {results : [
+      {
+        country: 'Canada',
+        code: 'CAN',
+        protein : 100.00,
+        position: 1
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        protein : 99.00,
+        position: 2
+      },
+      {
+        country: 'Mexico',
+        code: 'MEX',
+        protein : 98.00,
+        position: 3
+      }
+    ]}
+  );
+});
+
+// stub endpoint for filtering by a range of protein intake
+router.get('/countries/:country/protein', async (req, res) => {
+  const startProtein = req.query.startProtein;
+  const endProtein = req.query.endProtein;
+  startProtein.charAt(0);
+  endProtein.charAt(0);
+  res.status(200);
+  apiUtils.sendData(
+    {
+      country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          protein : 100.00
+        },
+        {
+          year : 2005,
+          protein : 101.00
+        }
+      ]
+    }
+  );
+});
+
+// stub api endpoint to filter by specific country and year
+router.get('/countries/:country/:year', async (req, res) => {
+  req.query.year;
+  res.status(200);
+
+  apiUtils.sendData (
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          protein : 100.00
+        }
+      ]}
+  );
+});
+
+// stub api endpoint for filtering by a range of countries
+router.get('/countries/', async (req, res) => {
+  // get all countries given in the query
+  let countries = req.query.countries;
+  countries = countries.split(',');
+  res.status(200);
+  countries.charAt(0);
+  apiUtils.sendData (
+    {results : [
+      {
+        country: 'Canada',
+        code: 'CAN',
+        protein : 100.00
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        protein : 99.00
+      },
+      {
+        country: 'Mexico',
+        code: 'MEX',
+        protein : 98.00
+      }
+    ]}
+  );
+});
+
+
+
 module.exports = router;

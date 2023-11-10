@@ -68,4 +68,128 @@ router.get('/countries/:country', async (req, res) => {
   gdpUtils.sendData(res, 200, responseBody);
 });
 
+// Filter through countries with a range of gdp using apiUtils
+router.get('/countries/:country/gdp-range', async (req, res) => {
+  const startGdp = req.query.startGdp;
+  const endGdp = req.query.endGdp;
+  startGdp.charAt(0);
+  endGdp.charAt(0);
+  res.status(200);
+
+  gdpUtils.sendData (
+    {
+      country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          gdp : 5723
+        },
+        {
+          year : 1991,
+          gdp : 5777
+        }
+      ]
+  
+    });
+});
+
+
+// stub api endpoint for growth / decline of gdp over all the years
+router.get('/countries/:country/variation', async (req, res) => {
+  const startYear = req.query.startYear;
+  const endYear = req.query.endYear;
+  startYear.charAt(0);
+  endYear.charAt(0);
+  res.status(200); 
+  gdpUtils.sendData (
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          years : [1990, 1991],
+          gdpGrowth : 7
+        },
+        {
+          years : [1991, 1992],
+          gdpGrowth : -2
+        }
+      ]}
+  );
+});
+
+// stub api endpoint to filter by specific country and year
+router.get('/countries/:country/:year', async (req, res) => {
+  res.status(200);
+  req.query.year;
+  gdpUtils.sendData (
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          gdp : 5723
+        }
+      ]}
+  );
+});
+
+
+// stub api endpoint to fiter by the top x countries with the highest or lowest gdd
+router.get('/countries/top/:top', async (req, res) => {
+  res.status(200);
+  const orderby = req.query.orderby;
+  orderby.charAt(0);
+  gdpUtils.sendData (
+    {results : [
+      {
+        country: 'Canada',
+        code: 'CAN',
+        year : 2003,
+        gdp : 1234,
+        position: 1
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 1995,
+        gdp : 4321,
+        position: 2
+      },
+      {
+        country: 'Mexico',
+        code: 'MEX',
+        year : 1995,
+        gdp : 4322,
+        position: 3
+      }
+    ]}
+  );
+});
+
+// stub api endpoint for filtering by a range of countries
+router.get('/countries/', async (req, res) => {
+  // get all countries given in the query
+  let countries = req.query.countries;
+  res.status(200);
+  countries = countries.split(',');
+  countries.charAt(0);
+  gdpUtils.sendData (
+    {results : [
+      {
+        country: 'Canada',
+        code: 'CAN',
+        year : 2003,
+        gdp : 1234
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 1995,
+        gdp : 4321
+      }
+    ]}
+  );
+});
+
 module.exports = router;
