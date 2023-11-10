@@ -17,7 +17,9 @@ export default function CountryFilter({ validCountries, basicFilters, setBasicFi
 
   return (
     <div className="CountryFilter">
-      <Select options={validCountries} labelText="Select a country to be displayed: "/>
+      <Select
+        options={validCountries}
+        labelText="Select a country to be displayed: "/>
       <button onClick={addCountry} >Add</button>
     </div>
   );

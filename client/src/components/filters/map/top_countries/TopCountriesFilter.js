@@ -1,5 +1,5 @@
-import './TopCountriesFilter.css';
 import '../MapFilters.css';
+import './TopCountriesFilter.css';
 import Select from '../select/Select';
 
 export default function TopCountriesFilter({ setTopCountriesFilter, disable }) {

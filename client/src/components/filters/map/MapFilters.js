@@ -16,7 +16,7 @@ export default function MapFilters({ years, validCountries }) {
     countries: [],
   });
   
-  const [topCountriesFilter, setTopCountriesFilter] = useState({
+  const [, setTopCountriesFilter] = useState({
     top: 3,
     variation: 'highest',
     value: 'gdp'
