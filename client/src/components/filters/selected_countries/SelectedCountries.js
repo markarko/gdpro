@@ -1,9 +1,12 @@
 import './SelectedCountries.css';
 
-export default function SelectedCountries({ countries }) {
+export default function SelectedCountries({ selectedCountries }) {
   return (
     <div className="SelectedCountries">
-      {countries.map(country => <SelectedCountry key={country} country={country} />)}
+      {selectedCountries.map(country => <SelectedCountry
+        key={country}
+        country={country}
+        selectedCounties={selectedCountries} />)}
     </div>
   );
 }
