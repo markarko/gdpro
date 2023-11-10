@@ -8,6 +8,12 @@ export default function MapFilters({ years, validCountries }) {
     year: 1990,
     countries: [],
   });
+  
+  const [topCountriesFilter, setTopCountriesFilter] = useState({
+    top: 3,
+    variation: 'highest',
+    value: 'gdp'
+  });
 
   const applyFilters = e => {
     e.preventDefault();
@@ -20,7 +26,9 @@ export default function MapFilters({ years, validCountries }) {
         validCountries={validCountries}
         basicFilters={basicFilters}
         setBasicFilters={setBasicFilters} />
-      <TopCountriesFilter />
+      <TopCountriesFilter
+        topCountriesFilter={topCountriesFilter}
+        setTopCountriesFilter={setTopCountriesFilter} />
       <button>Apply</button>
     </form>
   );
