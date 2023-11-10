@@ -1,7 +1,8 @@
 import './TopCountriesFilter.css';
+import '../MapFilters.css';
 import Select from '../select/Select';
 
-export default function TopCountriesFilter({ topCountriesFilter, setTopCountriesFilter }) {
+export default function TopCountriesFilter({ setTopCountriesFilter, disable }) {
   const topRange = [3, 4, 5, 6, 7, 8, 9, 10];
   const variations = ['highest', 'lowest'];
   const values = ['gdp', 'protein'];
@@ -37,7 +38,7 @@ export default function TopCountriesFilter({ topCountriesFilter, setTopCountries
   };
 
   return (
-    <div className="TopCountriesFilter">
+    <div className={disable ? 'TopCountriesFilter disabled' : 'TopCountriesFilter'} >
       <Select 
         options={topRange}
         labelText="Select top "

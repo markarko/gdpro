@@ -4,6 +4,18 @@
     border: 1px solid black;
 }
 
+.filterType {
+    display: flex;
+    border: 1px solid black;
+    padding: 1vh;
+    gap: 1vw;
+}
+
 .MapFilters > * {
     margin: 1vh;
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
