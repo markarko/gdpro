@@ -11,8 +11,8 @@ export default function ChartFilters({ years, validCountries }) {
 
   const [basicFilters, setBasicFilters] = useState({
     country: validCountries[0],
-    yearMin: years[0],
-    yearMax: years[years.length - 1]
+    minYear: years[0],
+    maxYear: years[years.length - 1]
   });
 
   const applyFilters = e => {
