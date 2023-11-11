@@ -1,4 +1,4 @@
-import './MapFilters.css';
+import '../Filters.css';
 import TopCountriesFilter from './top_countries/TopCountriesFilter';
 import BasicFilters from './basic/BasicFilters';
 import { useState } from 'react';

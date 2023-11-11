@@ -1,4 +1,4 @@
-.filterType > div {
+.MapFilters > .filterType:nth-child(1) > div {
     display: flex;
     flex-direction: column;
     gap: 1vh;
