@@ -1,0 +1,22 @@
+const app = require('../app');
+const DB = require('../db/db');
+
+const port = process.env.PORT || 3000;
+
+(async () => {
+  let db;
+  try {
+    const dbName = 'GDPRO';
+    db = new DB();
+    await db.connect(dbName);
+    app.listen(port, () => console.log('Listening on port ' + port));
+  } catch (e) {
+    console.error('Could not connect');
+    console.error(e);
+    if (db) {
+      db.close();
+    }
+    process.exit();
+  }
+})();
+  
