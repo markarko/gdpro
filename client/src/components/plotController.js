@@ -1,4 +1,4 @@
-import PlotDisplay from './plotDisplay';
+import PlotDisplay from './PlotDisplay';
 
 
 const generateBaseLayout = (title) => {
