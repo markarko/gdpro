@@ -54,7 +54,7 @@ const generateGdpLayout = () => {
   };
 };
 
-const PlotController = ({ gdp, protein, title }) => {
+export default function PlotController({ gdp, protein, title }) {
   const data = [];
 
   const layout = generateBaseLayout(title);
@@ -76,4 +76,4 @@ const PlotController = ({ gdp, protein, title }) => {
   );
 };
 
-export default PlotController;
+

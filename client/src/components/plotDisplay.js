@@ -3,9 +3,7 @@
 
 import Plot from 'react-plotly.js';
 
-const PlotDisplay = (props) => {
-  const data = props.data;
-  const layout = props.layout;
+export default function PlotDisplay({ data, layout }) {
 
   return (
     <Plot
@@ -14,4 +12,3 @@ const PlotDisplay = (props) => {
     />);
 };
 
-export default PlotDisplay;
