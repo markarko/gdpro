@@ -65,7 +65,7 @@ export default function PlotController({ gdp, protein, title }) {
   }
 
   if (gdp) {
-    data.push( mapGdpData(gdp));
+    data.push(mapGdpData(gdp));
     layout.yaxis2 = generateGdpLayout().yaxis2;
   }
 
