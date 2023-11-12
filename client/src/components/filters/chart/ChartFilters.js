@@ -1,10 +1,12 @@
 import '../Filters.css';
 import BasicFilters from './basic/BasicFilters';
 import { useState } from 'react';
+import CountryRankingFilter from './country_ranking/CountryRankingFilter';
 
 export default function ChartFilters({ years, validCountries }) {
   const FilterType = {
-    Basic: 'basic'
+    Basic: 'basic',
+    CountryRanking: 'country-ranking'
   };
 
   const [selectedFilterType, setSelectedFilterType] = useState(FilterType.Basic);
@@ -15,6 +17,11 @@ export default function ChartFilters({ years, validCountries }) {
     maxYear: years[years.length - 1]
   });
 
+  const [countryRankingFilter, setCountryRankingFilter] = useState({
+    variation: 'highest',
+    value: 'gdp'
+  });
+
   const applyFilters = e => {
     e.preventDefault();
   };
@@ -22,7 +29,10 @@ export default function ChartFilters({ years, validCountries }) {
   return(
     <form className="ChartFilters" onSubmit={applyFilters}>
       <div className="filterType">
-        <input type="radio" name="filterType" value={FilterType.Basic}
+        <input
+          type="radio"
+          name="filterType"
+          value={FilterType.Basic}
           onChange={e => setSelectedFilterType(e.target.value)}
           checked={selectedFilterType === FilterType.Basic} />
         <BasicFilters
@@ -31,6 +41,17 @@ export default function ChartFilters({ years, validCountries }) {
           basicFilters={basicFilters}
           setBasicFilters={setBasicFilters}
           disable={selectedFilterType !== FilterType.Basic} />
+      </div>
+      <div className="filterType">
+        <input
+          type="radio"
+          name="filterType"
+          value={FilterType.CountryRanking}
+          onChange={e => setSelectedFilterType(e.target.value)}
+          checked={selectedFilterType === FilterType.CountryRanking} />
+        <CountryRankingFilter
+          setCountryRankingFilter={setCountryRankingFilter}
+          disable={selectedFilterType !== FilterType.CountryRanking} />
       </div>
       <button>Apply</button>
     </form>
