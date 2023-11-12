@@ -20,8 +20,11 @@ export default function ChartFilters({ years, validCountries }) {
   };
 
   return(
-    <form className="MapFilters" onSubmit={applyFilters}>
+    <form className="ChartFilters" onSubmit={applyFilters}>
       <div className="filterType">
+        <input type="radio" name="filterType" value={FilterType.Basic}
+          onChange={e => setSelectedFilterType(e.target.value)}
+          checked={selectedFilterType === FilterType.Basic} />
         <BasicFilters
           years={years}
           validCountries={validCountries}

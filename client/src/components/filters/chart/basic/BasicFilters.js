@@ -1,6 +1,7 @@
 import '../../Filters.css';
+import './BasicFilters.css';
 import Select from '../../map/select/Select';
-import Slider from '../slider/Slider';
+import YearSlider from '../slider/Slider';
 
 export default function BasicFilters({
   years,
@@ -25,13 +26,13 @@ export default function BasicFilters({
         options={validCountries}
         labelText="Select the country: "
         onChange={e => updateCountry(e)} />
-      <Slider
+      <YearSlider
         labelText="Min year:"
         values={years}
         basicFilters={basicFilters}
         setBasicFilters={setBasicFilters}
         yearType="minYear" />
-      <Slider
+      <YearSlider
         labelText="Max year:"
         values={years}
         basicFilters={basicFilters}
