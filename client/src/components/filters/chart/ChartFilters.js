@@ -22,7 +22,7 @@ export default function ChartFilters({ setGdp, setProtein }) {
   });
 
   const [countryRankingFilter, setCountryRankingFilter] = useState({
-    variation: 'highest',
+    orderBy: 'highest',
     value: 'gdp'
   });
 
@@ -37,9 +37,10 @@ export default function ChartFilters({ setGdp, setProtein }) {
     e.preventDefault();
     switch (selectedFilterType) {
     case FilterType.Basic:
-      console.log(basicFilters);
       await updateDataWithBasicFilters();
+      break;
     case FilterType.CountryRanking:
+      await updateDataWithCountryRankingFilter();
       break;
     default:
       break;
@@ -49,8 +50,8 @@ export default function ChartFilters({ setGdp, setProtein }) {
   async function updateDataWithBasicFilters() {
     try {
       const [gdpData, proteinData] = await Promise.all([
-        getData('gdp'),
-        getData('protein')
+        getDataForBasicFitlers('gdp'),
+        getDataForBasicFitlers('protein')
       ]);
 
       setGdp(gdpData);
@@ -60,12 +61,36 @@ export default function ChartFilters({ setGdp, setProtein }) {
     }
   }
 
-  async function getData(dataType) {
+  async function updateDataWithCountryRankingFilter() {
+    try {
+      const data = await getDataForCountryRankingFilter();
+
+      if (countryRankingFilter['value'] === 'gdp'){
+        setGdp(data);
+      } else if (countryRankingFilter['value'] === 'protein') {
+        setProtein(data);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  async function getDataForBasicFitlers(dataType) {
     const country = basicFilters['country'];
     const minYear = basicFilters['minYear'];
     const maxYear = basicFilters['maxYear'];
 
     const url = `/api/v1/${dataType}/countries/${country}?startYear=${minYear}&endYear=${maxYear}`;
+    const response = await fetch(url);
+
+    return await response.json();
+  }
+
+  async function getDataForCountryRankingFilter() {
+    const orderBy = countryRankingFilter['orderBy'];
+    const value = countryRankingFilter['value'];
+
+    const url = `/api/v1/${value}/countries/top/1?orderBy=${orderBy}`;
     const response = await fetch(url);
 
     return await response.json();
