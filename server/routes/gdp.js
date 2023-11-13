@@ -76,7 +76,7 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
   endGdp.charAt(0);
   res.status(200);
 
-  gdpUtils.sendData (
+  gdpUtils.sendData (res, 200,
     {
       country: 'Canada',
       code: 'CAN',
@@ -102,7 +102,7 @@ router.get('/countries/:country/variation', async (req, res) => {
   startYear.charAt(0);
   endYear.charAt(0);
   res.status(200); 
-  gdpUtils.sendData (
+  gdpUtils.sendData (res, 200,
     {country: 'Canada',
       code: 'CAN',
       results : [
@@ -122,7 +122,7 @@ router.get('/countries/:country/variation', async (req, res) => {
 router.get('/countries/:country/:year', async (req, res) => {
   res.status(200);
   req.query.year;
-  gdpUtils.sendData (
+  gdpUtils.sendData(res, 200,
     {country: 'Canada',
       code: 'CAN',
       results : [
@@ -137,10 +137,26 @@ router.get('/countries/:country/:year', async (req, res) => {
 
 // stub api endpoint to fiter by the top x countries with the highest or lowest gdd
 router.get('/countries/top/:top', async (req, res) => {
-  res.status(200);
-  const orderby = req.query.orderby;
-  orderby.charAt(0);
-  gdpUtils.sendData (
+  const top = req.params.top;
+  
+  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
+    const error = `The value following top/ must be a number between 1 and 10`;
+    gdpUtils.sendError(res, 400, error);
+    return;
+  }
+
+  const orderBy = req.query.orderBy;
+  const orderByOptions = ['highest', 'lowest'];
+
+  if (!orderBy || !orderByOptions.includes(orderBy)) {
+    const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
+    gdpUtils.sendError(res, 400, error);
+    return;
+  }
+
+  
+
+  gdpUtils.sendData(res, 200,
     {results : [
       {
         country: 'Canada',
@@ -174,7 +190,7 @@ router.get('/countries/', async (req, res) => {
   res.status(200);
   countries = countries.split(',');
   countries.charAt(0);
-  gdpUtils.sendData (
+  gdpUtils.sendData (res, 200,
     {results : [
       {
         country: 'Canada',
