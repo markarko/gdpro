@@ -118,27 +118,10 @@ router.get('/countries/:country/variation', async (req, res) => {
   );
 });
 
-// stub api endpoint to filter by specific country and year
-router.get('/countries/:country/:year', async (req, res) => {
-  res.status(200);
-  req.query.year;
-  gdpUtils.sendData(res, 200,
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          gdp : 5723
-        }
-      ]}
-  );
-});
-
-
 // stub api endpoint to fiter by the top x countries with the highest or lowest gdd
 router.get('/countries/top/:top', async (req, res) => {
   const top = req.params.top;
-  
+
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
     const error = `The value following top/ must be a number between 1 and 10`;
     gdpUtils.sendError(res, 400, error);
@@ -154,32 +137,24 @@ router.get('/countries/top/:top', async (req, res) => {
     return;
   }
 
-  
+  const data = await db.readTopCountriesGdp(gdpCollName, top, orderBy);  
 
+  gdpUtils.sendData(res, 200, { results : data });
+});
+
+// stub api endpoint to filter by specific country and year
+router.get('/countries/:country/:year', async (req, res) => {
+  res.status(200);
+  req.query.year;
   gdpUtils.sendData(res, 200,
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        year : 2003,
-        gdp : 1234,
-        position: 1
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 1995,
-        gdp : 4321,
-        position: 2
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        year : 1995,
-        gdp : 4322,
-        position: 3
-      }
-    ]}
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          gdp : 5723
+        }
+      ]}
   );
 });
 
