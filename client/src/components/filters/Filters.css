@@ -1,4 +1,4 @@
-.MapFilters {
+.MapFilters, .ChartFilters {
     width: 500px;
     padding: 1vh;
     border: 1px solid black;
@@ -11,7 +11,7 @@
     gap: 1vw;
 }
 
-.MapFilters > * {
+.MapFilters > *, .ChartFilters > * {
     margin: 1vh;
 }
 

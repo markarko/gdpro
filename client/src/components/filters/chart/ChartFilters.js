@@ -1,23 +1,23 @@
 import '../Filters.css';
-import TopCountriesFilter from './top_countries/TopCountriesFilter';
 import BasicFilters from './basic/BasicFilters';
 import { useState } from 'react';
+import CountryRankingFilter from './country_ranking/CountryRankingFilter';
 
-export default function MapFilters({ years, validCountries }) {
+export default function ChartFilters({ years, validCountries }) {
   const FilterType = {
     Basic: 'basic',
-    TopCountries: 'top-countries'
+    CountryRanking: 'country-ranking'
   };
 
   const [selectedFilterType, setSelectedFilterType] = useState(FilterType.Basic);
 
   const [basicFilters, setBasicFilters] = useState({
-    year: 1990,
-    countries: [],
+    country: validCountries[0],
+    minYear: years[0],
+    maxYear: years[years.length - 1]
   });
-  
-  const [, setTopCountriesFilter] = useState({
-    top: 3,
+
+  const [countryRankingFilter, setCountryRankingFilter] = useState({
     variation: 'highest',
     value: 'gdp'
   });
@@ -27,7 +27,7 @@ export default function MapFilters({ years, validCountries }) {
   };
 
   return(
-    <form className="MapFilters" onSubmit={applyFilters}>
+    <form className="ChartFilters" onSubmit={applyFilters}>
       <div className="filterType">
         <input
           type="radio"
@@ -43,13 +43,15 @@ export default function MapFilters({ years, validCountries }) {
           disable={selectedFilterType !== FilterType.Basic} />
       </div>
       <div className="filterType">
-        <input type="radio" name="filterType" value={FilterType.TopCountries}
+        <input
+          type="radio"
+          name="filterType"
+          value={FilterType.CountryRanking}
           onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.TopCountries} />
-        <TopCountriesFilter
-          setTopCountriesFilter={setTopCountriesFilter}
-          selectedFilterType={selectedFilterType}
-          disable={selectedFilterType !== FilterType.TopCountries} />
+          checked={selectedFilterType === FilterType.CountryRanking} />
+        <CountryRankingFilter
+          setCountryRankingFilter={setCountryRankingFilter}
+          disable={selectedFilterType !== FilterType.CountryRanking} />
       </div>
       <button>Apply</button>
     </form>

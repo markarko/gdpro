@@ -1,4 +1,4 @@
-import '../MapFilters.css';
+import '../../Filters.css';
 import './BasicFilters.css';
 import Select from '../select/Select';
 import CountryFilter from '../country/CountryFilter';
