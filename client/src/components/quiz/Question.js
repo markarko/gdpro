@@ -11,12 +11,13 @@ export default function Question(props) {
     return <div>Loading...</div>;
   }
 
+
   //const coordinates = String(props.data.coordinates).split('-');
   return (
     <div>
-      <h1>Guess the metro station from these coordinates: </h1>
-      <p>Lan: None Lon: -None</p>
-      <p>A pin on the map has been placed to help guess which metro station it is</p>
+      <h1>Guess the country based on GDP and Protein: </h1>
+      <p>GDP: {props.data.QData['GDP']} Protein: {props.data.QData['Protein']}</p>
+      <p>A pin on the map has been placed to help guess which country it is</p>
       <AnswerOption choices={props.data['questions']} setAnswer={props.setAnswer}/>
     </div>
   );
