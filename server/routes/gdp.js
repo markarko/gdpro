@@ -5,8 +5,6 @@ const DB = require('../db/db.js');
 const db = new DB();
 const gdpCollName = 'gdp-per-capita-worldbank';
 
-
-
 /**
  * Middleware for validating the 'country' parameter in the route
  *
@@ -16,14 +14,21 @@ const gdpCollName = 'gdp-per-capita-worldbank';
  * @param {string} country - The 'country' parameter from the URL
  */
 router.param('country', (req, res, next, country) => {
-  // TODO: decode url (spaces are replaced with %20)
-  if (!gdpUtils.containsOnlyLetters(country)) {
+  const parsedCountry = country.replace('%20', ' ');
+  if (!gdpUtils.containsOnlyLetters(parsedCountry)) {
     gdpUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
     return;
   }
 
   req.params.country = country.toLowerCase();
   next();
+});
+
+router.get('/countries/all', async (req, res) => {
+  const data = await db.readAll(gdpCollName);
+  const nations = [...new Set(data.map(x => x.country))];
+  const countries = nations.filter(x => !x.includes('(') && !x.includes('income'));
+  gdpUtils.sendData(res, 200, countries);
 });
 
 /**
@@ -66,6 +71,120 @@ router.get('/countries/:country', async (req, res) => {
   };
 
   gdpUtils.sendData(res, 200, responseBody);
+});
+
+// Filter through countries with a range of gdp using apiUtils
+router.get('/countries/:country/gdp-range', async (req, res) => {
+  const startGdp = req.query.startGdp;
+  const endGdp = req.query.endGdp;
+  startGdp.charAt(0);
+  endGdp.charAt(0);
+  res.status(200);
+
+  gdpUtils.sendData (res, 200,
+    {
+      country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          gdp : 5723
+        },
+        {
+          year : 1991,
+          gdp : 5777
+        }
+      ]
+    });
+});
+
+
+// stub api endpoint for growth / decline of gdp over all the years
+router.get('/countries/:country/variation', async (req, res) => {
+  const startYear = req.query.startYear;
+  const endYear = req.query.endYear;
+  startYear.charAt(0);
+  endYear.charAt(0);
+  res.status(200); 
+  gdpUtils.sendData (res, 200,
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          years : [1990, 1991],
+          gdpGrowth : 7
+        },
+        {
+          years : [1991, 1992],
+          gdpGrowth : -2
+        }
+      ]}
+  );
+});
+
+// stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
+router.get('/countries/top/:top', async (req, res) => {
+  const top = req.params.top;
+
+  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
+    const error = `The value following top/ must be a number between 1 and 10`;
+    gdpUtils.sendError(res, 400, error);
+    return;
+  }
+
+  const orderBy = req.query.orderBy;
+  const orderByOptions = ['highest', 'lowest'];
+
+  if (!orderBy || !orderByOptions.includes(orderBy)) {
+    const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
+    gdpUtils.sendError(res, 400, error);
+    return;
+  }
+
+  const data = await db.readTopCountriesGdp(gdpCollName, top, orderBy);  
+
+  gdpUtils.sendData(res, 200, { results : data });
+});
+
+// stub api endpoint to filter by specific country and year
+router.get('/countries/:country/:year', async (req, res) => {
+  res.status(200);
+  req.query.year;
+  gdpUtils.sendData(res, 200,
+    {country: 'Canada',
+      code: 'CAN',
+      results : [
+        {
+          year : 1990,
+          gdp : 5723
+        }
+      ]}
+  );
+});
+
+// stub api endpoint for filtering by a range of countries
+router.get('/countries/', async (req, res) => {
+  // get all countries given in the query
+  let countries = req.query.countries;
+  res.status(200);
+  countries = countries.split(',');
+  countries.charAt(0);
+  gdpUtils.sendData (res, 200,
+    {results : [
+      {
+        country: 'Canada',
+        code: 'CAN',
+        year : 2003,
+        gdp : 1234
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 1995,
+        gdp : 4321
+      }
+    ]}
+  );
 });
 
 module.exports = router;

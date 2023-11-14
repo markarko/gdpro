@@ -1,0 +1,13 @@
+.SelectedCountries {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    gap: 1vh;
+    
+}
+
+.SelectedCountry {
+    display: flex;
+    justify-content: space-between;
+    gap: 1vw;
+}

@@ -6,7 +6,7 @@
  * false otherwise
  */
 function containsOnlyLetters(str) {
-  const regex = /^[a-zA-Z]+$/;
+  const regex = /^[a-zA-Z ]+$/;
   return regex.test(str);
 }
 
@@ -93,6 +93,36 @@ function validateYearRange(res, startYear, endYear) {
   }
 }
 
+function filterByStartGDP(startGDP, arr) {
+  if (!startGDP) {
+    return arr;
+  }
+  startGDP = parseInt(startGDP);
+  return arr.filter(obj => obj.gdp >= startGDP);
+}
+
+function filterByEndGDP(endGDP, arr) {
+  if (!endGDP) {
+    return arr;
+  }
+  endGDP = parseInt(endGDP);
+  return arr.filter(obj => obj.gdp <= endGDP);
+}
+
+function validateGDP(res, gdp, paramName) {
+  if (gdp && isNaN(gdp)) {
+    sendError(res, 400, `The ${paramName} parameter must be a number`);
+    throw new Error();
+  }
+}
+
+function validateGDPRange(res, startGDP, endGDP) {
+  if (startGDP && endGDP && startGDP > endGDP) {
+    sendError(res, 400, 'The startGDP parameter cannot be greater than the endGDP parameter');
+    throw new Error();
+  }
+}
+
 module.exports = {
   sendData,
   sendError,
@@ -100,5 +130,9 @@ module.exports = {
   filterByStartYear,
   filterByEndYear,
   validateYear,
-  validateYearRange
+  validateYearRange,
+  filterByStartGDP,
+  filterByEndGDP,
+  validateGDP,
+  validateGDPRange
 };
