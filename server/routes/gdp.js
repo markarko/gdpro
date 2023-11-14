@@ -165,10 +165,10 @@ router.get('/countries/:country/:year', async (req, res) => {
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  let countries = req.query.countries;
-  res.status(200);
-  countries = countries.split(',');
-  countries.charAt(0);
+  // let countries = req.query.countries;
+  // res.status(200);
+  // countries = countries.split(',');
+  // countries.charAt(0);
   gdpUtils.sendData (res, 200,
     {results : [
       {

@@ -2,7 +2,14 @@ import MapFilters from '../filters/map/MapFilters';
 import { useEffect, useState } from 'react';
 
 export default function MapView() {
+  const dataLayout = {
+    'data': {
+      'results': []
+    }
+  };
   
+  const [gdp, setGdp] = useState(dataLayout);
+  const [protein, setProtein] = useState(dataLayout);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [validYears, setValidYears] = useState([]);

@@ -193,11 +193,11 @@ router.get('/countries/:country/:year', async (req, res) => {
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  let countries = req.query.countries;
-  countries = countries.split(',');
-  res.status(200);
-  countries.charAt(0);
-  apiUtils.sendData (
+  // let countries = req.query.countries;
+  // countries = countries.split(',');
+  // res.status(200);
+  // countries.charAt(0);
+  apiUtils.sendData (res, 200,
     {results : [
       {
         country: 'Canada',
