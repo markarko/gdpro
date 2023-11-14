@@ -26,8 +26,8 @@ router.get('/random-questions/:number', async (req, res) => {
     questions: [
       {'Question': 'Which of the following countries has the',
         'QData': {'GDP': '7', 'Protein': '8', 'Lan': '9', 'Lon': '10'},
-        'Answers': ['To have fun', '7', 'something else'],
-        'Correct': 'To have fun'},
+        'Answers': ['Angola', '7', 'something else'],
+        'Correct': 'Angola'},
       {'Question': 'Which of the following countries has the',
         'QData': {'GDP': '7', 'Protein': '8', 'Lan': '9', 'Lon': '10'},
         'Answers': ['To have fun', '7', 'something else'],
