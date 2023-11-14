@@ -48,7 +48,7 @@ export default function QuizComponent(props) {
     setMessage('Loading questions...');
     fetch('/api/v1/questions/random-questions/5')
       .then((res) => res.json()).then((data) => {
-        console.log(data.data['questions']);
+        console.log(data.data);
         console.log(question);
 
         clear();
