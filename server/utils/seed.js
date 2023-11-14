@@ -7,6 +7,15 @@ const {datasetToJson, seedDatabase} = require('./parsing.js');
     const filteredData = data.filter(row => !row.country.includes('FAO')).map(row => {
       const rowCopy = Object.assign(row);
       rowCopy.country = row.country.toLowerCase();
+      rowCopy.year = Number(row.year);
+      
+      if (row.gdp) {
+        rowCopy.gdp = Number(row.gdp);
+      }
+      if (row.gppd){
+        rowCopy.gppd = Number(row.gppd);
+      }
+
       return row;
     });
     seedDatabase('GDPRO', fileName.split('.')[0], filteredData); 

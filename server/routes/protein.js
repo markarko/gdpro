@@ -19,8 +19,8 @@ const proteinCollName = 'daily-per-capita-protein-supply';
  * @param {string} country - The 'country' parameter from the URL
  */
 router.param('country', (req, res, next, country) => {
-  // TODO: decode url (spaces are replaced with %20)
-  if (!apiUtils.containsOnlyLetters(country)) {
+  const parsedCountry = country.replace('%20', ' ');
+  if (!apiUtils.containsOnlyLetters(parsedCountry)) {
     apiUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
     return;
   }
@@ -79,7 +79,7 @@ router.get('/countries/:country', async (req, res) => {
   startYear.charAt(0);
   endYear.charAt(0);
   res.status(200);
-  apiUtils.sendData(
+  apiUtils.sendData(res, 200,
     {
       country: 'Canada',
       code: 'CAN',
@@ -104,7 +104,7 @@ router.get('/countries/:country/variation', async (req, res) => {
   res.status(200);
   startYear.charAt(0);
   endYear.charAt(0);
-  apiUtils.sendData (
+  apiUtils.sendData (res, 200, 
     {country: 'Canada',
       code: 'CAN',
       results : [
@@ -122,31 +122,26 @@ router.get('/countries/:country/variation', async (req, res) => {
 
 // stub api endpoint to fiter by the top x countries with the highest or lowest protein intake
 router.get('/countries/top/:top', async (req, res) => {
-  const orderby = req.query.orderby;
-  res.status(200);
-  orderby.charAt(0);
-  apiUtils.sendData (
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        protein : 100.00,
-        position: 1
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        protein : 99.00,
-        position: 2
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        protein : 98.00,
-        position: 3
-      }
-    ]}
-  );
+  const top = req.params.top;
+
+  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
+    const error = `The value following top/ must be a number between 1 and 10`;
+    apiUtils.sendError(res, 400, error);
+    return;
+  }
+
+  const orderBy = req.query.orderBy;
+  const orderByOptions = ['highest', 'lowest'];
+
+  if (!orderBy || !orderByOptions.includes(orderBy)) {
+    const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
+    apiUtils.sendError(res, 400, error);
+    return;
+  }
+
+  const data = await db.readTopCountries(proteinCollName, top, orderBy, 'gppd');  
+
+  apiUtils.sendData(res, 200, { results : data });
 });
 
 // stub endpoint for filtering by a range of protein intake

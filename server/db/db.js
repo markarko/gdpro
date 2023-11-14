@@ -73,6 +73,21 @@ class DB {
       console.error('Error in readDataByYearRange:', error);
     }
   }
+
+  async readTopCountries(collName, topAmount, orderBy, dataType) {
+    try {
+      const orderInt = orderBy === 'highest' ? -1 : 1;
+      const collection = await instance.db.collection(collName);
+      const result = await collection.
+        find({}, { projection: { _id: 0 }}).
+        sort({ [dataType] : orderInt }).
+        limit(Number(topAmount)).
+        toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readTopCountries:', error);
+    }
+  }
     
   async createRecord(collName, jsonRecord) {
     try {

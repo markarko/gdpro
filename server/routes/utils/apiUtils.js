@@ -6,7 +6,7 @@
  * false otherwise
  */
 function containsOnlyLetters(str) {
-  const regex = /^[a-zA-Z]+$/;
+  const regex = /^[a-zA-Z ]+$/;
   return regex.test(str);
 }
 
