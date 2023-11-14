@@ -1,10 +1,15 @@
 import QuizComponent from './components/quiz/QuizComponent';
+import ReactDOM from 'react-dom/client';
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      <QuizComponent />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="Quiz" element={<QuizComponent />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
