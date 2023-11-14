@@ -19,8 +19,8 @@ const proteinCollName = 'daily-per-capita-protein-supply';
  * @param {string} country - The 'country' parameter from the URL
  */
 router.param('country', (req, res, next, country) => {
-  // TODO: decode url (spaces are replaced with %20)
-  if (!apiUtils.containsOnlyLetters(country)) {
+  const parsedCountry = country.replace('%20', ' ');
+  if (!apiUtils.containsOnlyLetters(parsedCountry)) {
     apiUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
     return;
   }
