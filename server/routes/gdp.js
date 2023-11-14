@@ -5,8 +5,6 @@ const DB = require('../db/db.js');
 const db = new DB();
 const gdpCollName = 'gdp-per-capita-worldbank';
 
-
-
 /**
  * Middleware for validating the 'country' parameter in the route
  *
@@ -16,14 +14,21 @@ const gdpCollName = 'gdp-per-capita-worldbank';
  * @param {string} country - The 'country' parameter from the URL
  */
 router.param('country', (req, res, next, country) => {
-  // TODO: decode url (spaces are replaced with %20)
-  if (!gdpUtils.containsOnlyLetters(country)) {
+  const parsedCountry = country.replace('%20', ' ');
+  if (!gdpUtils.containsOnlyLetters(parsedCountry)) {
     gdpUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
     return;
   }
 
   req.params.country = country.toLowerCase();
   next();
+});
+
+router.get('/countries/all', async (req, res) => {
+  const data = await db.readAll(gdpCollName);
+  const nations = [...new Set(data.map(x => x.country))];
+  const countries = nations.filter(x => !x.includes('(') && !x.includes('income'));
+  gdpUtils.sendData(res, 200, countries);
 });
 
 /**
@@ -90,7 +95,6 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
           gdp : 5777
         }
       ]
-  
     });
 });
 
@@ -118,7 +122,7 @@ router.get('/countries/:country/variation', async (req, res) => {
   );
 });
 
-// stub api endpoint to fiter by the top x countries with the highest or lowest gdd
+// stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
 router.get('/countries/top/:top', async (req, res) => {
   const top = req.params.top;
 
