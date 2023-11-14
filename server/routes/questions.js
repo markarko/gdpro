@@ -23,13 +23,28 @@ router.get('/random-questions/:number', async (req, res) => {
   }
 
   const responseBody = ({
-    data: {
-      questions: [
-        {'Question': 'What is the GDP of the United States?',
-          'Answers': ['To have fun', '7', 'something else'],
-          'Correct': 'To have fun'},
-      ]
-    }
+    questions: [
+      {'Question': 'Which of the following countries has the',
+        'QData': {'GDP': '7', 'Protein': '8', 'Lan': '9', 'Lon': '10'},
+        'Answers': ['To have fun', '7', 'something else'],
+        'Correct': 'To have fun'},
+      {'Question': 'Which of the following countries has the',
+        'QData': {'GDP': '7', 'Protein': '8', 'Lan': '9', 'Lon': '10'},
+        'Answers': ['To have fun', '7', 'something else'],
+        'Correct': 'To have fun'},
+      {'Question': 'Which of the following countries has the',
+        'QData': {'GDP': '7', 'Protein': '8', 'Lan': '9', 'Lon': '10'},
+        'Answers': ['To have fun', '7', 'something else'],
+        'Correct': 'To have fun'},
+      {'Question': 'Which of the following countries has the',
+        'QData': {'GDP': '7', 'Protein': '8', 'Lan': '9', 'Lon': '10'},
+        'Answers': ['To have fun', '7', 'something else'],
+        'Correct': 'To have fun'},
+      {'Question': 'Which of the following countries has the',
+        'QData': {'GDP': '7', 'Protein': '8', 'Lan': '9', 'Lon': '10'},
+        'Answers': ['To have fun', '7', 'something else'],
+        'Correct': 'To have fun'},
+    ]
   });
   
   apiUtils.sendData(res, 200, responseBody);
