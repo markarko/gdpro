@@ -10,7 +10,7 @@ const DB = require('../db/db.js');
 const db = new DB();
 const proteinCollName = 'daily-per-capita-protein-supply';
 const gdpCollName = 'gdp-per-capita-worldbank';
-const countriesCollName = 'countries';
+const countriesCollName = 'country';
 
 
 /**
