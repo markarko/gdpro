@@ -215,7 +215,9 @@ router.get('/countries/', async (req, res) => {
   const results = [];
 
   for (const country in countries) {
+    // eslint-disable-next-line no-await-in-loop
     const data = await db.getCountryYearData(gdpCollName, countries[country], year);
+    // eslint-disable-next-line no-await-in-loop
     const latLongData = await db.getCountryCountryData('country', countries[country]);
     data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
     results.push(data[0]);
