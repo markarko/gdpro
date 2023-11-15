@@ -38,8 +38,8 @@ export default function Map({gdp, protein}) {
   return (
     <div className="ui-container">
       <MapContainer
-        center={[45.5, -73.6]}
-        zoom={3}
+        center={[0, 0]}
+        zoom={2}
         zoomControl={true}
         updateWhenZooming={false}
         updateWhenIdle={true}
