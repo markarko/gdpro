@@ -143,22 +143,7 @@ router.get('/countries/top/:top', async (req, res) => {
   const results = [];
   const data = await db.readTopCountries(proteinCollName, top, orderBy, 'gppd');
   const geoPosition = await db.readAll(countryCollName);
-  // for (let i = 0; i < data.length; i++) {
-  //   for (let j = 0; j < geoPosition.length; j++) {
-  //     const country = data[i];
-  //     const position = geoPosition[j];
-  
-  //     if (country.country === position.name.toLowerCase()) {
-  //       results.push({
-  //         country: country.country,
-  //         code: country.code,
-  //         year: country.year,
-  //         protein: country.gppd,
-  //         position: [position.latitude, position.longitude]
-  //       });
-  //     }
-  //   }
-  // }
+
   data.forEach(country => {
     geoPosition.forEach(position => {
       if (country.country === position.name.toLowerCase()) {
