@@ -1,3 +1,4 @@
+import './ChartView.css';
 import ChartFilters from '../filters/chart/ChartFilters';
 import PlotController from '../chart/PlotController';
 import { useEffect, useState } from 'react';
@@ -26,33 +27,33 @@ export default function ChartView() {
       return await response.json();
     }
     async function fetchInitialData() {
-      const yearsUrl = '/api/v1/gdp/countries/ukraine';
-      const countriesUrl = '/api/v1/gdp/countries/all'; 
-
-      const fetches = [getJson(yearsUrl), getJson(countriesUrl)];
-      const [yearsData, countriesData] = await Promise.all(fetches);
+      try{
+        const yearsUrl = '/api/v1/gdp/countries/ukraine';
+        const countriesUrl = '/api/v1/gdp/countries/all'; 
+  
+        const fetches = [getJson(yearsUrl), getJson(countriesUrl)];
+        const [yearsData, countriesData] = await Promise.all(fetches);
       
-      setLoading(false);
-
-      const years = yearsData.data.results.map(x => x.year); 
-      setValidYears(years);
-
-      const countries = countriesData.data;
-      setValidCountries(countries);
+        const years = yearsData.data.results.map(x => x.year); 
+        setValidYears(years);
+  
+        const countries = countriesData.data;
+        setValidCountries(countries);
+      } catch(err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
     }
 
     fetchInitialData();
   }, []);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   if (loading) {
     return <div></div>;
   }
 
-  return <div>
+  return <div className="ChartView">
     <PlotController
       gdp={gdp['data']['results']}
       protein={protein['data']['results']}
@@ -62,6 +63,8 @@ export default function ChartView() {
       setProtein={setProtein}
       validYears={validYears}
       validCountries={validCountries}
-      dataLayout={dataLayout} />
+      dataLayout={dataLayout}
+      setError={setError} />
+    { error ? <div>{error}</div> : <div></div> }
   </div>;
 }

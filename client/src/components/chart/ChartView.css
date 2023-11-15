@@ -1,0 +1,4 @@
+.ChartView {
+    display: flex;
+    flex-wrap: wrap;
+}

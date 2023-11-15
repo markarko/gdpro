@@ -122,30 +122,26 @@ router.get('/countries/:country/variation', async (req, res) => {
 
 // stub api endpoint to fiter by the top x countries with the highest or lowest protein intake
 router.get('/countries/top/:top', async (req, res) => {
-  const orderby = req.query.orderby;
-  orderby.charAt(0);
-  apiUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        protein : 100.00,
-        position: 1
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        protein : 99.00,
-        position: 2
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        protein : 98.00,
-        position: 3
-      }
-    ]}
-  );
+  const top = req.params.top;
+
+  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
+    const error = `The value following top/ must be a number between 1 and 10`;
+    apiUtils.sendError(res, 400, error);
+    return;
+  }
+
+  const orderBy = req.query.orderBy;
+  const orderByOptions = ['highest', 'lowest'];
+
+  if (!orderBy || !orderByOptions.includes(orderBy)) {
+    const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
+    apiUtils.sendError(res, 400, error);
+    return;
+  }
+
+  const data = await db.readTopCountries(proteinCollName, top, orderBy, 'gppd');  
+
+  apiUtils.sendData(res, 200, { results : data });
 });
 
 // stub endpoint for filtering by a range of protein intake

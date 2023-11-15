@@ -141,7 +141,7 @@ router.get('/countries/top/:top', async (req, res) => {
     return;
   }
 
-  const data = await db.readTopCountriesGdp(gdpCollName, top, orderBy);  
+  const data = await db.readTopCountries(gdpCollName, top, orderBy, 'gdp');  
 
   gdpUtils.sendData(res, 200, { results : data });
 });
