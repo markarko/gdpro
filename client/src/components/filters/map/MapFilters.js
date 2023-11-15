@@ -80,7 +80,7 @@ export default function MapFilters({
 
     //This is a fake endpoint that will be deleted later. Since the real endpoint is
     //not ready yet, we are using this fake endpoint to test the UI.
-    const url = `/api/v1/${value}/stub/countries/top/${top}?orderBy=${variation}`;
+    const url = `/api/v1/${value}/countries/top/${top}?orderBy=${variation}&year=2020`;
     const response = await fetch(url);
 
     return await response.json();

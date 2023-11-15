@@ -74,16 +74,25 @@ class DB {
     }
   }
 
-  async readTopCountries(collName, topAmount, orderBy, dataType) {
+  async readTopCountries(collName, topAmount, orderBy, dataType, year) {
     try {
       const orderInt = orderBy === 'highest' ? -1 : 1;
       const collection = await instance.db.collection(collName);
-      const result = await collection.
-        find({}, { projection: { _id: 0 }}).
-        sort({ [dataType] : orderInt }).
-        limit(Number(topAmount)).
-        toArray();
-      return result;
+      if (year) {
+        const result = await collection.
+          find({year: Number(year)}, { projection: { _id: 0 }}).
+          sort({ [dataType] : orderInt }).
+          limit(Number(topAmount)).
+          toArray();
+        return result;
+      }else{
+        const result = await collection.
+          find({}, { projection: { _id: 0 }}).
+          sort({ [dataType] : orderInt }).
+          limit(Number(topAmount)).
+          toArray();
+        return result;
+      }
     } catch (error) {
       console.error('Error in readTopCountries:', error);
     }

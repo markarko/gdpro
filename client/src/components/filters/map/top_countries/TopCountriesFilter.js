@@ -9,7 +9,7 @@ export default function TopCountriesFilter({ setTopCountriesFilter, disable }) {
 
   const updateTopRange = e => {
     const top = e.target.value;
-    if (topRange.includes(top)) {
+    if (topRange.includes(Number(top))) {
       setTopCountriesFilter((prevFilter) => ({
         ...prevFilter,
         top,
