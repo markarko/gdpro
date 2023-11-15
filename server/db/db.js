@@ -123,6 +123,32 @@ class DB {
       console.error('Error in index:', error);
     }
   }
+
+  async getYearRange(collName, country, startYear, endYear) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        country: country,
+        year: { $gte: Number(startYear), $lte: Number(endYear) }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getYearRange:', error);
+    }
+  }
+
+  async getGDPRange(collName, country, startGdp, endGdp) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        country: country,
+        gdp: { $gte: Number(startGdp), $lte: Number(endGdp) }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getGDPRange:', error);
+    }
+  }
 }
 
 module.exports = DB;
