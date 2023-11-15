@@ -77,24 +77,18 @@ router.get('/countries/:country', async (req, res) => {
 router.get('/countries/:country/gdp-range', async (req, res) => {
   const startGdp = req.query.startGdp;
   const endGdp = req.query.endGdp;
-  startGdp.charAt(0);
-  endGdp.charAt(0);
+  const country = req.params.country;
   res.status(200);
+
+  const data = await db.getGDPRange(gdpCollName, country, startGdp, endGdp);
 
   gdpUtils.sendData (res, 200,
     {
-      country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          gdp : 5723
-        },
-        {
-          year : 1991,
-          gdp : 5777
-        }
-      ]
+      country: data[0].country,
+      code: data[0].code,
+      results : data.map(row => {
+        return { year : row.year, gdp : row.gdp };
+      })
     });
 });
 
@@ -103,22 +97,22 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
 router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
-  startYear.charAt(0);
-  endYear.charAt(0);
-  res.status(200); 
+  const country = req.params.country;
+
+  const data = await db.getYearRange(gdpCollName, country, startYear, endYear);
+  // Compare each year to the previous year and calculate the growth/decline
+  const results = data.map((row, index) => {
+    if (index === 0) {
+      return { year : row.year, gdpGrowth : 0 };
+    } else {
+      return { year : row.year, gdpGrowth : row.gdp / 1000 - data[index - 1].gdp / 10000 };
+    }
+  });
+
   gdpUtils.sendData (res, 200,
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          years : [1990, 1991],
-          gdpGrowth : 7
-        },
-        {
-          years : [1991, 1992],
-          gdpGrowth : -2
-        }
-      ]}
+    {country: data[0].country,
+      code: data[0].code,
+      results: results}
   );
 });
 
