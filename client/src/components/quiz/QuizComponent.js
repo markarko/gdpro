@@ -27,8 +27,7 @@ export default function QuizComponent(props) {
   const [answer, setAnswer] = useState(null);
   const [score, setScore] = useState(0);
   const [message, setMessage] = useState('');
-  const [mode, setMode] = useState('info');
-  const setPoints = props.setPoints;
+  const [render, setRender] = useState(false);
 
   // Clear question, answer and message
   function clear(message = '') { 
@@ -43,24 +42,20 @@ export default function QuizComponent(props) {
   }
 
   useEffect(() => {
-
     // Sometimes the api takes a long time to respond, so set loading message
     setMessage('Loading questions...');
     fetch('/api/v1/questions/random-questions/5')
-      .then((res) => res.json()).then((data) => {
-        console.log(data.data);
-        console.log(question);
-
+      .then((res) => res.json())
+      .then((data) => {
         clear();
         nextQuestion(data.data['questions'], setQuestion, setQuestions);
-
       }).catch((error) => {
       // Chance the API is down, set message and log error
         setMessage('Error fetching data');
         console.error('Fetch error:', error);
       });
 
-  }, [mode]);
+  }, []);
 
   // // Set points (AKA the coordinates on the map) based on the question coordinates
   // useEffect(() => {
@@ -100,13 +95,13 @@ export default function QuizComponent(props) {
    */
   function handleNextQuestion(e) {
     e.preventDefault();
-
+    console.log('handlingsdf');
     // Clear and disable button
     clear();
-    if (questions.length < 0) {
-      fetch('http://localhost:3000/api/v1/questions/random-questions/5')
+    if (questions.length === 0) {
+      fetch('/api/v1/questions/random-questions/5')
         .then((res) => res.json()).then((data) => {
-          nextQuestion(data, setQuestion, setQuestions);
+          nextQuestion(data.data['questions'], setQuestion, setQuestions);
         }).catch((error) => {
         // Chance the API is down, set message and log error
           setMessage('Error fetching data');

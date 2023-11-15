@@ -11,7 +11,6 @@ export default function Question(props) {
     return <div>Loading...</div>;
   }
 
-  console.log(props.data.QData);
 
 
   //const coordinates = String(props.data.coordinates).split('-');

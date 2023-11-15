@@ -12,7 +12,7 @@ export default function NavBar() {
           <a href="/map" className="elem">Map</a>
         </div>
         <div classname="nav-right">
-          <a href="" className="elem">Light mode</a>
+          <a href="" className="elem">Light</a>
         </div>
       </div>
     </div>  );
