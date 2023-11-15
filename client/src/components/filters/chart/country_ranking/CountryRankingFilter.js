@@ -2,15 +2,15 @@ import './CountryRankingFilter.css';
 import Select from '../../map/select/Select.js';
 
 export default function CountryRankingFilter({ setCountryRankingFilter, disable }) {
-  const variations = ['highest', 'lowest'];
+  const orderByOptions = ['highest', 'lowest'];
   const values = ['gdp', 'protein'];
   
   const updateVariation = e => {
-    const variation = e.target.value;
-    if (variations.includes(variation)) {
+    const orderBy = e.target.value;
+    if (orderByOptions.includes(orderBy)) {
       setCountryRankingFilter((prevFilter) => ({
         ...prevFilter,
-        variation,
+        orderBy,
       }));
     }
   };
@@ -28,7 +28,7 @@ export default function CountryRankingFilter({ setCountryRankingFilter, disable 
   return (
     <div className={disable ? 'CountryRanking disabled' : 'CountryRanking'} >
       <Select
-        options={variations}
+        options={orderByOptions}
         labelText="Select the country with the "
         onChange={updateVariation} />
       <Select

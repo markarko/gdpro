@@ -12,7 +12,7 @@ export default function BasicFilters({
 
   const updateCountry = e => {
     const country = e.target.value;
-    if (validCountries.includes(Number(country))) {
+    if (validCountries.includes(country)) {
       setBasicFilters((prevFilters) => ({
         ...prevFilters,
         country,
