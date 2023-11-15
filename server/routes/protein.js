@@ -232,37 +232,27 @@ router.get('/countries/:country/:year', async (req, res) => {
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  // let countries = req.query.countries;
-  // countries = countries.split(',');
-  // res.status(200);
-  // countries.charAt(0);
+  let countries = req.query.countries;
+  const year = req.query.year;
 
-  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
-  // this endpoint returns the protein for all the queried countries in the same year
+  countries = countries.split(',');
+  if (countries.length > 10 || countries.length < 1) {
+    apiUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+  }
+  //check if countries is in db.getAllCountries
+  const validCountries = await db.getAllCountries(proteinCollName);
+  countries.filter((country) => validCountries.includes(country.toLowerCase()));
+  const results = [];
+
+  for (const country in countries) {
+    const data = await db.getCountryYearData(proteinCollName, countries[country], year);
+    const latLongData = await db.getCountryCountryData('country', countries[country]);
+    data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
+    results.push(data[0]);
+  }
+
   apiUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        year : 2003,
-        protein : 100.00,
-        position : [56.1304, -106.3468]
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 2003,
-        protein : 99.00,
-        position : [37.0902, -95.7129]
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        year : 2003,
-        protein : 98.00,
-        position : [23.6345, -102.5528]
-      }
-    ]}
+    {results : results}
   );
 });
 
