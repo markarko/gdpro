@@ -27,10 +27,9 @@ export default function QuizComponent(props) {
   const [answer, setAnswer] = useState(null);
   const [score, setScore] = useState(0);
   const [message, setMessage] = useState('');
-  const [render, setRender] = useState(false);
 
   // Clear question, answer and message
-  function clear(message = '') { 
+  function clearQuestionComponent() { 
     setQuestion(null);
     setAnswer(null);
     setMessage('');
@@ -41,23 +40,22 @@ export default function QuizComponent(props) {
     }
   }
 
+  async function getData() {
+    setMessage('Loading questions...');
+    const response = await fetch('/api/v1/questions/random-questions/5');
+    const json = await response.json();
+    if (!response.ok) {
+      setMessage('Error fetching data');
+      console.error(json.error);
+      return;
+    }
+    clearQuestionComponent();
+    nextQuestion(json.data.questions, setQuestion, setQuestions);
+  }
+
   useEffect(() => {
     // Sometimes the api takes a long time to respond, so set loading message
-    setMessage('Loading questions...');
-    fetch('/api/v1/questions/random-questions/5')
-      .then((res) => res.json())
-      .then((data) => {
-        clear();
-        nextQuestion(data.data['questions'], setQuestion, setQuestions);
-        // Disable next button for first question
-        document.getElementsByClassName('next')[0].disabled = true;
-
-      }).catch((error) => {
-      // Chance the API is down, set message and log error
-        setMessage('Error fetching data');
-        console.error('Fetch error:', error);
-      });
-
+    getData();
   }, []);
 
   // // Set points (AKA the coordinates on the map) based on the question coordinates
@@ -70,18 +68,13 @@ export default function QuizComponent(props) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    // Check if answer is correct, award points and set message
-    if (answer === question.Correct) {
-      setScore(score + 1);
-      setMessage('That’s right!');
-
-    // Check if answer does not exist, set message
-    } else if (answer === null) {
+    if (answer === null) {
       setMessage('Please select an answer');
       return;
-
-    // Checks if answer is wrong, set message
-    } else if (answer !== question.Correct){
+    } else if (answer === question.Correct) {
+      setScore(score + 1);
+      setMessage('That’s right!');
+    } else {
       setMessage('Sorry, the correct answer is ' + question.Correct);
     }
 
@@ -98,22 +91,15 @@ export default function QuizComponent(props) {
    */
   function handleNextQuestion(e) {
     e.preventDefault();
-    console.log('handlingsdf');
     // Clear and disable button
-    clear();
+    clearQuestionComponent();
     if (questions.length === 0) {
-      fetch('/api/v1/questions/random-questions/5')
-        .then((res) => res.json()).then((data) => {
-          nextQuestion(data.data['questions'], setQuestion, setQuestions);
-        }).catch((error) => {
-        // Chance the API is down, set message and log error
-          setMessage('Error fetching data');
-          console.error('Fetch error:', error);
-        });
+      getData();
+      // Disable next button for first question
+      document.getElementsByClassName('next')[0].disabled = true;
     } else {
       nextQuestion(questions, setQuestion, setQuestions);
     }
-      
     e.target.disabled = true;
 
     // re-enable submit button and clear answers

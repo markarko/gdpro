@@ -6,21 +6,18 @@ import AnswerOption from './AnswerOption';
  * @returns JSX Question Component with the question and the AnswerOption component
  */
 
-export default function Question(props) {
-  if (props.data === null) {
+export default function Question({ data, setAnswer }) {
+  if (data === null) {
     return <div>Loading...</div>;
   }
 
-
-
-  //const coordinates = String(props.data.coordinates).split('-');
   return (
     <div>
       <h1>Guess the country based on GDP and Protein and the year the country had both: </h1>
-      <p>GDP: {props.data.QData.GDP} Protein: {props.data.QData.Protein} </p>
-      <p>Year: {props.data.QData.year}</p>
+      <p>GDP: {data.QData.GDP} Protein: {data.QData.Protein} </p>
+      <p>Year: {data.QData.year}</p>
       <p>A pin on the map has been placed to help guess which country it is</p>
-      <AnswerOption choices={props.data['Answers']} setAnswer={props.setAnswer}/>
+      <AnswerOption choices={data['Answers']} setAnswer={setAnswer}/>
     </div>
   );
 }
