@@ -1,3 +1,4 @@
+import './ChartView.css';
 import ChartFilters from '../filters/chart/ChartFilters';
 import PlotController from '../chart/PlotController';
 import { useEffect, useState } from 'react';
@@ -57,7 +58,7 @@ export default function ChartView() {
     return <div></div>;
   }
 
-  return <div>
+  return <div className="ChartView">
     <PlotController
       gdp={gdp['data']['results']}
       protein={protein['data']['results']}
