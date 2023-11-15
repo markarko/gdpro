@@ -146,6 +146,49 @@ router.get('/countries/top/:top', async (req, res) => {
   gdpUtils.sendData(res, 200, { results : data });
 });
 
+//Stub and temporary endpoint for the sake of map filters. This will be deleted later.
+router.get('/stub/countries/top/:top', async (req, res) => {
+  gdpUtils.sendData (res, 200,
+    {results : [
+      {
+        country: 'Iran',
+        code: 'IRN',
+        year : 2005,
+        gdp : 9876,
+        position : [32.4279, 53.6880]
+      },
+      {
+        country: 'Brazil',
+        code: 'BRZ',
+        year : 2015,
+        gdp : 5432,
+        position : [-14.2350, -51.9253]
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 2018,
+        gdp : 1234,
+        position : [37.0902, -95.7129]
+      },
+      {
+        country: 'France',
+        code: 'FRA',
+        year : 2011,
+        gdp : 5678,
+        position : [46.2276, 2.2137]
+      },
+      {
+        country: 'Japan',
+        code: 'JAP',
+        year : 2000,
+        gdp : 9999,
+        position : [36.2048, 138.2529]
+      }
+    ]}
+  );
+});
+
 // stub api endpoint to filter by specific country and year
 router.get('/countries/:country/:year', async (req, res) => {
   res.status(200);

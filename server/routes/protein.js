@@ -144,6 +144,49 @@ router.get('/countries/top/:top', async (req, res) => {
   apiUtils.sendData(res, 200, { results : data });
 });
 
+//Stub and temporary endpoint for the sake of map filters. This will be deleted later.
+router.get('/stub/countries/top/:top', async (req, res) => {
+  apiUtils.sendData (res, 200,
+    {results : [
+      {
+        country: 'Iran',
+        code: 'IRN',
+        year : 2005,
+        protein : 123,
+        position : [32.4279, 53.6880]
+      },
+      {
+        country: 'Brazil',
+        code: 'BRZ',
+        year : 2015,
+        protein : 69,
+        position : [-14.2350, -51.9253]
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 2018,
+        protein : 85,
+        position : [37.0902, -95.7129]
+      },
+      {
+        country: 'France',
+        code: 'FRA',
+        year : 2011,
+        protein : 21,
+        position : [46.2276, 2.2137]
+      },
+      {
+        country: 'Japan',
+        code: 'JAP',
+        year : 2000,
+        protein : 102,
+        position : [36.2048, 138.2529]
+      }
+    ]}
+  );
+});
+
 // stub endpoint for filtering by a range of protein intake
 router.get('/countries/:country/protein', async (req, res) => {
   const startProtein = req.query.startProtein;

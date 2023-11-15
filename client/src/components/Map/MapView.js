@@ -8,7 +8,7 @@ export default function MapView() {
       'results': []
     }
   };
-
+  
   const [gdp, setGdp] = useState(dataLayout);
   const [protein, setProtein] = useState(dataLayout);
   const [loading, setLoading] = useState(true);
@@ -25,10 +25,9 @@ export default function MapView() {
     async function fetchInitialData() {
       const yearsUrl = '/api/v1/gdp/countries/ukraine';
       const countriesUrl = '/api/v1/gdp/countries/all'; 
-    
-      const fetches = [getJson(yearsUrl), getJson(countriesUrl)];
-      const [yearsData, countriesData] = await Promise.all(fetches);
-          
+
+      const yearsData = await getJson(yearsUrl);
+      const countriesData = await getJson(countriesUrl);          
       setLoading(false);
     
       const years = yearsData.data.results.map(x => x.year); 
@@ -49,12 +48,16 @@ export default function MapView() {
   }
   
   return <>
-    <Map gdp={gdp.data.results} protein={protein.data.results}/>
+    <Map
+      gdp={gdp.data.results} 
+      protein={protein.data.results} 
+    />
     <MapFilters
       years={validYears}
       validCountries={validCountries}
       setGdp={setGdp}
       setProtein={setProtein}
+      dataLayout={dataLayout}
     />
   </>;
 }

@@ -11,22 +11,28 @@ const customIcon = new Icon({
   iconAnchor: [22, 30],
 });
 
-// export default function MontrealMap({gdp, protein, position}) {
 export default function Map({gdp, protein}) {
   const attribution =
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
   const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  // Combine gdp and protein arrays based on the 'country' property
+  let filterGdp = false;
+  let filterProtein = false;
   const mergedData = gdp.map((gdpItem) => {
     const matchingProteinItem = protein.find(
       (proteinItem) => proteinItem.country === gdpItem.country
     );
-
+  
     return {
       ...gdpItem,
       protein: matchingProteinItem ? matchingProteinItem.protein : null,
     };
   });
+  if (gdp.length > protein.length && protein.length === 0) {
+    filterGdp = true;
+  }else if(protein.length > gdp.length && gdp.length === 0) {
+    filterProtein = true;
+  }
+  
 
   return (
     <div className="ui-container">
@@ -41,17 +47,41 @@ export default function Map({gdp, protein}) {
         maxZoom={16}
       >
         <TileLayer attribution={attribution} url={tileUrl} />
-        {mergedData.map((data) => (
-          <Marker key={data.country} position={data.position} icon={customIcon}>
-            <Popup>
-              <div>
-                <p>Country: {data.country}</p>
-                <p>GDP: {data.gdp}</p>
-                <p>Protein: {data.protein}</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {filterGdp && gdp.length > 0
+          ? gdp.map((data) => 
+            <Marker key={data.country} position={data.position} icon={customIcon}>
+              <Popup>
+                <div>
+                  <p>Country: {data.country}</p>
+                  <p>GDP: {data.gdp}</p>
+                </div>
+              </Popup>
+            </Marker>
+          )
+          : filterProtein && protein.length > 0
+            ? protein.map((data) => 
+              <Marker key={data.country} position={data.position} icon={customIcon}>
+                <Popup>
+                  <div>
+                    <p>Country: {data.country}</p>
+                    <p>Protein: {data.protein}</p>
+                  </div>
+                </Popup>
+              </Marker>
+            )
+            : mergedData.length > 0
+              ? mergedData.map((data) => 
+                <Marker key={data.country} position={data.position} icon={customIcon}>
+                  <Popup>
+                    <div>
+                      <p>Country: {data.country}</p>
+                      <p>GDP: {data.gdp}</p>
+                      <p>Protein: {data.protein}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              )
+              : null}
       </MapContainer>
     </div>
   );

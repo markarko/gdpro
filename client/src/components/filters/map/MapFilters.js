@@ -7,7 +7,8 @@ export default function MapFilters({
   setGdp,
   setProtein,
   years,
-  validCountries
+  validCountries,
+  dataLayout,
 }) {
   const FilterType = {
     Basic: 'basic',
@@ -21,7 +22,7 @@ export default function MapFilters({
     countries: [],
   });
   
-  const [, setTopCountriesFilter] = useState({
+  const [topCountriesFilter, setTopCountriesFilter] = useState({
     top: 3,
     variation: 'highest',
     value: 'gdp'
@@ -39,13 +40,13 @@ export default function MapFilters({
     switch (selectedFilterType) {
     case FilterType.Basic:
       await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
-    // case FilterType.CountryRanking:
-    //   await updateDataWithCountryRankingFilter(
-    //     setGdp,
-    //     setProtein,
-    //     countryRankingFilter,
-    //     dataLayout);
-    //   break;
+    case FilterType.TopCountries:
+      await updateDataWithCountryRankingFilter(
+        setGdp,
+        setProtein,
+        topCountriesFilter,
+        dataLayout);
+      break;
     default: break;
     }
   };
@@ -71,6 +72,39 @@ export default function MapFilters({
       console.error('Error fetching data:', error);
     }
   }
+
+  async function getDataForCountryRankingFilter() {
+    const top = topCountriesFilter['top'];
+    const variation = topCountriesFilter['variation'];
+    const value = topCountriesFilter['value'];
+
+    //This is a fake endpoint that will be deleted later. Since the real endpoint is
+    //not ready yet, we are using this fake endpoint to test the UI.
+    const url = `/api/v1/${value}/stub/countries/top/${top}?orderBy=${variation}`;
+    const response = await fetch(url);
+
+    return await response.json();
+  }
+
+  async function updateDataWithCountryRankingFilter(
+    setGdp,
+    setProtein,
+    topCountriesFilter,
+    dataLayout) {
+    try {
+      const data = await getDataForCountryRankingFilter();
+  
+      if (topCountriesFilter['value'] === 'gdp'){
+        setGdp(data);
+        setProtein(dataLayout);
+      } else if (topCountriesFilter['value'] === 'protein') {
+        setProtein(data);
+        setGdp(dataLayout);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }  
 
   return(
     <form className="MapFilters" onSubmit={applyFilters}>
