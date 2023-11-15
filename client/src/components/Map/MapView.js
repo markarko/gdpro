@@ -1,4 +1,5 @@
 import MapFilters from '../filters/map/MapFilters';
+import Map from './Map';
 import { useEffect, useState } from 'react';
 
 export default function MapView() {
@@ -7,7 +8,7 @@ export default function MapView() {
       'results': []
     }
   };
-  
+
   const [gdp, setGdp] = useState(dataLayout);
   const [protein, setProtein] = useState(dataLayout);
   const [loading, setLoading] = useState(true);
@@ -48,6 +49,7 @@ export default function MapView() {
   }
   
   return <div>
+    <Map gdp={gdp.data} protein={protein.data}/>
     <MapFilters
       years={validYears}
       validCountries={validCountries}

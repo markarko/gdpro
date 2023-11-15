@@ -197,22 +197,31 @@ router.get('/countries/', async (req, res) => {
   // countries = countries.split(',');
   // res.status(200);
   // countries.charAt(0);
+
+  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
+  // this endpoint returns the protein for all the queried countries in the same year
   apiUtils.sendData (res, 200,
     {results : [
       {
         country: 'Canada',
         code: 'CAN',
-        protein : 100.00
+        year : 2003,
+        protein : 100.00,
+        position : [56.1304, 106.3468]
       },
       {
         country: 'United States',
         code: 'USA',
-        protein : 99.00
+        year : 2003,
+        protein : 99.00,
+        position : [37.0902, 95.7129]
       },
       {
         country: 'Mexico',
         code: 'MEX',
-        protein : 98.00
+        year : 2003,
+        protein : 98.00,
+        position : [23.6345, 102.5528]
       }
     ]}
   );

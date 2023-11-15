@@ -169,19 +169,24 @@ router.get('/countries/', async (req, res) => {
   // res.status(200);
   // countries = countries.split(',');
   // countries.charAt(0);
+
+  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
+  // this endpoint returns the gdp for all the queried countries in the same year.
   gdpUtils.sendData (res, 200,
     {results : [
       {
         country: 'Canada',
         code: 'CAN',
         year : 2003,
-        gdp : 1234
+        gdp : 1234,
+        position : [56.1304, 106.3468]
       },
       {
         country: 'United States',
         code: 'USA',
-        year : 1995,
-        gdp : 4321
+        year : 2003,
+        gdp : 4321,
+        position : [37.0902, 95.7129]
       }
     ]}
   );

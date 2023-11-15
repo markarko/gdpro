@@ -11,7 +11,8 @@ const customIcon = new Icon({
   iconAnchor: [22, 30],
 });
 
-export default function MontrealMap({position}) {
+// export default function MontrealMap({gdp, protein, position}) {
+export default function MontrealMap({gdp, protein}) {
   const attribution =
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
   const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -20,7 +21,7 @@ export default function MontrealMap({position}) {
     <div className="ui-container">
       <MapContainer
         center={[45.5, -73.6]}
-        zoom={11}
+        zoom={3}
         zoomControl={true}
         updateWhenZooming={false}
         updateWhenIdle={true}
@@ -29,11 +30,13 @@ export default function MontrealMap({position}) {
         maxZoom={16}
       >
         <TileLayer attribution={attribution} url={tileUrl} />
-        <Marker position={position} icon={customIcon} >
-          <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-          </Popup>
-        </Marker>
+        {protein && protein.length > 0 && protein.map(data =>
+          <Marker key={data.country} position={data.position} icon={customIcon}>
+            <Popup>
+              {data.protein}
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   );
