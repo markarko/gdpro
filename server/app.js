@@ -6,11 +6,14 @@ const gdpRouter = require('./routes/gdp');
 const proteinRouter = require('./routes/protein');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocs = require('./swagger/swagger-docs.json');
+const questions = require('./routes/questions');
 
 app.use(express.json());
 
 mainRouter.use('/gdp/', gdpRouter);
 mainRouter.use('/protein/', proteinRouter);
+mainRouter.use('/questions/', questions);
+
 
 app.use('/api/v1', mainRouter);
 
