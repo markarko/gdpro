@@ -26,19 +26,24 @@ export default function ChartView() {
       return await response.json();
     }
     async function fetchInitialData() {
-      const yearsUrl = '/api/v1/gdp/countries/ukraine';
-      const countriesUrl = '/api/v1/gdp/countries/all'; 
-
-      const fetches = [getJson(yearsUrl), getJson(countriesUrl)];
-      const [yearsData, countriesData] = await Promise.all(fetches);
+      try{
+        const yearsUrl = '/api/v1/gdp/countries/ukraine';
+        const countriesUrl = '/api/v1/gdp/countries/all'; 
+  
+        const fetches = [getJson(yearsUrl), getJson(countriesUrl)];
+        const [yearsData, countriesData] = await Promise.all(fetches);
       
-      setLoading(false);
-
-      const years = yearsData.data.results.map(x => x.year); 
-      setValidYears(years);
-
-      const countries = countriesData.data;
-      setValidCountries(countries);
+        const years = yearsData.data.results.map(x => x.year); 
+        setValidYears(years);
+  
+        const countries = countriesData.data;
+        setValidCountries(countries);
+      } catch(err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+      
     }
 
     fetchInitialData();
