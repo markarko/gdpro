@@ -49,6 +49,9 @@ export default function QuizComponent(props) {
       .then((data) => {
         clear();
         nextQuestion(data.data['questions'], setQuestion, setQuestions);
+        // Disable next button for first question
+        document.getElementsByClassName('next')[0].disabled = true;
+
       }).catch((error) => {
       // Chance the API is down, set message and log error
         setMessage('Error fetching data');

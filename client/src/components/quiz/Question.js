@@ -16,8 +16,9 @@ export default function Question(props) {
   //const coordinates = String(props.data.coordinates).split('-');
   return (
     <div>
-      <h1>Guess the country based on GDP and Protein: </h1>
-      <p>GDP: {props.data.QData.GDP} Protein: {props.data.QData.Protein}</p>
+      <h1>Guess the country based on GDP and Protein and the year the country had both: </h1>
+      <p>GDP: {props.data.QData.GDP} Protein: {props.data.QData.Protein} </p>
+      <p>Year: {props.data.QData.year}</p>
       <p>A pin on the map has been placed to help guess which country it is</p>
       <AnswerOption choices={props.data['Answers']} setAnswer={props.setAnswer}/>
     </div>
