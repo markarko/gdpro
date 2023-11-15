@@ -1,7 +1,7 @@
 import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 
-const CustomMarker = ({ data, icon }) => (
+const CustomMarker = ({ data, icon }) => 
   <Marker key={data.country} position={data.position} icon={icon}>
     <Popup>
       <div>
@@ -10,7 +10,6 @@ const CustomMarker = ({ data, icon }) => (
         {data.protein && <p>Protein: {data.protein}</p>}
       </div>
     </Popup>
-  </Marker>
-);
+  </Marker>;
 
 export default CustomMarker;
