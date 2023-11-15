@@ -149,6 +149,41 @@ class DB {
       console.error('Error in getGDPRange:', error);
     }
   }
+
+  async getAllCountries(collName) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.distinct('country');
+      return result;
+    } catch (error) {
+      console.error('Error in getAllCountries:', error);
+    }
+  }
+
+  async getCountryYearData(collName, country, year) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        country: country,
+        year: Number(year)
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getCountryYearData:', error);
+    }
+  }
+
+  async getCountryCountryData(collName, country1) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        name: country1
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getCountryCountryData:', error);
+    }
+  }
 }
 
 module.exports = DB;
