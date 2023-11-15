@@ -33,14 +33,20 @@ router.get('/random-questions/:number', async (req, res) => {
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
+    // This isn't great coding style, I understand, this is just a quick fix
     country = countries[Math.floor(Math.random() * countries.length)];
     // eslint-disable-next-line no-await-in-loop
     cGDP = await db.readAllCountryData(gdpCollName, country.name.toLowerCase());
     // eslint-disable-next-line no-await-in-loop
     cPro = await db.readAllCountryData(proteinCollName, country.name.toLowerCase());
 
-    cGDP = cGDP.find(gdp => cPro.some(pro => pro.year === gdp.year));
-    cPro = cPro.find(pro => pro.year === cGDP.year);
+    try {
+      cGDP = cGDP.find(gdp => cPro.some(pro => pro.year === gdp.year));
+      cPro = cPro.find(pro => pro.year === cGDP.year);
+    } catch {
+      continue;
+    }
+    
     if (cGDP && cPro) {
       break;
     }
