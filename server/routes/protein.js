@@ -207,21 +207,21 @@ router.get('/countries/', async (req, res) => {
         code: 'CAN',
         year : 2003,
         protein : 100.00,
-        position : [56.1304, 106.3468]
+        position : [56.1304, -106.3468]
       },
       {
         country: 'United States',
         code: 'USA',
         year : 2003,
         protein : 99.00,
-        position : [37.0902, 95.7129]
+        position : [37.0902, -95.7129]
       },
       {
         country: 'Mexico',
         code: 'MEX',
         year : 2003,
         protein : 98.00,
-        position : [23.6345, 102.5528]
+        position : [23.6345, -102.5528]
       }
     ]}
   );

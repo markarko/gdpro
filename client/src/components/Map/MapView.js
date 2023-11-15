@@ -48,11 +48,13 @@ export default function MapView() {
     return <div></div>;
   }
   
-  return <div>
-    <Map gdp={gdp.data} protein={protein.data}/>
+  return <>
+    <Map gdp={gdp.data.results} protein={protein.data.results}/>
     <MapFilters
       years={validYears}
       validCountries={validCountries}
+      setGdp={setGdp}
+      setProtein={setProtein}
     />
-  </div>;
+  </>;
 }
