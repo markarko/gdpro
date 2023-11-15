@@ -1,10 +1,12 @@
 .leaflet-container {
   height: 85%;
   width: 60%;
+  min-height: 50vh;
 }
 
 .ui-container {
   height: 100%;
+  min-height: 50vh;
   width: 100%;
   display: flex;
 }
