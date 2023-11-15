@@ -56,6 +56,8 @@ export default function QuizComponent(props) {
   useEffect(() => {
     // Sometimes the api takes a long time to respond, so set loading message
     getData();
+  // this is the initial fetch, so no dependencies need to be added
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // // Set points (AKA the coordinates on the map) based on the question coordinates

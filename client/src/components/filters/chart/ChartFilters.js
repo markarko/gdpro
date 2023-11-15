@@ -33,7 +33,10 @@ export default function ChartFilters({
     async function fetchDefaultData() {
       await updateDataWithBasicFilters(setGdp, setProtein, basicFilters);
     }
+
     fetchDefaultData();
+  // this is the initial fetch, so it should be ran only on the initial render
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applyFilters = async e => {
