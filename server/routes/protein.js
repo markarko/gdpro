@@ -144,6 +144,49 @@ router.get('/countries/top/:top', async (req, res) => {
   apiUtils.sendData(res, 200, { results : data });
 });
 
+//Stub and temporary endpoint for the sake of map filters. This will be deleted later.
+router.get('/stub/countries/top/:top', async (req, res) => {
+  apiUtils.sendData (res, 200,
+    {results : [
+      {
+        country: 'Iran',
+        code: 'IRN',
+        year : 2005,
+        protein : 123,
+        position : [32.4279, 53.6880]
+      },
+      {
+        country: 'Brazil',
+        code: 'BRZ',
+        year : 2015,
+        protein : 69,
+        position : [-14.2350, -51.9253]
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 2018,
+        protein : 85,
+        position : [37.0902, -95.7129]
+      },
+      {
+        country: 'France',
+        code: 'FRA',
+        year : 2011,
+        protein : 21,
+        position : [46.2276, 2.2137]
+      },
+      {
+        country: 'Japan',
+        code: 'JAP',
+        year : 2000,
+        protein : 102,
+        position : [36.2048, 138.2529]
+      }
+    ]}
+  );
+});
+
 // stub endpoint for filtering by a range of protein intake
 router.get('/countries/:country/protein', async (req, res) => {
   const startProtein = req.query.startProtein;
@@ -189,26 +232,35 @@ router.get('/countries/:country/:year', async (req, res) => {
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  let countries = req.query.countries;
-  countries = countries.split(',');
-  res.status(200);
-  countries.charAt(0);
-  apiUtils.sendData (
+  // let countries = req.query.countries;
+  // countries = countries.split(',');
+  // res.status(200);
+  // countries.charAt(0);
+
+  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
+  // this endpoint returns the protein for all the queried countries in the same year
+  apiUtils.sendData (res, 200,
     {results : [
       {
         country: 'Canada',
         code: 'CAN',
-        protein : 100.00
+        year : 2003,
+        protein : 100.00,
+        position : [56.1304, -106.3468]
       },
       {
         country: 'United States',
         code: 'USA',
-        protein : 99.00
+        year : 2003,
+        protein : 99.00,
+        position : [37.0902, -95.7129]
       },
       {
         country: 'Mexico',
         code: 'MEX',
-        protein : 98.00
+        year : 2003,
+        protein : 98.00,
+        position : [23.6345, -102.5528]
       }
     ]}
   );

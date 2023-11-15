@@ -9,11 +9,11 @@ export default function BasicFilters({
   validCountries,
   basicFilters,
   setBasicFilters,
-  disable }) {
+  disable }) { 
 
   const updateYear = e => {
     const year = e.target.value;
-    if (years.includes(Number(year))) {
+    if (years.includes(year)) {
       setBasicFilters((prevFilters) => ({
         ...prevFilters,
         year,

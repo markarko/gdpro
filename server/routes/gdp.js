@@ -146,6 +146,49 @@ router.get('/countries/top/:top', async (req, res) => {
   gdpUtils.sendData(res, 200, { results : data });
 });
 
+//Stub and temporary endpoint for the sake of map filters. This will be deleted later.
+router.get('/stub/countries/top/:top', async (req, res) => {
+  gdpUtils.sendData (res, 200,
+    {results : [
+      {
+        country: 'Iran',
+        code: 'IRN',
+        year : 2005,
+        gdp : 9876,
+        position : [32.4279, 53.6880]
+      },
+      {
+        country: 'Brazil',
+        code: 'BRZ',
+        year : 2015,
+        gdp : 5432,
+        position : [-14.2350, -51.9253]
+      },
+      {
+        country: 'United States',
+        code: 'USA',
+        year : 2018,
+        gdp : 1234,
+        position : [37.0902, -95.7129]
+      },
+      {
+        country: 'France',
+        code: 'FRA',
+        year : 2011,
+        gdp : 5678,
+        position : [46.2276, 2.2137]
+      },
+      {
+        country: 'Japan',
+        code: 'JAP',
+        year : 2000,
+        gdp : 9999,
+        position : [36.2048, 138.2529]
+      }
+    ]}
+  );
+});
+
 // stub api endpoint to filter by specific country and year
 router.get('/countries/:country/:year', async (req, res) => {
   res.status(200);
@@ -165,23 +208,35 @@ router.get('/countries/:country/:year', async (req, res) => {
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  let countries = req.query.countries;
-  res.status(200);
-  countries = countries.split(',');
-  countries.charAt(0);
+  // let countries = req.query.countries;
+  // res.status(200);
+  // countries = countries.split(',');
+  // countries.charAt(0);
+
+  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
+  // this endpoint returns the gdp for all the queried countries in the same year.
   gdpUtils.sendData (res, 200,
     {results : [
       {
         country: 'Canada',
         code: 'CAN',
         year : 2003,
-        gdp : 1234
+        gdp : 1234,
+        position : [56.1304, -106.3468]
       },
       {
         country: 'United States',
         code: 'USA',
-        year : 1995,
-        gdp : 4321
+        year : 2003,
+        gdp : 4321,
+        position : [37.0902, -95.7129]
+      },
+      {
+        country: 'Mexico',
+        code: 'MEX',
+        year : 2003,
+        gdp : 5432,
+        position : [23.6345, -102.5528]
       }
     ]}
   );

@@ -26,7 +26,7 @@ export default function Footer() {
       <h3>Developers:</h3>
       <p>Marko Litovchenko</p>
       <p>Thomas Proctor</p>
-      <p>Amir</p>
+      <p>Amirreza Mojtahedi</p>
     </div>
   </footer>;
 }
