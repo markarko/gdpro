@@ -9,6 +9,7 @@ const apiUtils = require('./utils/apiUtils.js');
 const DB = require('../db/db.js');
 const db = new DB();
 const proteinCollName = 'daily-per-capita-protein-supply';
+const countryCollName = 'country';
 
 /**
  * Middleware for validating the 'country' parameter in the route
@@ -139,9 +140,40 @@ router.get('/countries/top/:top', async (req, res) => {
     return;
   }
 
-  const data = await db.readTopCountries(proteinCollName, top, orderBy, 'gppd');  
+  const results = [];
+  const data = await db.readTopCountries(proteinCollName, top, orderBy, 'gppd');
+  const geoPosition = await db.readAll(countryCollName);
+  // for (let i = 0; i < data.length; i++) {
+  //   for (let j = 0; j < geoPosition.length; j++) {
+  //     const country = data[i];
+  //     const position = geoPosition[j];
+  
+  //     if (country.country === position.name.toLowerCase()) {
+  //       results.push({
+  //         country: country.country,
+  //         code: country.code,
+  //         year: country.year,
+  //         protein: country.gppd,
+  //         position: [position.latitude, position.longitude]
+  //       });
+  //     }
+  //   }
+  // }
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name.toLowerCase()) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          protein: country.gppd,
+          position: [position.latitude, position.longitude]
+        });
+      }
+    });
+  });  
 
-  apiUtils.sendData(res, 200, { results : data });
+  apiUtils.sendData(res, 200, { results : results });
 });
 
 //Stub and temporary endpoint for the sake of map filters. This will be deleted later.
