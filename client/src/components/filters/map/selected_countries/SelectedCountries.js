@@ -12,7 +12,7 @@ export default function SelectedCountries({ basicFilters, setBasicFilters }) {
 
   return (
     <div className="SelectedCountries">
-      {selectedCountries.map(country => <SelectedCountry
+      {selectedCountries && selectedCountries.map(country => <SelectedCountry
         key={country}
         country={country}
         removeCountry={removeCountry} />)}
