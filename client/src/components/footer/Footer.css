@@ -1,0 +1,19 @@
+.Footer {
+    display: flex;
+    border: 1px solid black;
+    padding: 2vh;
+    margin-top: 2vh
+}
+
+.Footer > * {
+    flex: 1;
+    text-align: center;
+}
+
+h3 {
+    margin-top: 0;
+}
+
+a {
+    text-decoration: none;
+}
