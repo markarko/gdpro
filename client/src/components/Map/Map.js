@@ -1,5 +1,6 @@
 import { Icon } from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import CustomMarker from './CustomMarker';
 
 import 'leaflet/dist/leaflet.css';
 import './Map.css';
@@ -48,39 +49,20 @@ export default function Map({gdp, protein}) {
       >
         <TileLayer attribution={attribution} url={tileUrl} />
         {filterGdp && gdp.length > 0
-          ? gdp.map((data) => 
-            <Marker key={data.country} position={data.position} icon={customIcon}>
-              <Popup>
-                <div>
-                  <p>Country: {data.country}</p>
-                  <p>GDP: {data.gdp}</p>
-                </div>
-              </Popup>
-            </Marker>
-          )
+          ? gdp.map((data) => <CustomMarker
+            key={data.country}
+            data={data}
+            icon={customIcon} />)
           : filterProtein && protein.length > 0
-            ? protein.map((data) => 
-              <Marker key={data.country} position={data.position} icon={customIcon}>
-                <Popup>
-                  <div>
-                    <p>Country: {data.country}</p>
-                    <p>Protein: {data.protein}</p>
-                  </div>
-                </Popup>
-              </Marker>
-            )
+            ? protein.map((data) => <CustomMarker
+              key={data.country}
+              data={data}
+              icon={customIcon} />)
             : mergedData.length > 0
-              ? mergedData.map((data) => 
-                <Marker key={data.country} position={data.position} icon={customIcon}>
-                  <Popup>
-                    <div>
-                      <p>Country: {data.country}</p>
-                      <p>GDP: {data.gdp}</p>
-                      <p>Protein: {data.protein}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              )
+              ? mergedData.map((data) => <CustomMarker
+                key={data.country}
+                data={data} 
+                icon={customIcon} />)
               : null}
       </MapContainer>
     </div>
