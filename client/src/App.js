@@ -16,13 +16,13 @@ function App() {
   const [currentView, setCurrentView] = useState(views.Chart);
 
   return <div>
-    <NavBar />
+    <NavBar setCurrentView={setCurrentView} views={views} />
     <View currentView={currentView} views={views} />
     <Footer />
   </div>;
 }
 
-function View(currentView, views) {
+function View({ currentView, views }) {
   switch (currentView){
   case views.Chart:
     return <ChartView />;
