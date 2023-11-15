@@ -33,6 +33,9 @@ export default function MapFilters({
       await updateDataWithBasicFilters(setGdp, setProtein, basicFilters);
     }
     fetchDefaultData();
+  // This is the initial fetch so the should not be any dependencies
+  // We will try to rewrite this code to not have the warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applyFilters = async e => {

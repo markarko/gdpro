@@ -4,20 +4,35 @@ import NavBar from './components/navbar/navbar';
 import ChartView from './components/chart/ChartView';
 import Footer from './components/footer/Footer';
 import MapView from './components/Map/MapView';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <NavBar />
-      <Routes>
-        <Route path="/" element={<ChartView />} />
-        <Route path="Quiz" element={<QuizComponent />} />
-        <Route path="Map" element={<MapView />} />
-      </Routes>
-      <Footer />
-    </BrowserRouter>
-  );
+  const views = {
+    Chart : 'chart',
+    Map : 'map',
+    Quiz : 'quiz'
+  };
+
+  const [currentView, setCurrentView] = useState(views.Chart);
+
+  return <div>
+    <NavBar setCurrentView={setCurrentView} views={views} />
+    <View currentView={currentView} views={views} />
+    <Footer />
+  </div>;
+}
+
+function View({ currentView, views }) {
+  switch (currentView){
+  case views.Chart:
+    return <ChartView />;
+  case views.Map:
+    return <MapView />;
+  case views.Quiz:
+    return <QuizComponent />;
+  default:
+    return <div>Unsupported view</div>;
+  }
 }
 
 export default App;
