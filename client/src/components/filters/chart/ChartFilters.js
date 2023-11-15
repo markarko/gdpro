@@ -8,7 +8,8 @@ export default function ChartFilters({
   setProtein,
   validYears,
   validCountries,
-  dataLayout }) {
+  dataLayout,
+  setError }) {
     
   const FilterType = {
     Basic: 'basic',
@@ -37,17 +38,21 @@ export default function ChartFilters({
 
   const applyFilters = async e => {
     e.preventDefault();
-    switch (selectedFilterType) {
-    case FilterType.Basic:
-      await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
-    case FilterType.CountryRanking:
-      await updateDataWithCountryRankingFilter(
-        setGdp,
-        setProtein,
-        countryRankingFilter,
-        dataLayout);
-      break;
-    default: break;
+    try{
+      switch (selectedFilterType) {
+      case FilterType.Basic:
+        await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
+      case FilterType.CountryRanking:
+        await updateDataWithCountryRankingFilter(
+          setGdp,
+          setProtein,
+          countryRankingFilter,
+          dataLayout);
+        break;
+      default: break;
+      }
+    } catch(err) {
+      setError(err.message);
     }
   };
 
@@ -95,21 +100,22 @@ async function updateDataWithBasicFilters(
   
     const url = `/api/v1/${dataType}/countries/${country}?startYear=${minYear}&endYear=${maxYear}`;
     const response = await fetch(url);
-  
-    return await response.json();
+    const json = await response.json();
+
+    if (!response.ok){
+      throw new Error(json.error);
+    }
+
+    return json;
   }
 
-  try {
-    const [gdpData, proteinData] = await Promise.all([
-      getDataForBasicFitlers('gdp', basicFilters),
-      getDataForBasicFitlers('protein', basicFilters)
-    ]);
+  const [gdpData, proteinData] = await Promise.all([
+    getDataForBasicFitlers('gdp', basicFilters),
+    getDataForBasicFitlers('protein', basicFilters)
+  ]);
 
-    setGdp(gdpData);
-    setProtein(proteinData);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+  setGdp(gdpData);
+  setProtein(proteinData);
 }
 
 async function updateDataWithCountryRankingFilter(
@@ -124,21 +130,22 @@ async function updateDataWithCountryRankingFilter(
 
     const url = `/api/v1/${value}/countries/top/1?orderBy=${orderBy}`;
     const response = await fetch(url);
+    const json = await response.json();
+    
+    if (!response.ok){
+      throw new Error(json.error);
+    }
 
-    return await response.json();
+    return json;
   }
   
-  try {
-    const data = await getDataForCountryRankingFilter();
+  const data = await getDataForCountryRankingFilter();
 
-    if (countryRankingFilter['value'] === 'gdp'){
-      setGdp(data);
-      setProtein(dataLayout);
-    } else if (countryRankingFilter['value'] === 'protein') {
-      setProtein(data);
-      setGdp(dataLayout);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
+  if (countryRankingFilter['value'] === 'gdp'){
+    setGdp(data);
+    setProtein(dataLayout);
+  } else if (countryRankingFilter['value'] === 'protein') {
+    setProtein(data);
+    setGdp(dataLayout);
   }
 }  

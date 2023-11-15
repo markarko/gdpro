@@ -44,15 +44,10 @@ export default function ChartView() {
       } finally {
         setLoading(false);
       }
-      
     }
 
     fetchInitialData();
   }, []);
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   if (loading) {
     return <div></div>;
@@ -68,6 +63,8 @@ export default function ChartView() {
       setProtein={setProtein}
       validYears={validYears}
       validCountries={validCountries}
-      dataLayout={dataLayout} />
+      dataLayout={dataLayout}
+      setError={setError} />
+    { error ? <div>{error}</div> : <div></div> }
   </div>;
 }
