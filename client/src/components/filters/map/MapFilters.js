@@ -19,7 +19,7 @@ export default function MapFilters({
 
   const [basicFilters, setBasicFilters] = useState({
     year: 1990,
-    countries: [],
+    countries: ['iran', 'ukraine', 'united states'],
   });
   
   const [topCountriesFilter, setTopCountriesFilter] = useState({

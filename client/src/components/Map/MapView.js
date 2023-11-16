@@ -9,8 +9,34 @@ export default function MapView() {
     }
   };
   
-  const [gdp, setGdp] = useState(dataLayout);
-  const [protein, setProtein] = useState(dataLayout);
+  const proteinDataLayout = {
+    'data': {
+      'results': [
+        {'county': 'iran',
+          'code': 'IRN',
+          'year': 2018,
+          'gppd': 78.99342,
+          'position': ['32.427908', '53.688046']
+        }
+      ]
+    }
+  };
+
+  const gdpDataLayout = {
+    'data': {
+      'results': [
+        {'county': 'iran',
+          'code': 'IRN',
+          'year': 2018,
+          'gpd': 14628.946,
+          'position': ['32.427908', '53.688046']
+        }
+      ]
+    }
+  };
+  
+  const [gdp, setGdp] = useState(gdpDataLayout);
+  const [protein, setProtein] = useState(proteinDataLayout);
   const [loading, setLoading] = useState(true);
   const [error,] = useState(false);
   const [validYears, setValidYears] = useState([]);

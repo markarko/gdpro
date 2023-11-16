@@ -93,6 +93,15 @@ function validateYearRange(res, startYear, endYear) {
   }
 }
 
+/**
+ * Filters an array of objects by the start GDP
+ * 
+ * @param {number} startGDP - The start GDP to filter by
+ * @param {Array<Object>} arr - An array of objects to be filtered
+ * Each object must have a 'gdp' property
+ * @returns {Array<Object>} - The filtered array
+ */
+
 function filterByStartGDP(startGDP, arr) {
   if (!startGDP) {
     return arr;
@@ -101,6 +110,15 @@ function filterByStartGDP(startGDP, arr) {
   return arr.filter(obj => obj.gdp >= startGDP);
 }
 
+
+/**
+ * Filters an array of objects by the end GDP
+ * 
+ * @param {number} endGDP - The end GDP to filter by
+ * @param {Array<Object>} arr - An array of objects to be filtered
+ * Each object must have a 'gdp' property
+ * @returns {Array<Object>} - The filtered array
+ */
 function filterByEndGDP(endGDP, arr) {
   if (!endGDP) {
     return arr;
@@ -109,6 +127,14 @@ function filterByEndGDP(endGDP, arr) {
   return arr.filter(obj => obj.gdp <= endGDP);
 }
 
+/**
+ * Validates whether the GDP parameter is a number
+ * 
+ * @param {Object} res - The express response object
+ * @param {number} gdp - The GDP parameter to validate
+ * @throws {Error} - If the GDP parameter is not a number
+ */
+
 function validateGDP(res, gdp, paramName) {
   if (gdp && isNaN(gdp)) {
     sendError(res, 400, `The ${paramName} parameter must be a number`);
@@ -116,11 +142,38 @@ function validateGDP(res, gdp, paramName) {
   }
 }
 
+/**
+ * Validates the order of start GDP and end GDP parameters
+ * 
+ * @param {Object} res - The express response object
+ * @param {number} startGDP - The start GDP parameter
+ * @param {number} endGDP - The end GDP parameter
+ * @throws {Error} - If the start GDP parameter is greater than the end GDP parameter
+ */
+
 function validateGDPRange(res, startGDP, endGDP) {
   if (startGDP && endGDP && startGDP > endGDP) {
     sendError(res, 400, 'The startGDP parameter cannot be greater than the endGDP parameter');
     throw new Error();
   }
+}
+
+/**
+ * Validates whether the countries parameter is a string
+ * 
+ * @param {Object} res - The express response object
+ * @param {string} countries - The countries parameter to validate
+ * @throws {Error} - If the countries parameter is not a string
+ */
+
+function validateCountries(validCountries, countries) {
+  const returnCountries = [];
+  for (let i = 0; i < countries.length; i++) {
+    if (validCountries.includes(countries[i])) {
+      returnCountries.push(countries[i]);
+    }
+  }
+  return returnCountries;
 }
 
 module.exports = {
@@ -134,5 +187,6 @@ module.exports = {
   filterByStartGDP,
   filterByEndGDP,
   validateGDP,
-  validateGDPRange
+  validateGDPRange,
+  validateCountries
 };
