@@ -73,31 +73,6 @@ router.get('/countries/:country', async (req, res) => {
   apiUtils.sendData(res, 200, responseBody);
 });
 
-// stub endpoint for filtering by a range of years
-router.get('/countries/:country', async (req, res) => {
-  const startYear = req.query.startYear;
-  const endYear = req.query.endYear;
-  startYear.charAt(0);
-  endYear.charAt(0);
-  res.status(200);
-  apiUtils.sendData(res, 200,
-    {
-      country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          protein : 123.12
-        },
-        {
-          year : 1991,
-          protein : 234.12
-        }
-      ]
-    }
-  );
-});
-
 // stub api endpoint for growth / decline of protein over all the years
 router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;

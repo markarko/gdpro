@@ -6,7 +6,7 @@ jest.mock('../db/db', () => {
     constructor() {
     }
     async readAllCountryData() {
-      return [{ 'country' : 'Iran', 'code' : 'IRN', 'year' : '2021', 'gppd' : '50' }];
+      return [{ 'country' : 'iran', 'code' : 'IRN', 'year' : 2021, 'gppd' : 50 }];
     }
 
     async readTopCountries() {
@@ -28,7 +28,7 @@ describe('should get protein for a country', () => {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }).send({
-      'country':'Iran', 'code':'IRN', 'results':[{'year':'2021', 'gppd':'50'}]
+      'country':'Iran', 'code':'IRN', 'results':[{'year':2021, 'gppd':50}]
     });
     expect(response.statusCode).toEqual(200);
   });
@@ -39,6 +39,45 @@ describe('should return 400 since country is invalid', () => {
     const url = '/api/v1/protein/countries/Ir@n';
     const response = await request(app).get(url).set('Accept', 'application/json');
     expect(response.statusCode).toEqual(400);
+  });
+});
+
+describe('GET /api/v1/protein/countries/Iran?endYear=2021', () => {
+  test('responds with an array of gppd values filtered by end year', async () => {
+    const url = '/api/v1/protein/countries/Iran?endYear=2021';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'data': {
+        'country':'iran', 'code':'IRN', 'results':[{'year':2021, 'gppd':50}]
+      }
+      });
+    expect(response.statusCode).toEqual(200);
+  });
+});
+
+describe('GET /api/v1/protein/countries/Iran?endYear=2000', () => {
+  test('responds with empty results', async () => {
+    const url = '/api/v1/protein/countries/Iran?endYear=2000';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'data': {
+        'country':'iran', 'code':'IRN', 'results':[]
+      }
+      });
+    expect(response.statusCode).toEqual(200);
+  });
+});
+
+describe('GET /api/v1/protein/countries/Iran?startYear=2000&endYear=2050', () => {
+  test('responds with an array of protein values filtered by end year', async () => {
+    const url = '/api/v1/protein/countries/Iran?startYear=2021&endYear=2050';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'data': {
+        'country':'iran', 'code':'IRN', 'results':[{'year':2021, 'gppd':50}]
+      }
+      });
+    expect(response.statusCode).toEqual(200);
   });
 });
 
