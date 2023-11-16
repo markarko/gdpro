@@ -8,6 +8,15 @@ jest.mock('../db/db', () => {
     async readAllCountryData() {
       return [{ 'country' : 'Iran', 'code' : 'IRN', 'year' : '2021', 'gppd' : '50' }];
     }
+
+    async readTopCountries() {
+      return [{'code':'ISL', 'country':'iceland', 'gppd':123.44397, 'year':2000}];
+    }
+
+    async readAll() {
+      return [{'country':'lc', 'latitude':'64.963051', 'longitude':'-19.020835',
+        'name':'Iceland'}];
+    }
   }
   return DB;
 });
@@ -33,9 +42,34 @@ describe('should return 400 since country is invalid', () => {
   });
 });
 
+describe('GET /api/v1/protein/countries/top/1?orderBy=highest&year=2000', () => {
+  it('responds top 1 country with highest gdp', async () => {
+    const url = '/api/v1/protein/countries/top/1?orderBy=highest&year=2000';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'data': {
+        'results':[{'country':'iceland', 'code':'ISL', 'year':2000,
+          'protein':123.44397, position:['64.963051', '-19.020835']}]
+      }
+      });
+    expect(response.statusCode).toEqual(200);
+  });
+});
+
+describe('GET /api/v1/protein/countries/top/-1?orderBy=highest', () => {
+  it('responds with error', async () => {
+    const url = '/api/v1/protein/countries/top/-1?orderBy=highest';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'error': 'The value following top/ must be a number between 1 and 10'}
+    );
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
 describe('GET /api/v1/protein/countries/top/100?orderBy=highest', () => {
   it('responds with error', async () => {
-    const url = '/api/v1/gdp/countries/top/100?orderBy=highest';
+    const url = '/api/v1/protein/countries/top/100?orderBy=highest';
     const response = await request(app).get(url);
     expect(response.body).toEqual(
       {'error': 'The value following top/ must be a number between 1 and 10'}
