@@ -42,6 +42,28 @@ describe('should return 400 since country is invalid', () => {
   });
 });
 
+describe('GET /api/v1/protein/countries/Canada?startYear=2050&endYear=2000', () => {
+  test('responds with year range error', async () => {
+    const url = '/api/v1/protein/countries/Canada?startYear=2050&endYear=2000';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual({'error' : 
+    'The startYear parameter cannot be greater than the endYear parameter'
+    });
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
+describe('GET /api/v1/protein/countries/Canada?startYear=2050&endYear=2000', () => {
+  test('responds with year range error', async () => {
+    const url = '/api/v1/protein/countries/Canada?startYear=2050&endYear=2000';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual({'error' : 
+    'The startYear parameter cannot be greater than the endYear parameter'
+    });
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
 describe('GET /api/v1/protein/countries/top/1?orderBy=highest&year=2000', () => {
   it('responds top 1 country with highest gdp', async () => {
     const url = '/api/v1/protein/countries/top/1?orderBy=highest&year=2000';
