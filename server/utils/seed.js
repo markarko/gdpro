@@ -22,6 +22,10 @@ const {datasetToJson, seedDatabase} = require('./parsing.js');
             rowCopy.gppd = Number(row.gppd);
           }
         }
+
+        if (rowCopy.name) {
+          rowCopy.name = row.name.toLowerCase();
+        }
         
 
         return row;
