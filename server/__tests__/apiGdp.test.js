@@ -42,21 +42,7 @@ jest.mock('../db/db', () => {
         'name': 'canada'
       }];
     }
-
-    async readAll() {
-      return [{
-        'country': 'ca',
-        'latitude': '56.130366',
-        'longitude': '-106.346771',
-        'name': 'canada'
-      },
-      {
-        'country': 'de',
-        'latitude': '51.165691',
-        'longitude': '10.451526',
-        'name': 'germany'
-      }];
-    }
+    
     async readTopCountries() {
       return [{'country':'luxembourg', 'code':'LUX', 'year':2000,
         'gdp':99301.52, position:['49.815273', '6.129583']}];
