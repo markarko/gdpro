@@ -77,48 +77,70 @@ router.get('/countries/:country', async (req, res) => {
 router.get('/countries/:country/gdp-range', async (req, res) => {
   const startGdp = req.query.startGdp;
   const endGdp = req.query.endGdp;
-  startGdp.charAt(0);
-  endGdp.charAt(0);
+  const country = req.params.country;
   res.status(200);
+
+  try {
+    gdpUtils.validateGDP(res, startGdp, 'startGdp');
+    gdpUtils.validateGDP(res, endGdp, 'endGdp');
+    gdpUtils.validateGDPRange(res, startGdp, endGdp);
+  } catch {
+    return;
+  }
+
+  const data = await db.getGDPRange(gdpCollName, country, startGdp, endGdp);
+
+  if (!data.length) {
+    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
 
   gdpUtils.sendData (res, 200,
     {
-      country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          gdp : 5723
-        },
-        {
-          year : 1991,
-          gdp : 5777
-        }
-      ]
+      country: data[0].country,
+      code: data[0].code,
+      results : data.map(row => {
+        return { year : row.year, gdp : row.gdp };
+      })
     });
 });
 
 
-// stub api endpoint for growth / decline of gdp over all the years
+// Api endpoint for growth / decline of gdp over all the years
 router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
-  startYear.charAt(0);
-  endYear.charAt(0);
-  res.status(200); 
+  const country = req.params.country;
+
+  // validate start and end year
+  try {
+    gdpUtils.validateYear(res, startYear, 'startYear');
+    gdpUtils.validateYear(res, endYear, 'endYear');
+    gdpUtils.validateYearRange(res, startYear, endYear);
+  } catch {
+    return;
+  }
+
+  const data = await db.getYearRange(gdpCollName, country, startYear, endYear);
+
+  if (!data.length) {
+    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
+  // Compare each year to the previous year and calculate the growth/decline
+  const results = data.map((row, index) => {
+    if (index === 0) {
+      return { year : row.year, gdpGrowth : 0 };
+    } else {
+      return { year : row.year, gdpGrowth : row.gdp / 1000 - data[index - 1].gdp / 10000 };
+    }
+  });
+
   gdpUtils.sendData (res, 200,
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          years : [1990, 1991],
-          gdpGrowth : 7
-        },
-        {
-          years : [1991, 1992],
-          gdpGrowth : -2
-        }
-      ]}
+    {country: data[0].country,
+      code: data[0].code,
+      results: results}
   );
 });
 
@@ -189,56 +211,34 @@ router.get('/stub/countries/top/:top', async (req, res) => {
   );
 });
 
-// stub api endpoint to filter by specific country and year
-router.get('/countries/:country/:year', async (req, res) => {
-  res.status(200);
-  req.query.year;
-  gdpUtils.sendData(res, 200,
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          gdp : 5723
-        }
-      ]}
-  );
-});
-
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  // let countries = req.query.countries;
-  // res.status(200);
-  // countries = countries.split(',');
-  // countries.charAt(0);
+  let countries = req.query.countries;
+  const year = req.query.year;
 
-  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
-  // this endpoint returns the gdp for all the queried countries in the same year.
+  countries = countries.split(',');
+  if (countries.length > 10 || countries.length < 1) {
+    gdpUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+  }
+  //check if countries is in AllCountries
+  countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), countries);
+  if (countries.length === 0) {
+    gdpUtils.sendError(res, 404, `Countries ${countries} not found`);
+  }
+
+  const results = [];
+  for (const country in countries) {
+    // eslint-disable-next-line no-await-in-loop
+    const data = await db.getCountryYearData(gdpCollName, countries[country], year);
+    // eslint-disable-next-line no-await-in-loop
+    const latLongData = await db.getCountryCountryData('country', countries[country]);
+    data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
+    results.push(data[0]);
+  }
+
   gdpUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        year : 2003,
-        gdp : 1234,
-        position : [56.1304, -106.3468]
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 2003,
-        gdp : 4321,
-        position : [37.0902, -95.7129]
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        year : 2003,
-        gdp : 5432,
-        position : [23.6345, -102.5528]
-      }
-    ]}
+    {results : results}
   );
 });
 

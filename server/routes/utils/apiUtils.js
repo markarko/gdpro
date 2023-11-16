@@ -123,6 +123,16 @@ function validateGDPRange(res, startGDP, endGDP) {
   }
 }
 
+function validateCountries(validCountries, countries) {
+  const returnCountries = [];
+  for (let i = 0; i < countries.length; i++) {
+    if (!validCountries.includes(countries[i])) {
+      returnCountries.push(countries[i]);
+    }
+  }
+  return returnCountries;
+}
+
 module.exports = {
   sendData,
   sendError,
@@ -134,5 +144,6 @@ module.exports = {
   filterByStartGDP,
   filterByEndGDP,
   validateGDP,
-  validateGDPRange
+  validateGDPRange,
+  validateCountries
 };

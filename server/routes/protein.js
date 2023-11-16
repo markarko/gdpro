@@ -5,7 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
-const apiUtils = require('./utils/apiUtils.js');
+const proteinUtils = require('./utils/apiUtils.js');
 const DB = require('../db/db.js');
 const db = new DB();
 const proteinCollName = 'daily-per-capita-protein-supply';
@@ -20,8 +20,9 @@ const proteinCollName = 'daily-per-capita-protein-supply';
  */
 router.param('country', (req, res, next, country) => {
   const parsedCountry = country.replace('%20', ' ');
-  if (!apiUtils.containsOnlyLetters(parsedCountry)) {
-    apiUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
+  if (!proteinUtils.containsOnlyLetters(parsedCountry)) {
+    const error = 'The country name cannot contain numbers or special characters';
+    proteinUtils.sendError(res, 400, error);
     return;
   }
 
@@ -41,9 +42,9 @@ router.get('/countries/:country', async (req, res) => {
   const endYear = req.query.endYear;
   try {
     if (startYear && endYear) {
-      apiUtils.validateYear(res, startYear, 'startYear');
-      apiUtils.validateYear(res, endYear, 'endYear');
-      apiUtils.validateYearRange(res, startYear, endYear);
+      proteinUtils.validateYear(res, startYear, 'startYear');
+      proteinUtils.validateYear(res, endYear, 'endYear');
+      proteinUtils.validateYearRange(res, startYear, endYear);
     } 
   } catch {
     return;
@@ -52,7 +53,7 @@ router.get('/countries/:country', async (req, res) => {
   const data = await db.readAllCountryData(proteinCollName, req.params.country);
 
   if (!data.length) {
-    apiUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    proteinUtils.sendError(res, 404, `No data found for ${req.params.country}`);
     return;
   }
 
@@ -60,8 +61,8 @@ router.get('/countries/:country', async (req, res) => {
     return { year : row.year, gppd : row.gppd };
   });
 
-  results = apiUtils.filterByStartYear(startYear, results);
-  results = apiUtils.filterByEndYear(endYear, results);
+  results = proteinUtils.filterByStartYear(startYear, results);
+  results = proteinUtils.filterByEndYear(endYear, results);
 
   const responseBody = {
     country: data[0].country,
@@ -69,54 +70,46 @@ router.get('/countries/:country', async (req, res) => {
     results : results
   };
 
-  apiUtils.sendData(res, 200, responseBody);
-});
-
-// stub endpoint for filtering by a range of years
-router.get('/countries/:country', async (req, res) => {
-  const startYear = req.query.startYear;
-  const endYear = req.query.endYear;
-  startYear.charAt(0);
-  endYear.charAt(0);
-  res.status(200);
-  apiUtils.sendData(res, 200,
-    {
-      country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          protein : 123.12
-        },
-        {
-          year : 1991,
-          protein : 234.12
-        }
-      ]
-    }
-  );
+  proteinUtils.sendData(res, 200, responseBody);
 });
 
 // stub api endpoint for growth / decline of protein over all the years
 router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
-  res.status(200);
-  startYear.charAt(0);
-  endYear.charAt(0);
-  apiUtils.sendData (res, 200, 
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          years : [1990, 1991],
-          proteinGrowth : 7
-        },
-        {
-          years : [1991, 1992],
-          proteinGrowth : -2
-        }
-      ]}
+  const country = req.params.country;
+
+  // Validate the start and end year parameters
+  try {
+    if (startYear && endYear) {
+      proteinUtils.validateYear(res, startYear, 'startYear');
+      proteinUtils.validateYear(res, endYear, 'endYear');
+      proteinUtils.validateYearRange(res, startYear, endYear);
+    }
+  } catch {
+    return;
+  }
+
+  const data = await db.getYearRange(proteinCollName, country, startYear, endYear);
+
+  if (!data.length) {
+    proteinUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
+  // Compare each year to the previous year and calculate the growth/decline
+  const results = data.map((row, index) => {
+    if (index === 0) {
+      return { year : row.year, gppdGrowth : 0 };
+    } else {
+      return { year : row.year, gppdGrowth : row.gppd / 1000 - data[index - 1].gppd / 1000 };
+    }
+  });
+
+  proteinUtils.sendData (res, 200,
+    {country: data[0].country,
+      code: data[0].code,
+      results: results}
   );
 });
 
@@ -126,7 +119,7 @@ router.get('/countries/top/:top', async (req, res) => {
 
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
     const error = `The value following top/ must be a number between 1 and 10`;
-    apiUtils.sendError(res, 400, error);
+    proteinUtils.sendError(res, 400, error);
     return;
   }
 
@@ -135,134 +128,44 @@ router.get('/countries/top/:top', async (req, res) => {
 
   if (!orderBy || !orderByOptions.includes(orderBy)) {
     const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
-    apiUtils.sendError(res, 400, error);
+    proteinUtils.sendError(res, 400, error);
     return;
   }
 
   const data = await db.readTopCountries(proteinCollName, top, orderBy, 'gppd');  
 
-  apiUtils.sendData(res, 200, { results : data });
-});
-
-//Stub and temporary endpoint for the sake of map filters. This will be deleted later.
-router.get('/stub/countries/top/:top', async (req, res) => {
-  apiUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Iran',
-        code: 'IRN',
-        year : 2005,
-        protein : 123,
-        position : [32.4279, 53.6880]
-      },
-      {
-        country: 'Brazil',
-        code: 'BRZ',
-        year : 2015,
-        protein : 69,
-        position : [-14.2350, -51.9253]
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 2018,
-        protein : 85,
-        position : [37.0902, -95.7129]
-      },
-      {
-        country: 'France',
-        code: 'FRA',
-        year : 2011,
-        protein : 21,
-        position : [46.2276, 2.2137]
-      },
-      {
-        country: 'Japan',
-        code: 'JAP',
-        year : 2000,
-        protein : 102,
-        position : [36.2048, 138.2529]
-      }
-    ]}
-  );
-});
-
-// stub endpoint for filtering by a range of protein intake
-router.get('/countries/:country/protein', async (req, res) => {
-  const startProtein = req.query.startProtein;
-  const endProtein = req.query.endProtein;
-  startProtein.charAt(0);
-  endProtein.charAt(0);
-  res.status(200);
-  apiUtils.sendData(
-    {
-      country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          protein : 100.00
-        },
-        {
-          year : 2005,
-          protein : 101.00
-        }
-      ]
-    }
-  );
-});
-
-// stub api endpoint to filter by specific country and year
-router.get('/countries/:country/:year', async (req, res) => {
-  req.query.year;
-  res.status(200);
-
-  apiUtils.sendData (
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          protein : 100.00
-        }
-      ]}
-  );
+  proteinUtils.sendData(res, 200, { results : data });
 });
 
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  // let countries = req.query.countries;
-  // countries = countries.split(',');
-  // res.status(200);
-  // countries.charAt(0);
+  let countries = req.query.countries;
+  const year = req.query.year;
 
-  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
-  // this endpoint returns the protein for all the queried countries in the same year
-  apiUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        year : 2003,
-        protein : 100.00,
-        position : [56.1304, -106.3468]
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 2003,
-        protein : 99.00,
-        position : [37.0902, -95.7129]
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        year : 2003,
-        protein : 98.00,
-        position : [23.6345, -102.5528]
-      }
-    ]}
+  countries = countries.split(',');
+  if (countries.length > 10 || countries.length < 1) {
+    proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+  }
+
+  //check if countries is in the database
+  countries = proteinUtils.validateCountries(await db.getAllCountries(proteinCollName), countries);
+  if (countries.length === 0) {
+    proteinUtils.sendError(res, 404, `Countries ${countries} not found`);
+  }
+
+  const results = [];
+  for (const country in countries) {
+    // eslint-disable-next-line no-await-in-loop
+    const data = await db.getCountryYearData(proteinCollName, countries[country], year);
+    // eslint-disable-next-line no-await-in-loop
+    const latLongData = await db.getCountryCountryData('country', countries[country]);
+    data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
+    results.push(data[0]);
+  }
+
+  proteinUtils.sendData (res, 200,
+    {results : results}
   );
 });
 

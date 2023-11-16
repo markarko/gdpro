@@ -1,8 +1,9 @@
+/* eslint-disable no-loop-func */
+
 /**
  * Express router for managing protein data by country.
  * @module proteinRouter
  */
-
 const express = require('express');
 const router = express.Router();
 const apiUtils = require('./utils/apiUtils.js');
@@ -23,17 +24,17 @@ const countriesCollName = 'country';
 router.get('/random-questions/:number', async (req, res) => {
   const numQuestion = req.params.number;
 
+  if (!numQuestion) {
+    apiUtils.sendError(res, 400, 'No questions specified');
+    return;
+  }
   // check if the number of questions is valid (between 1 and 10)
   if (numQuestion < 1 || numQuestion > 10) {
     apiUtils.sendError(res, 400, 'Invalid number of questions');
     return;
   }
+  
   const questions = [];
-  if (!numQuestion) {
-    apiUtils.sendError(res, 400, 'No questions specified');
-    return;
-  }
-
   for (let i = 0; i < numQuestion; i++) {
     // eslint-disable-next-line no-await-in-loop
     const question = await generateQuestion();
@@ -45,9 +46,9 @@ router.get('/random-questions/:number', async (req, res) => {
     let cGDP = '';
     let cPro = '';
     let country = '';
+    let loop = true;
   
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    while (loop) {
       // This isn't great coding style, I understand, this is just a quick fix
       country = countries[Math.floor(Math.random() * countries.length)];
       // eslint-disable-next-line no-await-in-loop
@@ -63,11 +64,10 @@ router.get('/random-questions/:number', async (req, res) => {
       }
       
       if (cGDP && cPro) {
-        break;
+        loop = false;
       }
     }
   
-    
     const Lon = country.longitude;
     const Lat = country.lattitude;
   
