@@ -10,9 +10,9 @@ export default function NavBar({ setCurrentView, views}) {
           <a href="/#" onClick={() => setCurrentView(views.Chart)} className="elem">Chart</a>
           <a href="/#" onClick={() => setCurrentView(views.Quiz)} className="elem">Quiz</a>
         </div>
-        <div className="nav-right">
+        {/* <div className="nav-right">
           <a href="Light" className="elem">Light</a>
-        </div>
+        </div> */}
       </nav>
     </div>  );
 }
