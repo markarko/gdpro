@@ -42,6 +42,21 @@ jest.mock('../db/db', () => {
         'name': 'canada'
       }];
     }
+
+    async readAll() {
+      return [{
+        'country': 'ca',
+        'latitude': '56.130366',
+        'longitude': '-106.346771',
+        'name': 'canada'
+      },
+      {
+        'country': 'de',
+        'latitude': '51.165691',
+        'longitude': '10.451526',
+        'name': 'germany'
+      }];
+    }
   }
   
   return DB;
@@ -137,8 +152,6 @@ describe('GET /api/v1/gdp/countries/Canada?startYear=2050&endYear=2000', () => {
     expect(response.statusCode).toEqual(400);
   });
 });
-
-
 
 describe('GET /api/v1/gdp/countries/canada/gdp-range?startGdp=1&endGdp=100000', () => {
   test('responds with an array of gdp values filtered by start gdp', async () => {
