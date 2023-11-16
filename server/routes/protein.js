@@ -146,12 +146,13 @@ router.get('/countries/', async (req, res) => {
   countries = countries.split(',');
   if (countries.length > 10 || countries.length < 1) {
     proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+    return;
   }
 
-  //check if countries is in the database
   countries = proteinUtils.validateCountries(await db.getAllCountries(proteinCollName), countries);
   if (countries.length === 0) {
     proteinUtils.sendError(res, 404, `Countries ${countries} not found`);
+    return;
   }
 
   const results = [];
