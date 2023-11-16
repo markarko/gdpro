@@ -121,7 +121,6 @@ router.get('/countries/:country/variation', async (req, res) => {
   );
 });
 
-// stub api endpoint to fiter by the top x countries with the highest or lowest protein intake
 router.get('/countries/top/:top', async (req, res) => {
   const top = req.params.top;
   const year = req.query.year;

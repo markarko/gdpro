@@ -4,6 +4,7 @@ const gdpUtils = require('./utils/apiUtils.js');
 const DB = require('../db/db.js');
 const db = new DB();
 const gdpCollName = 'gdp-per-capita-worldbank';
+const countryCollName = 'country';
 
 /**
  * Middleware for validating the 'country' parameter in the route
@@ -125,6 +126,7 @@ router.get('/countries/:country/variation', async (req, res) => {
 // stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
 router.get('/countries/top/:top', async (req, res) => {
   const top = req.params.top;
+  const year = req.query.year;
 
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
     const error = `The value following top/ must be a number between 1 and 10`;
@@ -141,52 +143,26 @@ router.get('/countries/top/:top', async (req, res) => {
     return;
   }
 
-  const data = await db.readTopCountries(gdpCollName, top, orderBy, 'gdp');  
+  const results = [];
+  const data = await db.readTopCountries(gdpCollName, top, orderBy, 'gdp', year);  
+  const geoPosition = await db.readAll(countryCollName);
 
-  gdpUtils.sendData(res, 200, { results : data });
-});
-
-//Stub and temporary endpoint for the sake of map filters. This will be deleted later.
-router.get('/stub/countries/top/:top', async (req, res) => {
-  gdpUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Iran',
-        code: 'IRN',
-        year : 2005,
-        gdp : 9876,
-        position : [32.4279, 53.6880]
-      },
-      {
-        country: 'Brazil',
-        code: 'BRZ',
-        year : 2015,
-        gdp : 5432,
-        position : [-14.2350, -51.9253]
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 2018,
-        gdp : 1234,
-        position : [37.0902, -95.7129]
-      },
-      {
-        country: 'France',
-        code: 'FRA',
-        year : 2011,
-        gdp : 5678,
-        position : [46.2276, 2.2137]
-      },
-      {
-        country: 'Japan',
-        code: 'JAP',
-        year : 2000,
-        gdp : 9999,
-        position : [36.2048, 138.2529]
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name.toLowerCase()) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          gdp: country.gdp,
+          position: [position.latitude, position.longitude]
+        });
       }
-    ]}
-  );
+    });
+  });
+
+  gdpUtils.sendData(res, 200, { results : results });
+
 });
 
 // stub api endpoint to filter by specific country and year
