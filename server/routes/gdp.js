@@ -80,7 +80,20 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
   const country = req.params.country;
   res.status(200);
 
+  try {
+    gdpUtils.validateGDP(res, startGdp, 'startGdp');
+    gdpUtils.validateGDP(res, endGdp, 'endGdp');
+    gdpUtils.validateGDPRange(res, startGdp, endGdp);
+  } catch {
+    return;
+  }
+
   const data = await db.getGDPRange(gdpCollName, country, startGdp, endGdp);
+
+  if (!data.length) {
+    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
 
   gdpUtils.sendData (res, 200,
     {
@@ -93,13 +106,28 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
 });
 
 
-// stub api endpoint for growth / decline of gdp over all the years
+// Api endpoint for growth / decline of gdp over all the years
 router.get('/countries/:country/variation', async (req, res) => {
   const startYear = req.query.startYear;
   const endYear = req.query.endYear;
   const country = req.params.country;
 
+  // validate start and end year
+  try {
+    gdpUtils.validateYear(res, startYear, 'startYear');
+    gdpUtils.validateYear(res, endYear, 'endYear');
+    gdpUtils.validateYearRange(res, startYear, endYear);
+  } catch {
+    return;
+  }
+
   const data = await db.getYearRange(gdpCollName, country, startYear, endYear);
+
+  if (!data.length) {
+    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
   // Compare each year to the previous year and calculate the growth/decline
   const results = data.map((row, index) => {
     if (index === 0) {
@@ -183,22 +211,6 @@ router.get('/stub/countries/top/:top', async (req, res) => {
   );
 });
 
-// stub api endpoint to filter by specific country and year
-router.get('/countries/:country/:year', async (req, res) => {
-  res.status(200);
-  req.query.year;
-  gdpUtils.sendData(res, 200,
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          gdp : 5723
-        }
-      ]}
-  );
-});
-
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
@@ -209,11 +221,13 @@ router.get('/countries/', async (req, res) => {
   if (countries.length > 10 || countries.length < 1) {
     gdpUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
   }
-  //check if countries is in db.getAllCountries
-  const validCountries = await db.getAllCountries(gdpCollName);
-  countries.filter((country) => validCountries.includes(country.toLowerCase()));
-  const results = [];
+  //check if countries is in AllCountries
+  countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), countries);
+  if (countries.length === 0) {
+    gdpUtils.sendError(res, 404, `Countries ${countries} not found`);
+  }
 
+  const results = [];
   for (const country in countries) {
     // eslint-disable-next-line no-await-in-loop
     const data = await db.getCountryYearData(gdpCollName, countries[country], year);

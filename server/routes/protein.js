@@ -79,13 +79,30 @@ router.get('/countries/:country/variation', async (req, res) => {
   const endYear = req.query.endYear;
   const country = req.params.country;
 
+  // Validate the start and end year parameters
+  try {
+    if (startYear && endYear) {
+      proteinUtils.validateYear(res, startYear, 'startYear');
+      proteinUtils.validateYear(res, endYear, 'endYear');
+      proteinUtils.validateYearRange(res, startYear, endYear);
+    }
+  } catch {
+    return;
+  }
+
   const data = await db.getYearRange(proteinCollName, country, startYear, endYear);
+
+  if (!data.length) {
+    proteinUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
   // Compare each year to the previous year and calculate the growth/decline
   const results = data.map((row, index) => {
     if (index === 0) {
       return { year : row.year, gppdGrowth : 0 };
     } else {
-      return { year : row.year, gppdGrowth : row.gppd / 1000 - data[index - 1].gppd / 10000 };
+      return { year : row.year, gppdGrowth : row.gppd / 1000 - data[index - 1].gppd / 1000 };
     }
   });
 
@@ -130,11 +147,14 @@ router.get('/countries/', async (req, res) => {
   if (countries.length > 10 || countries.length < 1) {
     proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
   }
-  //check if countries is in db.getAllCountries
-  const validCountries = await db.getAllCountries(proteinCollName);
-  countries.filter((country) => validCountries.includes(country.toLowerCase()));
-  const results = [];
 
+  //check if countries is in the database
+  countries = proteinUtils.validateCountries(await db.getAllCountries(proteinCollName), countries);
+  if (countries.length === 0) {
+    proteinUtils.sendError(res, 404, `Countries ${countries} not found`);
+  }
+
+  const results = [];
   for (const country in countries) {
     // eslint-disable-next-line no-await-in-loop
     const data = await db.getCountryYearData(proteinCollName, countries[country], year);
