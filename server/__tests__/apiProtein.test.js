@@ -33,6 +33,29 @@ describe('should return 400 since country is invalid', () => {
   });
 });
 
+describe('GET /api/v1/protein/countries/top/100?orderBy=highest', () => {
+  it('responds with error', async () => {
+    const url = '/api/v1/gdp/countries/top/100?orderBy=highest';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'error': 'The value following top/ must be a number between 1 and 10'}
+    );
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
+describe('GET /api/v1/protein/countries/top/1?orderBy=trash', () => {
+  it('responds with error', async () => {
+    const url = '/api/v1/protein/countries/top/1?orderBy=trash';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'error':
+      'orderBy query parameter can be one of the following values: \'highest\', \'lowest\''}
+    );
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
 describe('GET /api/v1/protein/countries/top/1', () => {
   test('responds with error', async () => {
     const url = '/api/v1/protein/countries/top/1';
