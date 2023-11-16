@@ -42,23 +42,15 @@ jest.mock('../db/db', () => {
         'name': 'canada'
       }];
     }
+    
+    async readTopCountries() {
+      return [{'country':'luxembourg', 'code':'LUX', 'year':2000,
+        'gdp':99301.52, position:['49.815273', '6.129583']}];
+    }
 
     async readAll() {
-      return [{
-        'country': 'ca',
-        'latitude': '56.130366',
-        'longitude': '-106.346771',
-        'name': 'canada'
-      },
-      {
-        'country': 'de',
-        'latitude': '51.165691',
-        'longitude': '10.451526',
-        'name': 'germany'
-      }];
-    }
-    async readTopCountries() {
-      return [{'country':'macao', 'code':'MAC', 'year':2013, 'gdp':157602.48}];
+      return [{'country':'lu', 'latitude':'49.815273', 'longitude':'6.129583',
+        'name':'Luxembourg'}];
     }
   }
   
@@ -328,11 +320,12 @@ describe('GET /api/v1/gdp/countries/?countries=canada,germany,france', () => {
 
 describe('GET /api/v1/gdp/countries/top/1?orderBy=highest', () => {
   test('responds top 1 country with highest gdp', async () => {
-    const url = '/api/v1/gdp/countries/top/1?orderBy=highest';
+    const url = '/api/v1/gdp/countries/top/1?orderBy=highest&year=2000';
     const response = await request(app).get(url);
     expect(response.body).toEqual(
       {'data': {
-        'results':[{'country':'macao', 'code':'MAC', 'year':2013, 'gdp':157602.48}]
+        'results':[{'country':'luxembourg', 'code':'LUX', 'year':2000,
+          'gdp':99301.52, position:['49.815273', '6.129583']}]
       }
       });
     expect(response.statusCode).toEqual(200);

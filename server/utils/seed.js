@@ -4,8 +4,7 @@ const {datasetToJson, seedDatabase} = require('./parsing.js');
   try{
 
   
-    const filesNames = ['daily-per-capita-protein-supply.csv', 
-      'gdp-per-capita-worldbank.csv'];
+    const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];
     for (const fileName of filesNames) {
       const data = await datasetToJson(fileName);
       const filteredData = data.filter(row => !row.country.includes('FAO')).map(row => {
