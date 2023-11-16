@@ -33,7 +33,7 @@ router.get('/random-questions/:number', async (req, res) => {
     apiUtils.sendError(res, 400, 'Invalid number of questions');
     return;
   }
-  
+
   const questions = [];
   for (let i = 0; i < numQuestion; i++) {
     // eslint-disable-next-line no-await-in-loop
@@ -42,20 +42,29 @@ router.get('/random-questions/:number', async (req, res) => {
   }
 
   async function generateQuestion() {
+    // read all for now (dataset is quite small)
+    // But we can change this to read only the country names and then make query for the data
     const countries = await db.readAll(countriesCollName);
+
+    // Shuffle the countries
+    countries.sort(() => Math.random() - 0.5);
+
     let cGDP = '';
     let cPro = '';
     let country = '';
-    let loop = true;
-  
-    while (loop) {
+    let found = false;
+
+    // Used to be a while loop, but its better to have a limit
+    for (let i = 0; i < countries.length; i++) {
+      country = countries[i];
+
       // This isn't great coding style, I understand, this is just a quick fix
-      country = countries[Math.floor(Math.random() * countries.length)];
       // eslint-disable-next-line no-await-in-loop
       cGDP = await db.readAllCountryData(gdpCollName, country.name.toLowerCase());
       // eslint-disable-next-line no-await-in-loop
       cPro = await db.readAllCountryData(proteinCollName, country.name.toLowerCase());
   
+      // Sometimes one dataset has more years than the other
       try {
         cGDP = cGDP.find(gdp => cPro.some(pro => pro.year === gdp.year));
         cPro = cPro.find(pro => pro.year === cGDP.year);
@@ -64,8 +73,19 @@ router.get('/random-questions/:number', async (req, res) => {
       }
       
       if (cGDP && cPro) {
-        loop = false;
+        found = true;
+        break;
       }
+    }
+
+    if (!found) {
+      apiUtils.sendError(res, 404, 'No questions found');
+      return;
+    }
+
+    if (cGDP.year === undefined || cPro.year === undefined) {
+      apiUtils.sendError(res, 404, 'No questions found');
+      return;
     }
   
     const Lon = country.longitude;
