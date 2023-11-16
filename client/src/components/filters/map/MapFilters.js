@@ -80,9 +80,7 @@ export default function MapFilters({
     const top = topCountriesFilter['top'];
     const variation = topCountriesFilter['variation'];
     const value = topCountriesFilter['value'];
-
-    //This is a fake endpoint that will be deleted later. Since the real endpoint is
-    //not ready yet, we are using this fake endpoint to test the UI.
+    
     const url = `/api/v1/${value}/countries/top/${top}?orderBy=${variation}&year=2020`;
     const response = await fetch(url);
 
@@ -134,7 +132,7 @@ export default function MapFilters({
           selectedFilterType={selectedFilterType}
           disable={selectedFilterType !== FilterType.TopCountries} />
       </div>
-      <button>Apply</button>
+      <button type="submit">Apply</button>
     </form>
   );
 }

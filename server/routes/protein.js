@@ -203,43 +203,27 @@ router.get('/countries/:country/:year', async (req, res) => {
   );
 });
 
-// stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
-  // get all countries given in the query
-  // let countries = req.query.countries;
-  // countries = countries.split(',');
-  // res.status(200);
-  // countries.charAt(0);
-
-  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
-  // this endpoint returns the protein for all the queried countries in the same year
-  apiUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        year : 2003,
-        protein : 100.00,
-        position : [56.1304, -106.3468]
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 2003,
-        protein : 99.00,
-        position : [37.0902, -95.7129]
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        year : 2003,
-        protein : 98.00,
-        position : [23.6345, -102.5528]
+  let countries = req.query.countries;
+  const year = req.query.year;
+  countries = countries.split(',');
+  const results = [];
+  const data = await db.readAllYearCountryData(proteinCollName, Number(year), countries);
+  const geoPosition = await db.readAll(countryCollName);
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name.toLowerCase()) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          protein: country.gppd,
+          position: [position.latitude, position.longitude]
+        });
       }
-    ]}
-  );
+    });
+  });  
+  apiUtils.sendData(res, 200, { results : results });
 });
-
-
-
+  
 module.exports = router;

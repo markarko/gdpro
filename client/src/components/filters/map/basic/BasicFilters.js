@@ -13,7 +13,7 @@ export default function BasicFilters({
 
   const updateYear = e => {
     const year = e.target.value;
-    if (years.includes(year)) {
+    if (years.includes(Number(year))) {
       setBasicFilters((prevFilters) => ({
         ...prevFilters,
         year,

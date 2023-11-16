@@ -181,41 +181,28 @@ router.get('/countries/:country/:year', async (req, res) => {
   );
 });
 
-// stub api endpoint for filtering by a range of countries
-router.get('/countries/', async (req, res) => {
-  // get all countries given in the query
-  // let countries = req.query.countries;
-  // res.status(200);
-  // countries = countries.split(',');
-  // countries.charAt(0);
 
-  // FOR THOMAS: Make sure that the countries all share the same year e.g. 2003. So basically
-  // this endpoint returns the gdp for all the queried countries in the same year.
-  gdpUtils.sendData (res, 200,
-    {results : [
-      {
-        country: 'Canada',
-        code: 'CAN',
-        year : 2003,
-        gdp : 1234,
-        position : [56.1304, -106.3468]
-      },
-      {
-        country: 'United States',
-        code: 'USA',
-        year : 2003,
-        gdp : 4321,
-        position : [37.0902, -95.7129]
-      },
-      {
-        country: 'Mexico',
-        code: 'MEX',
-        year : 2003,
-        gdp : 5432,
-        position : [23.6345, -102.5528]
+router.get('/countries/', async (req, res) => {
+  let countries = req.query.countries;
+  const year = req.query.year;
+  countries = countries.split(',');
+  const results = [];
+  const data = await db.readAllYearCountryData(gdpCollName, Number(year), countries);
+  const geoPosition = await db.readAll(countryCollName);
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name.toLowerCase()) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          gdp: country.gdp,
+          position: [position.latitude, position.longitude]
+        });
       }
-    ]}
-  );
+    });
+  });
+  gdpUtils.sendData(res, 200, { results : results });
 });
 
 module.exports = router;

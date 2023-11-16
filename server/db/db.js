@@ -61,6 +61,19 @@ class DB {
       console.error('Error in readAllYearData:', error);
     }
   }
+
+  async readAllYearCountryData(collName, year, countries) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        year: year,
+        country: { $in: countries } },
+      { projection: { _id: 0 } }).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readAllYearData:', error);
+    }
+  }
     
   async readDataByYearRange(collName, startYear, endYear) {
     try {
