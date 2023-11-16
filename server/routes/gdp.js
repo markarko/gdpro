@@ -78,7 +78,11 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
   const startGdp = req.query.startGdp;
   const endGdp = req.query.endGdp;
   const country = req.params.country;
-  res.status(200);
+
+  if (!startGdp || !endGdp) {
+    gdpUtils.sendError(res, 400, 'The startGdp or endGdp parameters cannot both be empty');
+    return;
+  }
 
   try {
     gdpUtils.validateGDP(res, startGdp, 'startGdp');
@@ -112,6 +116,16 @@ router.get('/countries/:country/variation', async (req, res) => {
   const endYear = req.query.endYear;
   const country = req.params.country;
 
+  if (!startYear || !endYear) {
+    gdpUtils.sendError(res, 400, 'The startYear or endYear parameters cannot both be empty');
+    return;
+  }
+
+  if (!country || !gdpUtils.containsOnlyLetters(country)) {
+    gdpUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
+    return;
+  }
+
   // validate start and end year
   try {
     gdpUtils.validateYear(res, startYear, 'startYear');
@@ -120,6 +134,7 @@ router.get('/countries/:country/variation', async (req, res) => {
   } catch {
     return;
   }
+
 
   const data = await db.getYearRange(gdpCollName, country, startYear, endYear);
 
@@ -214,17 +229,26 @@ router.get('/stub/countries/top/:top', async (req, res) => {
 // stub api endpoint for filtering by a range of countries
 router.get('/countries/', async (req, res) => {
   // get all countries given in the query
-  let countries = req.query.countries;
+  let reqCountries = req.query.countries;
   const year = req.query.year;
 
-  countries = countries.split(',');
-  if (countries.length > 10 || countries.length < 1) {
+  gdpUtils.validateYear(res, year, 'year');
+
+  if (reqCountries.length === 0) {
+    gdpUtils.sendError(res, 404, 'No countries specified');
+    return;
+  }
+
+  reqCountries = reqCountries.split(',');
+  if (reqCountries.length > 10 || reqCountries.length < 1) {
     gdpUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+    return;
   }
   //check if countries is in AllCountries
-  countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), countries);
+  const countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), reqCountries);
   if (countries.length === 0) {
-    gdpUtils.sendError(res, 404, `Countries ${countries} not found`);
+    gdpUtils.sendError(res, 404, `Countries ${reqCountries} not found`);
+    return;
   }
 
   const results = [];
