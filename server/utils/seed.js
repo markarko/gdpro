@@ -1,11 +1,22 @@
 const {datasetToJson, seedDatabase} = require('./parsing.js');
+const DB = require('../db/db.js');
 
 (async () => {
-  try{
+  let db;
 
+  try{
+    const dbName = 'GDPRO';
+    const db = new DB();
+    await db.connect(dbName);  
   
-    const filesNames = ['daily-per-capita-protein-supply.csv', 'gdp-per-capita-worldbank.csv'];
+    const filesNames = [
+      'gdp-per-capita-worldbank.csv',
+      'daily-per-capita-protein-supply.csv',
+      'country.csv'
+    ];
+
     for (const fileName of filesNames) {
+      
       const data = await datasetToJson(fileName);
       const filteredData = data.filter(row => !row.country.includes('FAO')).map(row => {
         
@@ -27,11 +38,17 @@ const {datasetToJson, seedDatabase} = require('./parsing.js');
         }
         
 
-        return row;
+        return rowCopy;
       });
-      seedDatabase('GDPRO', fileName.split('.')[0], filteredData); 
+
+      await seedDatabase(db, fileName.split('.')[0], filteredData); 
     }
   } catch (err) {
     console.log(err);
+  } finally {
+    if (db) {
+      db.close();
+    }
+    process.exit();
   }
 })();
