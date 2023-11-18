@@ -44,9 +44,9 @@ router.get('/countries/:country', async (req, res) => {
   const endYear = req.query.endYear;
 
   try {
-    gdpUtils.validateYear(res, startYear, 'startYear');
-    gdpUtils.validateYear(res, endYear, 'endYear');
-    gdpUtils.validateYearRange(res, startYear, endYear);
+    gdpUtils.validateIntParam(res, startYear, 'startYear');
+    gdpUtils.validateIntParam(res, endYear, 'endYear');
+    gdpUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
   } catch {
     return;
   }
@@ -62,8 +62,8 @@ router.get('/countries/:country', async (req, res) => {
     return { year : row.year, gdp : row.gdp };
   });
 
-  results = gdpUtils.filterByStartYear(startYear, results);
-  results = gdpUtils.filterByEndYear(endYear, results);
+  results = gdpUtils.filterByStartInt(startYear, results, 'year');
+  results = gdpUtils.filterByEndInt(endYear, results, 'year');
 
   const responseBody = {
     country: data[0].country,
@@ -80,15 +80,10 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
   const endGdp = req.query.endGdp;
   const country = req.params.country;
 
-  if (!startGdp || !endGdp) {
-    gdpUtils.sendError(res, 400, 'The startGdp or endGdp parameters cannot both be empty');
-    return;
-  }
-
   try {
-    gdpUtils.validateGDP(res, startGdp, 'startGdp');
-    gdpUtils.validateGDP(res, endGdp, 'endGdp');
-    gdpUtils.validateGDPRange(res, startGdp, endGdp);
+    gdpUtils.validateIntParam(res, startGdp, 'startGdp');
+    gdpUtils.validateIntParam(res, endGdp, 'endGdp');
+    gdpUtils.validateRange(res, startGdp, endGdp, 'startGdp', 'endGdp');
   } catch {
     return;
   }
@@ -96,7 +91,8 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
   const data = await db.getGDPRange(gdpCollName, country, startGdp, endGdp);
 
   if (!data.length) {
-    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
+    const error = `No data found for ${country} with gdp between ${startGdp} and ${endGdp}`;
+    gdpUtils.sendError(res, 404, error);
     return;
   }
 
@@ -129,13 +125,13 @@ router.get('/countries/:country/variation', async (req, res) => {
 
   // validate start and end year
   try {
-    gdpUtils.validateYear(res, startYear, 'startYear');
-    gdpUtils.validateYear(res, endYear, 'endYear');
-    gdpUtils.validateYearRange(res, startYear, endYear);
+    gdpUtils.validateIntParam(res, startYear, 'startYear');
+    gdpUtils.validateIntParam(res, endYear, 'endYear');
+    gdpUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
   } catch {
+    // the validate methods already send the response errors
     return;
   }
-
 
   const data = await db.getYearRange(gdpCollName, country, startYear, endYear);
 
@@ -247,7 +243,7 @@ router.get('/countries/', async (req, res) => {
   let reqCountries = req.query.countries;
   const year = req.query.year;
 
-  gdpUtils.validateYear(res, year, 'year');
+  gdpUtils.validateIntParam(res, year, 'year');
 
   if (reqCountries.length === 0) {
     gdpUtils.sendError(res, 404, 'No countries specified');

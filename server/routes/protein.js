@@ -43,9 +43,9 @@ router.get('/countries/:country', async (req, res) => {
   const endYear = req.query.endYear;
   try {
     if (startYear && endYear) {
-      proteinUtils.validateYear(res, startYear, 'startYear');
-      proteinUtils.validateYear(res, endYear, 'endYear');
-      proteinUtils.validateYearRange(res, startYear, endYear);
+      proteinUtils.validateIntParam(res, startYear, 'startYear');
+      proteinUtils.validateIntParam(res, endYear, 'endYear');
+      proteinUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
     } 
   } catch {
     return;
@@ -62,8 +62,8 @@ router.get('/countries/:country', async (req, res) => {
     return { year : row.year, gppd : row.gppd };
   });
 
-  results = proteinUtils.filterByStartYear(startYear, results);
-  results = proteinUtils.filterByEndYear(endYear, results);
+  results = proteinUtils.filterByStartInt(startYear, results, 'year');
+  results = proteinUtils.filterByEndInt(endYear, results, 'year');
 
   const responseBody = {
     country: data[0].country,
@@ -82,9 +82,9 @@ router.get('/countries/:country/variation', async (req, res) => {
   // Validate the start and end year parameters
   try {
     if (startYear && endYear) {
-      proteinUtils.validateYear(res, startYear, 'startYear');
-      proteinUtils.validateYear(res, endYear, 'endYear');
-      proteinUtils.validateYearRange(res, startYear, endYear);
+      proteinUtils.validateIntParam(res, startYear, 'startYear');
+      proteinUtils.validateIntParam(res, endYear, 'endYear');
+      proteinUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
     }
   } catch {
     return;
