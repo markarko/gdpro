@@ -83,48 +83,19 @@ router.get('/countries/:country/variation', async (req, res) => {
   await gdpUtils.getVariationSpecificCountry(req, res, db, gdpCollName, 'gdp');
 });
 
-
-
-// stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
-router.get('/countries/top/:top', async (req, res) => {
-  const top = req.params.top;
-  const year = req.query.year;
-
+router.param('top', (req, res, next, top) => {
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
     const error = `The value following top/ must be a number between 1 and 10`;
     gdpUtils.sendError(res, 400, error);
     return;
   }
 
-  const orderBy = req.query.orderBy;
-  const orderByOptions = ['highest', 'lowest'];
+  next();
+});
 
-  if (!orderBy || !orderByOptions.includes(orderBy)) {
-    const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
-    gdpUtils.sendError(res, 400, error);
-    return;
-  }
-
-  const results = [];
-  const data = await db.readTopCountries(gdpCollName, top, orderBy, 'gdp', year);  
-  const geoPosition = await db.readAll(countryCollName);
-
-  data.forEach(country => {
-    geoPosition.forEach(position => {
-      if (country.country === position.name.toLowerCase()) {
-        results.push({
-          country: country.country,
-          code: country.code,
-          year: country.year,
-          gdp: country.gdp,
-          position: [position.latitude, position.longitude]
-        });
-      }
-    });
-  });
-
-  gdpUtils.sendData(res, 200, { results : results });
-
+// stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
+router.get('/countries/top/:top', async (req, res) => {
+  await gdpUtils.getTopCountries(req, res, db, gdpCollName, countryCollName, 'gdp');
 });
 
 // stub api endpoint to filter by specific country and year

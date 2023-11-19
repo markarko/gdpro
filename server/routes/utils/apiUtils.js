@@ -179,11 +179,6 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
 
   [startYear, endYear] = getDefaultYearParams(startYear, endYear);
 
-  if (!country || !containsOnlyLetters(country)) {
-    sendError(res, 400, 'The country name cannot contain numbers or special characters');
-    return;
-  }
-
   // validate start and end year
   try {
     validateIntParam(res, startYear, 'startYear');
@@ -200,8 +195,6 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
     sendError(res, 404, `No data found for ${req.params.country}`);
     return;
   }
-
-  
 
   // Compare each year to the previous year and calculate the growth/decline
   const results = data.map((row, index) => {
@@ -225,6 +218,39 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
   );
 }
 
+async function getTopCountries(req, res, db, collName, countryCollName, dataType) {
+  const top = req.params.top;
+  const year = req.query.year;
+
+  const orderBy = req.query.orderBy;
+  const orderByOptions = ['highest', 'lowest'];
+
+  if (!orderBy || !orderByOptions.includes(orderBy)) {
+    const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
+    sendError(res, 400, error);
+    return;
+  }
+
+  const results = [];
+  const data = await db.readTopCountries(collName, top, orderBy, 'gdp', year);  
+  const geoPosition = await db.readAll(countryCollName);
+
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name.toLowerCase()) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          [dataType]: country[dataType],
+          position: [position.latitude, position.longitude]
+        });
+      }
+    });
+  });
+
+  sendData(res, 200, { results : results });
+}
 
 
 module.exports = {
@@ -240,5 +266,6 @@ module.exports = {
   getDefaultGdpParams,
   getDefaultProteinParams,
   getDataSpecificCountry,
-  getVariationSpecificCountry
+  getVariationSpecificCountry,
+  getTopCountries
 };

@@ -47,44 +47,18 @@ router.get('/countries/:country/variation', async (req, res) => {
   await proteinUtils.getVariationSpecificCountry(req, res, db, proteinCollName, 'gppd');
 });
 
-router.get('/countries/top/:top', async (req, res) => {
-  const top = req.params.top;
-  const year = req.query.year;
-
+router.param('top', (req, res, next, top) => {
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
     const error = `The value following top/ must be a number between 1 and 10`;
     proteinUtils.sendError(res, 400, error);
     return;
   }
 
-  const orderBy = req.query.orderBy;
-  const orderByOptions = ['highest', 'lowest'];
+  next();
+});
 
-  if (!orderBy || !orderByOptions.includes(orderBy)) {
-    const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
-    proteinUtils.sendError(res, 400, error);
-    return;
-  }
-
-  const results = [];
-  const data = await db.readTopCountries(proteinCollName, top, orderBy, 'gppd', year);
-  const geoPosition = await db.readAll(countryCollName);
-
-  data.forEach(country => {
-    geoPosition.forEach(position => {
-      if (country.country === position.name.toLowerCase()) {
-        results.push({
-          country: country.country,
-          code: country.code,
-          year: country.year,
-          protein: country.gppd,
-          position: [position.latitude, position.longitude]
-        });
-      }
-    });
-  });  
-
-  proteinUtils.sendData(res, 200, { results : results });
+router.get('/countries/top/:top', async (req, res) => {
+  await proteinUtils.getTopCountries(req, res, db, proteinCollName, countryCollName, 'gppd');
 });
 
 // stub endpoint for filtering by a range of protein intake
