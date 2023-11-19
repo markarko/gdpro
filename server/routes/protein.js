@@ -11,6 +11,20 @@ const db = new DB();
 const proteinCollName = 'daily-per-capita-protein-supply';
 const countryCollName = 'country';
 
+router.param('top', (req, res, next, top) => {
+  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
+    const error = `The value following top/ must be a number between 1 and 10`;
+    proteinUtils.sendError(res, 400, error);
+    return;
+  }
+
+  next();
+});
+
+router.get('/countries/top/:top', async (req, res) => {
+  await proteinUtils.getTopCountries(req, res, db, proteinCollName, countryCollName, 'gppd');
+});
+
 /**
  * Middleware for validating the 'country' parameter in the route
  *
@@ -45,20 +59,6 @@ router.get('/countries/:country', async (req, res) => {
 // stub api endpoint for growth / decline of protein over all the years
 router.get('/countries/:country/variation', async (req, res) => {
   await proteinUtils.getVariationSpecificCountry(req, res, db, proteinCollName, 'gppd');
-});
-
-router.param('top', (req, res, next, top) => {
-  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
-    const error = `The value following top/ must be a number between 1 and 10`;
-    proteinUtils.sendError(res, 400, error);
-    return;
-  }
-
-  next();
-});
-
-router.get('/countries/top/:top', async (req, res) => {
-  await proteinUtils.getTopCountries(req, res, db, proteinCollName, countryCollName, 'gppd');
 });
 
 // stub endpoint for filtering by a range of protein intake

@@ -6,6 +6,22 @@ const db = new DB();
 const gdpCollName = 'gdp-per-capita-worldbank';
 const countryCollName = 'country';
 
+router.param('top', (req, res, next, top) => {
+  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
+    const error = `The value following top/ must be a number between 1 and 10`;
+    gdpUtils.sendError(res, 400, error);
+    return;
+  }
+
+  next();
+});
+
+// stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
+router.get('/countries/top/:top', async (req, res) => {
+  await gdpUtils.getTopCountries(req, res, db, gdpCollName, countryCollName, 'gdp');
+});
+
+
 /**
  * Middleware for validating the 'country' parameter in the route
  *
@@ -83,21 +99,6 @@ router.get('/countries/:country/variation', async (req, res) => {
   await gdpUtils.getVariationSpecificCountry(req, res, db, gdpCollName, 'gdp');
 });
 
-router.param('top', (req, res, next, top) => {
-  if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
-    const error = `The value following top/ must be a number between 1 and 10`;
-    gdpUtils.sendError(res, 400, error);
-    return;
-  }
-
-  next();
-});
-
-// stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
-router.get('/countries/top/:top', async (req, res) => {
-  await gdpUtils.getTopCountries(req, res, db, gdpCollName, countryCollName, 'gdp');
-});
-
 // stub api endpoint to filter by specific country and year
 router.get('/countries/:country/:year', async (req, res) => {
   res.status(200);
@@ -143,9 +144,14 @@ router.get('/countries/', async (req, res) => {
   let reqCountries = req.query.countries;
   const year = req.query.year;
 
-  gdpUtils.validateIntParam(res, year, 'year');
-
-  if (reqCountries.length === 0) {
+  try{
+    gdpUtils.validateIntParam(res, year, 'year');
+  } catch {
+    return;
+  }
+  
+ 
+  if (!reqCountries) {
     gdpUtils.sendError(res, 404, 'No countries specified');
     return;
   }

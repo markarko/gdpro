@@ -128,7 +128,7 @@ function getDefaultYearParams(startYear, endYear) {
 }
 
 function getDefaultGdpParams(startGdp, endGdp) {
-  return getDefaultParams(startGdp, endGdp, 0, 100000);
+  return getDefaultParams(startGdp, endGdp, 0, 1000000);
 }
 
 function getDefaultProteinParams(startProtein, endProtein) {
@@ -232,7 +232,7 @@ async function getTopCountries(req, res, db, collName, countryCollName, dataType
   }
 
   const results = [];
-  const data = await db.readTopCountries(collName, top, orderBy, 'gdp', year);  
+  const data = await db.readTopCountries(collName, top, orderBy, dataType, year);  
   const geoPosition = await db.readAll(countryCollName);
 
   data.forEach(country => {
