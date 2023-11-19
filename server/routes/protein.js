@@ -39,53 +39,22 @@ router.param('country', (req, res, next, country) => {
  * @param {Object} res - Express response object
  */
 router.get('/countries/:country', async (req, res) => {
-  const startYear = req.query.startYear;
-  const endYear = req.query.endYear;
-  try {
-    if (startYear && endYear) {
-      proteinUtils.validateIntParam(res, startYear, 'startYear');
-      proteinUtils.validateIntParam(res, endYear, 'endYear');
-      proteinUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
-    } 
-  } catch {
-    return;
-  }
-
-  const data = await db.readAllCountryData(proteinCollName, req.params.country);
-
-  if (!data.length) {
-    proteinUtils.sendError(res, 404, `No data found for ${req.params.country}`);
-    return;
-  }
-
-  let results = data.sort((a, b) => a.year - b.year).map(row => { 
-    return { year : row.year, gppd : row.gppd };
-  });
-
-  results = proteinUtils.filterByStartInt(startYear, results, 'year');
-  results = proteinUtils.filterByEndInt(endYear, results, 'year');
-
-  const responseBody = {
-    country: data[0].country,
-    code: data[0].code,
-    results : results
-  };
-  proteinUtils.sendData(res, 200, responseBody);
+  await proteinUtils.getDataSpecificCountry(req, res, db, proteinCollName, 'gppd');
 });
 
 // stub api endpoint for growth / decline of protein over all the years
 router.get('/countries/:country/variation', async (req, res) => {
-  const startYear = req.query.startYear;
-  const endYear = req.query.endYear;
+  let startYear = req.query.startYear;
+  let endYear = req.query.endYear;
   const country = req.params.country;
+
+  [startYear, endYear] = proteinUtils.getDefaultYearParams(startYear, endYear);
 
   // Validate the start and end year parameters
   try {
-    if (startYear && endYear) {
-      proteinUtils.validateIntParam(res, startYear, 'startYear');
-      proteinUtils.validateIntParam(res, endYear, 'endYear');
-      proteinUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
-    }
+    proteinUtils.validateIntParam(res, startYear, 'startYear');
+    proteinUtils.validateIntParam(res, endYear, 'endYear');
+    proteinUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
   } catch {
     return;
   }

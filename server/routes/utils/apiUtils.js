@@ -116,6 +116,62 @@ function validateCountries(validCountries, countries) {
   return returnCountries;
 }
 
+function getDefaultParams(start, end, defaultStart, defaultEnd) {
+  start = start ? start : defaultStart;
+  end = end ? end : defaultEnd;
+
+  return [start, end];
+}
+
+function getDefaultYearParams(startYear, endYear) {
+  return getDefaultParams(startYear, endYear, 1990, 2020);
+}
+
+function getDefaultGdpParams(startGdp, endGdp) {
+  return getDefaultParams(startGdp, endGdp, 0, 100000);
+}
+
+function getDefaultProteinParams(startProtein, endProtein) {
+  return getDefaultParams(startProtein, endProtein, 0, 500);
+}
+
+async function getDataSpecificCountry(req, res, db, collName, dataType){
+  let startYear = req.query.startYear;
+  let endYear = req.query.endYear;
+
+  [startYear, endYear] = getDefaultYearParams(startYear, endYear);
+
+  try {
+    validateIntParam(res, startYear, 'startYear');
+    validateIntParam(res, endYear, 'endYear');
+    validateRange(res, startYear, endYear, 'startYear', 'endYear');
+  } catch {
+    return;
+  }
+
+  const data = await db.readAllCountryData(collName, req.params.country);
+
+  if (!data.length) {
+    sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
+  let results = data.map(row => { 
+    return { year : row.year, [dataType] : row[dataType] };
+  });
+
+  results = filterByStartInt(startYear, results, 'year');
+  results = filterByEndInt(endYear, results, 'year');
+
+  const responseBody = {
+    country: data[0].country,
+    code: data[0].code,
+    results : results
+  };
+
+  sendData(res, 200, responseBody);
+}
+
 module.exports = {
   sendData,
   sendError,
@@ -124,5 +180,9 @@ module.exports = {
   filterByStartInt,
   filterByEndInt,
   validateIntParam,
-  validateCountries
+  validateCountries,
+  getDefaultYearParams,
+  getDefaultGdpParams,
+  getDefaultProteinParams,
+  getDataSpecificCountry
 };

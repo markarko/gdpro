@@ -40,45 +40,16 @@ router.get('/countries/all', async (req, res) => {
  * @param {Object} res - Express response object
  */
 router.get('/countries/:country', async (req, res) => {
-  const startYear = req.query.startYear;
-  const endYear = req.query.endYear;
-
-  try {
-    gdpUtils.validateIntParam(res, startYear, 'startYear');
-    gdpUtils.validateIntParam(res, endYear, 'endYear');
-    gdpUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
-  } catch {
-    return;
-  }
-
-  const data = await db.readAllCountryData(gdpCollName, req.params.country);
-
-  if (!data.length) {
-    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
-    return;
-  }
-
-  let results = data.sort((a, b) => a.year - b.year).map(row => { 
-    return { year : row.year, gdp : row.gdp };
-  });
-
-  results = gdpUtils.filterByStartInt(startYear, results, 'year');
-  results = gdpUtils.filterByEndInt(endYear, results, 'year');
-
-  const responseBody = {
-    country: data[0].country,
-    code: data[0].code,
-    results : results
-  };
-
-  gdpUtils.sendData(res, 200, responseBody);
+  await gdpUtils.getDataSpecificCountry(req, res, db, gdpCollName, 'gdp');
 });
 
 // Filter through countries with a range of gdp using apiUtils
 router.get('/countries/:country/gdp-range', async (req, res) => {
-  const startGdp = req.query.startGdp;
-  const endGdp = req.query.endGdp;
+  let startGdp = req.query.startGdp;
+  let endGdp = req.query.endGdp;
   const country = req.params.country;
+
+  [startGdp, endGdp] = gdpUtils.getDefaultGdpParams(startGdp, endGdp);
 
   try {
     gdpUtils.validateIntParam(res, startGdp, 'startGdp');
@@ -109,14 +80,11 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
 
 // Api endpoint for growth / decline of gdp over all the years
 router.get('/countries/:country/variation', async (req, res) => {
-  const startYear = req.query.startYear;
-  const endYear = req.query.endYear;
+  let startYear = req.query.startYear;
+  let endYear = req.query.endYear;
   const country = req.params.country;
 
-  if (!startYear || !endYear) {
-    gdpUtils.sendError(res, 400, 'The startYear or endYear parameters cannot both be empty');
-    return;
-  }
+  [startYear, endYear] = gdpUtils.getDefaultYearParams(startYear, endYear);
 
   if (!country || !gdpUtils.containsOnlyLetters(country)) {
     gdpUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
