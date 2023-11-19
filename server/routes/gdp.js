@@ -80,7 +80,7 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
 
 // Api endpoint for growth / decline of gdp over all the years
 router.get('/countries/:country/variation', async (req, res) => {
-  await gdpUtils.getVariationSpecificCountry(res, res, db, gdpCollName, 'gdp');
+  await gdpUtils.getVariationSpecificCountry(req, res, db, gdpCollName, 'gdp');
 });
 
 

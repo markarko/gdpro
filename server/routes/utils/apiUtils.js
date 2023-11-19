@@ -201,16 +201,21 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
     return;
   }
 
+  
+
   // Compare each year to the previous year and calculate the growth/decline
   const results = data.map((row, index) => {
     if (index === 0) {
       return { year : row.year, growth : 0 };
-    } else {
-      return {
-        year : row.year,
-        growth : row[dataType] / 1000 - data[index - 1][dataType] / 10000
-      };
     }
+
+    let growth = (row[dataType] - data[index - 1][dataType]) * 100 / row[dataType];
+    growth = Math.round(growth * 100) / 100;
+
+    return {
+      year : row.year,
+      growth : growth
+    };
   });
 
   sendData (res, 200,

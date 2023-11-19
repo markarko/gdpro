@@ -44,7 +44,7 @@ router.get('/countries/:country', async (req, res) => {
 
 // stub api endpoint for growth / decline of protein over all the years
 router.get('/countries/:country/variation', async (req, res) => {
-  await proteinUtils.getVariationSpecificCountry(res, res, db, proteinCollName, 'gdp');
+  await proteinUtils.getVariationSpecificCountry(req, res, db, proteinCollName, 'gppd');
 });
 
 router.get('/countries/top/:top', async (req, res) => {
