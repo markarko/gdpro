@@ -80,49 +80,10 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
 
 // Api endpoint for growth / decline of gdp over all the years
 router.get('/countries/:country/variation', async (req, res) => {
-  let startYear = req.query.startYear;
-  let endYear = req.query.endYear;
-  const country = req.params.country;
-
-  [startYear, endYear] = gdpUtils.getDefaultYearParams(startYear, endYear);
-
-  if (!country || !gdpUtils.containsOnlyLetters(country)) {
-    gdpUtils.sendError(res, 400, 'The country name cannot contain numbers or special characters');
-    return;
-  }
-
-  // validate start and end year
-  try {
-    gdpUtils.validateIntParam(res, startYear, 'startYear');
-    gdpUtils.validateIntParam(res, endYear, 'endYear');
-    gdpUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
-  } catch {
-    // the validate methods already send the response errors
-    return;
-  }
-
-  const data = await db.getYearRange(gdpCollName, country, startYear, endYear);
-
-  if (!data.length) {
-    gdpUtils.sendError(res, 404, `No data found for ${req.params.country}`);
-    return;
-  }
-
-  // Compare each year to the previous year and calculate the growth/decline
-  const results = data.map((row, index) => {
-    if (index === 0) {
-      return { year : row.year, gdpGrowth : 0 };
-    } else {
-      return { year : row.year, gdpGrowth : row.gdp / 1000 - data[index - 1].gdp / 10000 };
-    }
-  });
-
-  gdpUtils.sendData (res, 200,
-    {country: data[0].country,
-      code: data[0].code,
-      results: results}
-  );
+  await gdpUtils.getVariationSpecificCountry(res, res, db, gdpCollName, 'gdp');
 });
+
+
 
 // stub api endpoint to fiter by the top x countries with the highest or lowest gpd protein
 router.get('/countries/top/:top', async (req, res) => {

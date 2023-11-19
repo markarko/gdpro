@@ -44,42 +44,7 @@ router.get('/countries/:country', async (req, res) => {
 
 // stub api endpoint for growth / decline of protein over all the years
 router.get('/countries/:country/variation', async (req, res) => {
-  let startYear = req.query.startYear;
-  let endYear = req.query.endYear;
-  const country = req.params.country;
-
-  [startYear, endYear] = proteinUtils.getDefaultYearParams(startYear, endYear);
-
-  // Validate the start and end year parameters
-  try {
-    proteinUtils.validateIntParam(res, startYear, 'startYear');
-    proteinUtils.validateIntParam(res, endYear, 'endYear');
-    proteinUtils.validateRange(res, startYear, endYear, 'startYear', 'endYear');
-  } catch {
-    return;
-  }
-
-  const data = await db.getYearRange(proteinCollName, country, startYear, endYear);
-
-  if (!data.length) {
-    proteinUtils.sendError(res, 404, `No data found for ${req.params.country}`);
-    return;
-  }
-
-  // Compare each year to the previous year and calculate the growth/decline
-  const results = data.map((row, index) => {
-    if (index === 0) {
-      return { year : row.year, gppdGrowth : 0 };
-    } else {
-      return { year : row.year, gppdGrowth : row.gppd / 1000 - data[index - 1].gppd / 1000 };
-    }
-  });
-
-  proteinUtils.sendData (res, 200,
-    {country: data[0].country,
-      code: data[0].code,
-      results: results}
-  );
+  await proteinUtils.getVariationSpecificCountry(res, res, db, proteinCollName, 'gdp');
 });
 
 router.get('/countries/top/:top', async (req, res) => {

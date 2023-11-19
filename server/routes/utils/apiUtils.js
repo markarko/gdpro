@@ -172,6 +172,56 @@ async function getDataSpecificCountry(req, res, db, collName, dataType){
   sendData(res, 200, responseBody);
 }
 
+async function getVariationSpecificCountry(req, res, db, collName, dataType) {
+  let startYear = req.query.startYear;
+  let endYear = req.query.endYear;
+  const country = req.params.country;
+
+  [startYear, endYear] = getDefaultYearParams(startYear, endYear);
+
+  if (!country || !containsOnlyLetters(country)) {
+    sendError(res, 400, 'The country name cannot contain numbers or special characters');
+    return;
+  }
+
+  // validate start and end year
+  try {
+    validateIntParam(res, startYear, 'startYear');
+    validateIntParam(res, endYear, 'endYear');
+    validateRange(res, startYear, endYear, 'startYear', 'endYear');
+  } catch {
+    // the validate methods already send the response errors
+    return;
+  }
+
+  const data = await db.getYearRange(collName, country, startYear, endYear);
+
+  if (!data.length) {
+    sendError(res, 404, `No data found for ${req.params.country}`);
+    return;
+  }
+
+  // Compare each year to the previous year and calculate the growth/decline
+  const results = data.map((row, index) => {
+    if (index === 0) {
+      return { year : row.year, growth : 0 };
+    } else {
+      return {
+        year : row.year,
+        growth : row[dataType] / 1000 - data[index - 1][dataType] / 10000
+      };
+    }
+  });
+
+  sendData (res, 200,
+    {country: data[0].country,
+      code: data[0].code,
+      results: results}
+  );
+}
+
+
+
 module.exports = {
   sendData,
   sendError,
@@ -184,5 +234,6 @@ module.exports = {
   getDefaultYearParams,
   getDefaultGdpParams,
   getDefaultProteinParams,
-  getDataSpecificCountry
+  getDataSpecificCountry,
+  getVariationSpecificCountry
 };
