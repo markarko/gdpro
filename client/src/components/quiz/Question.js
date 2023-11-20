@@ -14,10 +14,8 @@ export default function Question({ data, setAnswer }) {
   return (
     <div>
       <h1>Guess the country based on GDP and Protein and the Year: </h1>
-      <p>GDP: {data.QData.GDP} Protein: {data.QData.Protein} </p>
-      <p>Year: {data.QData.year}</p>
       <p>A pin on the map has been placed to help guess which country it is</p>
-      <AnswerOption choices={data['Answers']} setAnswer={setAnswer}/>
+      <AnswerOption choices={data} setAnswer={setAnswer}/>
     </div>
   );
 }

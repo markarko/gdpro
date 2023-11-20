@@ -92,9 +92,8 @@ router.get('/random-questions/:number', async (req, res) => {
     for (const newCountry in otherCountries) {
       const countryData = otherCountries[newCountry];
       mapData.push({
-        lat: countryData.latitude,
-        lon: countryData.longitude,
-        name: countryData.name
+        country: countryData.name,
+        position: [countryData.latitude, countryData.longitude]
       });
     }
 
@@ -122,13 +121,9 @@ router.get('/random-questions/:number', async (req, res) => {
       map: mapData,
       answer: country.name
     };
-  }
+  } 
 
-  const responseBody = {
-    'questions': questions
-  };
-
-  apiUtils.sendData(res, 200, responseBody);
+  apiUtils.sendData(res, 200, questions);
 });
 
 
