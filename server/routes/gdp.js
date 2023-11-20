@@ -99,23 +99,6 @@ router.get('/countries/:country/variation', async (req, res) => {
   await gdpUtils.getVariationSpecificCountry(req, res, db, gdpCollName, 'gdp');
 });
 
-// stub api endpoint to filter by specific country and year
-router.get('/countries/:country/:year', async (req, res) => {
-  res.status(200);
-  req.query.year;
-  gdpUtils.sendData(res, 200,
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          gdp : 5723
-        }
-      ]}
-  );
-});
-
-
 // router.get('/countries/', async (req, res) => {
 //   let countries = req.query.countries;
 //   const year = req.query.year;

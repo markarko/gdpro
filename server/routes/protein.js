@@ -61,103 +61,83 @@ router.get('/countries/:country/variation', async (req, res) => {
   await proteinUtils.getVariationSpecificCountry(req, res, db, proteinCollName, 'gppd');
 });
 
-// stub endpoint for filtering by a range of protein intake
+// Filter through countries with a range of gdp using apiUtils
 router.get('/countries/:country/protein', async (req, res) => {
-  const startProtein = req.query.startProtein;
-  const endProtein = req.query.endProtein;
-  startProtein.charAt(0);
-  endProtein.charAt(0);
-  res.status(200);
-  proteinUtils.sendData(
+  let startProtein = req.query.startProtein;
+  let endProtein = req.query.endProtein;
+  const country = req.params.country;
+
+  [startProtein, endProtein] = proteinUtils.getDefaultGdpParams(startProtein, endProtein);
+
+  try {
+    proteinUtils.validateIntParam(res, startProtein, 'startProtein');
+    proteinUtils.validateIntParam(res, endProtein, 'endProtein');
+    proteinUtils.validateRange(res, startProtein, endProtein, 'startProtein', 'endProtein');
+  } catch {
+    return;
+  }
+
+  const data = await db.getProteinRange(proteinCollName, country, startProtein, endProtein);
+
+  if (!data.length) {
+    const error = `No data found for ${country} with pro between ${startProtein} and ${endProtein}`;
+    proteinUtils.sendError(res, 404, error);
+    return;
+  }
+
+  proteinUtils.sendData (res, 200,
     {
-      country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          protein : 100.00
-        },
-        {
-          year : 2005,
-          protein : 101.00
-        }
-      ]
-    }
-  );
-});
-
-// stub api endpoint to filter by specific country and year
-router.get('/countries/:country/:year', async (req, res) => {
-  req.query.year;
-  res.status(200);
-
-  proteinUtils.sendData (
-    {country: 'Canada',
-      code: 'CAN',
-      results : [
-        {
-          year : 1990,
-          protein : 100.00
-        }
-      ]}
-  );
-  proteinUtils.sendData(res, 200, { results : data });
+      country: data[0].country,
+      code: data[0].code,
+      results : data.map(row => {
+        return { year : row.year, gppd : row.gppd };
+      })
+    });
 });
 
 router.get('/countries/', async (req, res) => {
-  let countries = req.query.countries;
-  const year = req.query.year;
-  countries = countries.split(',');
-  const results = [];
-  const data = await db.readAllYearCountryData(proteinCollName, Number(year), countries);
-  const geoPosition = await db.readAll(countryCollName);
-  data.forEach(country => {
-    geoPosition.forEach(position => {
-      if (country.country === position.name.toLowerCase()) {
-        results.push({
-          country: country.country,
-          code: country.code,
-          year: country.year,
-          protein: country.gppd,
-          position: [position.latitude, position.longitude]
-        });
-      }
-    });
-  });  
-  proteinUtils.sendData(res, 200, { results : results });
-  // BELOW IS THOMAS'S CODE BUT IT DOESN'T WORK WITH MY CODE FOR SOME REASON. WE WILL
-  // COME BACK AND DEBUG IT LATER. THE PLAN IS TO USE HIS CODE BUT FOR NOW WE USE THE VERSION
-  // ABOVE THAT WORKS WITH MY CODE.
-
   // get all countries given in the query
-  // let countries = req.query.countries;
-  // const year = req.query.year;
+  let reqCountries = req.query.countries;
+  const year = req.query.year;
 
-  // countries = countries.split(',');
-  // if (countries.length > 10 || countries.length < 1) {
-  // proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
-  //   return;
-  // }
+  try{
+    proteinUtils.validateIntParam(res, year, 'year');
+  } catch {
+    return;
+  }
+  
+ 
+  if (!reqCountries) {
+    proteinUtils.sendError(res, 404, 'No countries specified');
+    return;
+  }
 
-  //countries= proteinUtils.validateCountries(await db.getAllCountries(proteinCollName), countries);
-  // if (countries.length === 0) {
-  //   proteinUtils.sendError(res, 404, `Countries ${countries} not found`);
-  //   return;
-  // }
+  reqCountries = reqCountries.split(',');
+  if (reqCountries.length > 10 || reqCountries.length < 1) {
+    proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+    return;
+  }
+  //check if countries is in AllCountries
+  const countries = proteinUtils
+    .validateCountries(await db.getAllCountries(proteinCollName), reqCountries);
+  if (countries.length === 0) {
+    proteinUtils.sendError(res, 404, `Countries ${reqCountries} not found`);
+    return;
+  }
 
-  // const results = [];
-  // for (const country in countries) {
-  //   // eslint-disable-next-line no-await-in-loop
-  //   const data = await db.getCountryYearData(proteinCollName, countries[country], year);
-  //   // eslint-disable-next-line no-await-in-loop
-  //   const latLongData = await db.getCountryCountryData('country', countries[country]);
-  //   data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
-  //   results.push(data[0]);
-  // }
+  const results = [];
+  for (const country in countries) {
+    // eslint-disable-next-line no-await-in-loop
+    const data = await db.getCountryYearData(proteinCollName, countries[country], year);
+    // eslint-disable-next-line no-await-in-loop
+    const latLongData = await db.getCountryCountryData('country', countries[country]);
+    data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
+    results.push(data[0]);
+  }
 
-  // proteinUtils.sendData (res, 200,
-  //   {results : results}
-  // );
+  proteinUtils.sendData (res, 200,
+    {results : results}
+  );
 });
   
 module.exports = router;
