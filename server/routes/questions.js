@@ -63,33 +63,18 @@ router.get('/random-questions/:number', async (req, res) => {
       cGDP = await db.readAllCountryData(gdpCollName, country.name.toLowerCase());
       // eslint-disable-next-line no-await-in-loop
       cPro = await db.readAllCountryData(proteinCollName, country.name.toLowerCase());
-  
-      // Sometimes one dataset has more years than the other
-      try {
-        cGDP = cGDP.find(gdp => cPro.some(pro => pro.year === gdp.year));
-        cPro = cPro.find(pro => pro.year === cGDP.year);
-      } catch {
-        continue;
-      }
-      
+        
       if (cGDP && cPro) {
         found = true;
         break;
       }
     }
 
+
     if (!found) {
       apiUtils.sendError(res, 404, 'No questions found');
       return;
     }
-
-    if (cGDP.year === undefined || cPro.year === undefined) {
-      apiUtils.sendError(res, 404, 'No questions found');
-      return;
-    }
-  
-    const Lon = country.longitude;
-    const Lat = country.lattitude;
   
     const otherCountries = [];
     for (let i = 0; i < 2; i++) {
@@ -97,14 +82,46 @@ router.get('/random-questions/:number', async (req, res) => {
       otherCountries.push(otherCountry);
     }
     otherCountries.push(country);
+
   
     // randomize the order of the countries
     otherCountries.sort(() => Math.random() - 0.5);
 
-    return {'Question': 'Which of the following countries has the',
-      'QData': {'GDP': cGDP.gdp, 'Protein': cPro.gppd, 'Lan': Lat, 'Lon': Lon, 'year': cGDP.year},
-      'Answers': [otherCountries[0].name, otherCountries[1].name, otherCountries[2].name],
-      'Correct': country.name};
+    const mapData = [];
+
+    for (const newCountry in otherCountries) {
+      const countryData = otherCountries[newCountry];
+      mapData.push({
+        lat: countryData.latitude,
+        lon: countryData.longitude,
+        name: countryData.name
+      });
+    }
+
+    // filter cGDP to only have {year: 213, gdp: 123}
+    cGDP = cGDP.map((row) => {
+      return {
+        year: row.year,
+        gdp: row.gdp
+      };
+    });
+
+    // filter cPro the same way
+    cPro = cPro.map((row) => {
+      return {
+        year: row.year,
+        gppd: row.gppd
+      };
+    });
+
+    return {
+      chart: {
+        gdp: cGDP,
+        gppd: cPro
+      },
+      map: mapData,
+      answer: country.name
+    };
   }
 
   const responseBody = {
