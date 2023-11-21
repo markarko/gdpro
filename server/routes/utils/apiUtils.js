@@ -128,11 +128,11 @@ function getDefaultYearParams(startYear, endYear) {
 }
 
 function getDefaultGdpParams(startGdp, endGdp) {
-  return getDefaultParams(startGdp, endGdp, 0, 1000000);
+  return getDefaultParams(startGdp, endGdp, 1, 1000000);
 }
 
 function getDefaultProteinParams(startProtein, endProtein) {
-  return getDefaultParams(startProtein, endProtein, 0, 500);
+  return getDefaultParams(startProtein, endProtein, 1, 500);
 }
 
 async function getDataSpecificCountry(req, res, db, collName, dataType){
@@ -221,6 +221,14 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
 async function getTopCountries(req, res, db, collName, countryCollName, dataType) {
   const top = req.params.top;
   const year = req.query.year;
+
+  if (year) {
+    try {
+      validateIntParam(res, year, 'year');
+    } catch {
+      return;
+    }
+  }
 
   const orderBy = req.query.orderBy;
   const orderByOptions = ['highest', 'lowest'];
