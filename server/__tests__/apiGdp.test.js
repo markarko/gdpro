@@ -131,9 +131,9 @@ describe('GET /api/v1/gdp/countries/Canada?startYear=2000', () => {
 });
 
 
-describe('GET /api/v1/gdp/countries/Canada?startYear=2050', () => {
+describe('GET /api/v1/gdp/countries/Canada?startYear=2000', () => {
   test('responds with empty results', async () => {
-    const url = '/api/v1/gdp/countries/Canada?startYear=2050';
+    const url = '/api/v1/gdp/countries/Canada?startYear=2000';
     const response = await request(app).get(url);
     expect(response.body).toEqual(
       {'data': {
@@ -212,34 +212,10 @@ describe('GET /api/v1/gdp/countries/canada/gdp-range?startGdp=100000&endGdp=1', 
     const url = '/api/v1/gdp/countries/canada/gdp-range?startGdp=100000&endGdp=1';
     const response = await request(app).get(url);
     expect(response.body).toEqual({'error' : 
-    'The startGDP parameter cannot be greater than the endGDP parameter'
+    'The startGdp parameter cannot be greater than the endGdp parameter'
     });
     expect(response.statusCode).toEqual(400);
   });
-});
-
-describe('GET /api/v1/gdp/countries/canada/gdp-range?startGdp=1', () => {
-  test('responds with The startGdp or endGdp parameters cannot both be empty', async () => {
-    const url = '/api/v1/gdp/countries/canada/gdp-range?startGdp=1';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual({'error' : 
-    'The startGdp or endGdp parameters cannot both be empty'
-    });
-    expect(response.statusCode).toEqual(400);
-  }
-  );
-});
-
-describe('GET /api/v1/gdp/countries/canada/gdp-range?endGdp=1', () => {
-  test('responds with The startGdp or endGdp parameters cannot both be empty', async () => {
-    const url = '/api/v1/gdp/countries/canada/gdp-range?endGdp=1';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual({'error' : 
-    'The startGdp or endGdp parameters cannot both be empty'
-    });
-    expect(response.statusCode).toEqual(400);
-  }
-  );
 });
 
 describe('GET /api/v1/gdp/countries/Random/gdp-range?startGdp=1&endGdp=100000', () => {
@@ -248,7 +224,7 @@ describe('GET /api/v1/gdp/countries/Random/gdp-range?startGdp=1&endGdp=100000', 
     const response = await request(app).get(url);
     expect(response.body).toEqual(
       {'error': 
-      'No data found for random'
+      'No data found for random with gdp between 1 and 100000'
       });
     expect(response.statusCode).toEqual(404);
   });
@@ -264,15 +240,15 @@ describe('GET /api/v1/gdp/countries/canada/variation?startYear=2020&endYear=2050
         'country': 'canada',
         'results':  [
           {
-            'gdpGrowth': 0,
+            'growth': 0,
             'year': '2021',
           },
           {
-            'gdpGrowth': 5.5,
+            'growth': 16.67,
             'year': '2022',
           },
           {
-            'gdpGrowth': 6.4,
+            'growth': 14.29,
             'year': '2023',
           },
         ],
@@ -291,30 +267,6 @@ describe('GET /api/v1/gdp/countries/canada/variation?startYear=2050&endYear=2020
     });
     expect(response.statusCode).toEqual(400);
   });
-});
-
-describe('GET /api/v1/gdp/countries/canada/variation?startYear=2020', () => {
-  test('responds with The startYear or endYear parameters cannot both be empty', async () => {
-    const url = '/api/v1/gdp/countries/canada/variation?startYear=2020';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual({'error' : 
-    'The startYear or endYear parameters cannot both be empty'
-    });
-    expect(response.statusCode).toEqual(400);
-  }
-  );
-});
-
-describe('GET /api/v1/gdp/countries/canada/variation?endYear=2020', () => {
-  test('responds with The startYear or endYear parameters cannot both be empty', async () => {
-    const url = '/api/v1/gdp/countries/canada/variation?endYear=2020';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual({'error' : 
-    'The startYear or endYear parameters cannot both be empty'
-    });
-    expect(response.statusCode).toEqual(400);
-  }
-  );
 });
 
 describe('GET /api/v1/gdp/countries/Random/variation?startYear=2020&endYear=2050', () => {

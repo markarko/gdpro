@@ -99,55 +99,17 @@ router.get('/countries/:country/variation', async (req, res) => {
   await gdpUtils.getVariationSpecificCountry(req, res, db, gdpCollName, 'gdp');
 });
 
-// router.get('/countries/top/:top', async (req, res) => {
-//   const top = req.params.top;
-//   const year = req.query.year;
-
-//   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
-//     const error = `The value following top/ must be a number between 1 and 10`;
-//     gdpUtils.sendError(res, 400, error);
-//     return;
-//   }
-
-//   const orderBy = req.query.orderBy;
-//   const orderByOptions = ['highest', 'lowest'];
-
-//   if (!orderBy || !orderByOptions.includes(orderBy)) {
-//     eslint-disable-next-line max-len
-//     const error = `orderBy query parameter can be one of the following values: 'highest', 'lowest'`;
-//     gdpUtils.sendError(res, 400, error);
-//     return;
-//   }
-
-//   const results = [];
-//   const data = await db.readTopCountries(gdpCollName, top, orderBy, 'gdp', year);  
-//   const geoPosition = await db.readAll(countryCollName);
-
-//   data.forEach(country => {
-//     geoPosition.forEach(position => {
-//       if (country.country === position.name.toLowerCase()) {
-//         results.push({
-//           country: country.country,
-//           code: country.code,
-//           year: country.year,
-//           gdp: country.gdp,
-//           position: [position.latitude, position.longitude]
-//         });
-//       }
-//     });
-//   });
-
-//   gdpUtils.sendData(res, 200, { results : results });
-
-// });
-
 router.get('/countries/', async (req, res) => {
   let countries = req.query.countries;
+
   if (!countries) {
     gdpUtils.sendError(res, 404, 'No countries specified');
     return;
   }
-  const year = req.query.year;
+
+  let year = req.query.year;
+  [year] = gdpUtils.getDefaultYearParams(year, null, 'year', null);
+
   try{
     gdpUtils.validateIntParam(res, year, 'year');
   } catch {

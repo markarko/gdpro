@@ -116,7 +116,7 @@ router.get('/countries/:country/variation', async (req, res) => {
  * @throws {string} 400 - If the 'startProtein' or 'endProtein' params are not numbers or
  * if 'startProtein' is greater than the 'endProtein'
  */ 
-router.get('/countries/:country/protein', async (req, res) => {
+router.get('/countries/:country/protein-range', async (req, res) => {
   let startProtein = req.query.startProtein;
   let endProtein = req.query.endProtein;
   const country = req.params.country;
