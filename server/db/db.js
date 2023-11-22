@@ -158,18 +158,6 @@ class DB {
     }
   }
 
-  async getCountryCountryData(collName, country1) {
-    try {
-      const collection = await instance.db.collection(collName);
-      const result = await collection.find({
-        name: country1
-      }, { projection: { _id: 0 }}).toArray();
-      return result;
-    } catch (error) {
-      console.error('Error in getCountryCountryData:', error);
-    }
-  }
-
   async getYearRange(collName, country, startYear, endYear) {
     try {
       const collection = await instance.db.collection(collName);
@@ -216,6 +204,31 @@ class DB {
       return result;
     } catch (error) {
       console.error('Error in getCountryYearData:', error);
+    }
+  }
+
+  async getCountryCountryData(collName, country1) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        name: country1
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getCountryCountryData:', error);
+    }
+  }
+
+  async getProteinRange(collName, country, startProtein, endProtein) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        country: country,
+        gppd: { $gte: Number(startProtein), $lte: Number(endProtein) }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getProteinRange:', error);
     }
   }
 }
