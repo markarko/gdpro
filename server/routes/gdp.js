@@ -229,7 +229,7 @@ router.get('/countries/', async (req, res) => {
 
   countries = countries.split(',');
   if (countries.length > 10 || countries.length < 1) {
-    gdpUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+    gdpUtils.sendError(res, 400, 'Countries length can not be less then 1 or greater then 10');
     return;
   }
 

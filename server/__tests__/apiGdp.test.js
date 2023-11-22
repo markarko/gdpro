@@ -419,7 +419,7 @@ describe('GET /api/v1/gdp/countries/?countries=1,2,3,4,5,6,7,8,9,0,1,2,3,4', () 
       {'error': 
       'Countries length can not be less then 1 or greater then 10'
       });
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 });
 
