@@ -221,17 +221,21 @@ router.get('/countries/:country/:year', async (req, res) => {
 
 router.get('/countries/', async (req, res) => {
   let countries = req.query.countries;
+  if (!countries) {
+    gdpUtils.sendError(res, 404, 'No countries specified');
+    return;
+  }
   const year = req.query.year;
 
   countries = countries.split(',');
   if (countries.length > 10 || countries.length < 1) {
-    gdpCollName.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+    gdpUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
     return;
   }
 
   countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), countries);
   if (countries.length === 0) {
-    gdpUtils.sendError(res, 404, `Countries ${countries} not found`);
+    gdpUtils.sendError(res, 404, `Countries ${req.query.countries} not found`);
     return;
   }
   const results = [];

@@ -24,6 +24,82 @@
         }
     ],
     "paths": {
+        "/api/v1/protein/countries":{
+            "get": {
+                "summary": "Gets all the protein data for the mentioned countries",
+                "tags": [
+                    "Protein"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The fetched country data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "country": {
+                                                    "type": "string",
+                                                    "description": "The country name"
+                                                },
+                                                "code": {
+                                                    "type": "string",
+                                                    "description": "The country code"
+                                                },
+                                                "results": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "year": {
+                                                                "type": "string",
+                                                                "description": "The year"
+                                                            },
+                                                            "gppd": {
+                                                                "type": "string",
+                                                                "description": "Grams of protein supply per person per day"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "example": {
+                                        "data": {
+                                            "country": "canada",
+                                            "code": "CAN",
+                                            "results": [
+                                                {
+                                                    "year": "1961",
+                                                    "gppd": "78.3"
+                                                },
+                                                {
+                                                    "year": "1962",
+                                                    "gppd": "59.5"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid country name or year range"
+                    },
+                    "404": {
+                        "description": "No data found for the specified country"
+                    },
+                    "500": {
+                        "description": "Some server error"
+                    }
+                }
+            }
+        },
         "/api/v1/protein/countries/{country}": {
             "get": {
                 "summary": "Gets all the data for a specific country",

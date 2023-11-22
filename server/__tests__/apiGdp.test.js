@@ -10,6 +10,52 @@ jest.mock('../db/db', () => {
       return [{ 'country' : 'canada', 'code' : 'CAN', 'year' : '2021', 'gdp' : '5000' }];
     }
 
+    async readAllYearCountryData() {
+      return [
+        {
+          country: 'canada',
+          code: 'CAN',
+          year: '2021',
+          gdp: '5000',
+        },
+        {
+          country: 'germany',
+          code: 'GER',
+          year: '2021',
+          gdp: '5000',
+        },
+        {
+          country: 'france',
+          code: 'FRA',
+          year: '2021',
+          gdp: '5000',
+        }
+      ];
+    }
+
+    async readAllYearCountryGeo() {
+      return [
+        {
+          country: 'ca',
+          latitude: '56.130366',
+          longitude: '-106.346771',
+          name: 'canada',
+        },
+        {
+          country: 'ca',
+          latitude: '56.130366',
+          longitude: '-106.346771',
+          name: 'canada',
+        },
+        {
+          country: 'ca',
+          latitude: '56.130366',
+          longitude: '-106.346771',
+          name: 'canada',
+        }
+      ];
+    }
+
     async getGDPRange(collName, country) {
       if (country === 'random') {
         return [];
@@ -291,25 +337,34 @@ describe('GET /api/v1/gdp/countries/?countries=canada,germany,france', () => {
       {'data': {
         'results':[
           {
-            country: 'canada',
-            code: 'CAN',
-            year: '2021',
-            gdp: '5000',
-            position: ['56.130366', '-106.346771']
+            'code': 'CAN',
+            'country': 'canada',
+            'gdp': '5000',
+            'position': [
+              '56.130366',
+              '-106.346771',
+            ],
+            'year': '2021',
           },
           {
-            country: 'canada',
-            code: 'CAN',
-            year: '2021',
-            gdp: '5000',
-            position: ['56.130366', '-106.346771']
+            'code': 'CAN',
+            'country': 'canada',
+            'gdp': '5000',
+            'position': [
+              '56.130366',
+              '-106.346771',
+            ],
+            'year': '2021'
           },
           {
-            country: 'canada',
-            code: 'CAN',
-            year: '2021',
-            gdp: '5000',
-            position: ['56.130366', '-106.346771']
+            'code': 'CAN',
+            'country': 'canada',
+            'gdp': '5000',
+            'position': [
+              '56.130366',
+              '-106.346771',
+            ],
+            'year': '2021'
           }
         ]
       }
@@ -326,34 +381,6 @@ describe('GET /api/v1/gdp/countries/top/1?orderBy=highest', () => {
       {'data': {
         'results':[{'country':'luxembourg', 'code':'LUX', 'year':2000,
           'gdp':99301.52, position:['49.815273', '6.129583']}]
-      }
-      });
-    expect(response.statusCode).toEqual(200);
-  });
-});
-
-describe('GET /api/v1/gdp/countries/?countries=canada,germany,randomcountry', () => {
-  test('responds with an array of gdp values filtered by countries', async () => {
-    const url = '/api/v1/gdp/countries/?countries=canada,germany,randomcountry';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual(
-      {'data': {
-        'results':[
-          {
-            country: 'canada',
-            code: 'CAN',
-            year: '2021',
-            gdp: '5000',
-            position: ['56.130366', '-106.346771']
-          },
-          {
-            country: 'canada',
-            code: 'CAN',
-            year: '2021',
-            gdp: '5000',
-            position: ['56.130366', '-106.346771']
-          }
-        ]
       }
       });
     expect(response.statusCode).toEqual(200);

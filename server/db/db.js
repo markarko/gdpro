@@ -218,18 +218,6 @@ class DB {
       console.error('Error in getCountryYearData:', error);
     }
   }
-
-  async getCountryCountryData(collName, country1) {
-    try {
-      const collection = await instance.db.collection(collName);
-      const result = await collection.find({
-        name: country1
-      }, { projection: { _id: 0 }}).toArray();
-      return result;
-    } catch (error) {
-      console.error('Error in getCountryCountryData:', error);
-    }
-  }
 }
 
 module.exports = DB;
