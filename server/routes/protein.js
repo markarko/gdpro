@@ -197,12 +197,19 @@ router.get('/countries/:country/:year', async (req, res) => {
 });
 
 router.get('/countries/', async (req, res) => {
-  let countries = req.query.countries;
-  const year = req.query.year;
-
-  countries = countries.split(',');
+  let countries = [];
+  let year = '';
+  if (req.query.countries) {
+    countries = req.query.countries.toLowerCase().split(',');
+  }
+  if (req.query.year) {
+    year = req.query.year;
+  }else{
+    proteinUtils.sendError(res, 400, 'Year query parameter is required');
+    return;
+  }
   if (countries.length > 10 || countries.length < 1) {
-    proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+    proteinUtils.sendError(res, 400, 'Countries length can not be less then 1 or greater then 10');
     return;
   }
 

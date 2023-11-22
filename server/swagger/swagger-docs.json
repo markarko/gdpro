@@ -24,15 +24,35 @@
         }
     ],
     "paths": {
-        "/api/v1/protein/countries":{
+        "/api/v1/protein/countries": {
             "get": {
-                "summary": "Gets all the protein data for the mentioned countries",
+                "summary": "Gets all the protein data for the mentioned countries based on the year",
                 "tags": [
                     "Protein"
                 ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "countries",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "The country names comma separated"
+                    },
+                    {
+                        "in": "query",
+                        "name": "year",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "description": "The year for the data"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "The fetched country data.",
+                        "description": "The fetched protein data for the countries.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -41,26 +61,33 @@
                                         "data": {
                                             "type": "object",
                                             "properties": {
-                                                "country": {
-                                                    "type": "string",
-                                                    "description": "The country name"
-                                                },
-                                                "code": {
-                                                    "type": "string",
-                                                    "description": "The country code"
-                                                },
                                                 "results": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "object",
                                                         "properties": {
-                                                            "year": {
+                                                            "country": {
                                                                 "type": "string",
+                                                                "description": "The country name"
+                                                            },
+                                                            "code": {
+                                                                "type": "string",
+                                                                "description": "The country code"
+                                                            },
+                                                            "year": {
+                                                                "type": "Integer",
                                                                 "description": "The year"
                                                             },
-                                                            "gppd": {
-                                                                "type": "string",
+                                                            "protein": {
+                                                                "type": "Float",
                                                                 "description": "Grams of protein supply per person per day"
+                                                            },
+                                                            "position": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "description": "The position of the country in the list"
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -70,16 +97,26 @@
                                     },
                                     "example": {
                                         "data": {
-                                            "country": "canada",
-                                            "code": "CAN",
                                             "results": [
                                                 {
-                                                    "year": "1961",
-                                                    "gppd": "78.3"
+                                                    "country": "canada",
+                                                    "code": "CAN",
+                                                    "year": 2010,
+                                                    "protein": 102.66495,
+                                                    "position": [
+                                                        "56.130366",
+                                                        "-106.346771"
+                                                    ]
                                                 },
                                                 {
-                                                    "year": "1962",
-                                                    "gppd": "59.5"
+                                                    "country": "iran",
+                                                    "code": "IRN",
+                                                    "year": 2010,
+                                                    "protein": 82.625595,
+                                                    "position": [
+                                                        "32.427908",
+                                                        "53.688046"
+                                                    ]
                                                 }
                                             ]
                                         }
@@ -89,13 +126,42 @@
                         }
                     },
                     "400": {
-                        "description": "Invalid country name or year range"
+                        "description": "400 error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "Error message"
+                                        }
+                                    },
+                                    "example": {
+                                        "error": "Countries length cannot be less than 1 or greater than 10"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "No data found for the specified country"
-                    },
-                    "500": {
-                        "description": "Some server error"
+                        "description": "404 error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "Error message"
+                                        }
+                                    },
+                                    "example": {
+                                        "error": "Countries iran,brazil,usa not found"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
