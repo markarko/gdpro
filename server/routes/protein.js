@@ -199,13 +199,24 @@ router.get('/countries/:country/:year', async (req, res) => {
 router.get('/countries/', async (req, res) => {
   let countries = req.query.countries;
   const year = req.query.year;
+
   countries = countries.split(',');
+  if (countries.length > 10 || countries.length < 1) {
+    proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
+    return;
+  }
+
+  countries = proteinUtils.validateCountries(await db.getAllCountries(proteinCollName), countries);
+  if (countries.length === 0) {
+    proteinUtils.sendError(res, 404, `Countries ${countries} not found`);
+    return;
+  }
   const results = [];
   const data = await db.readAllYearCountryData(proteinCollName, Number(year), countries);
-  const geoPosition = await db.readAll(countryCollName);
+  const geoPosition = await db.readAllYearCountryGeo(countries);
   data.forEach(country => {
     geoPosition.forEach(position => {
-      if (country.country === position.name.toLowerCase()) {
+      if (country.country === position.name) {
         results.push({
           country: country.country,
           code: country.code,
@@ -217,39 +228,6 @@ router.get('/countries/', async (req, res) => {
     });
   });  
   proteinUtils.sendData(res, 200, { results : results });
-  // BELOW IS THOMAS'S CODE BUT IT DOESN'T WORK WITH MY CODE FOR SOME REASON. WE WILL
-  // COME BACK AND DEBUG IT LATER. THE PLAN IS TO USE HIS CODE BUT FOR NOW WE USE THE VERSION
-  // ABOVE THAT WORKS WITH MY CODE.
-
-  // get all countries given in the query
-  // let countries = req.query.countries;
-  // const year = req.query.year;
-
-  // countries = countries.split(',');
-  // if (countries.length > 10 || countries.length < 1) {
-  // proteinUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
-  //   return;
-  // }
-
-  //countries= proteinUtils.validateCountries(await db.getAllCountries(proteinCollName), countries);
-  // if (countries.length === 0) {
-  //   proteinUtils.sendError(res, 404, `Countries ${countries} not found`);
-  //   return;
-  // }
-
-  // const results = [];
-  // for (const country in countries) {
-  //   // eslint-disable-next-line no-await-in-loop
-  //   const data = await db.getCountryYearData(proteinCollName, countries[country], year);
-  //   // eslint-disable-next-line no-await-in-loop
-  //   const latLongData = await db.getCountryCountryData('country', countries[country]);
-  //   data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
-  //   results.push(data[0]);
-  // }
-
-  // proteinUtils.sendData (res, 200,
-  //   {results : results}
-  // );
 });
   
 module.exports = router;

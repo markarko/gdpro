@@ -219,66 +219,38 @@ router.get('/countries/:country/:year', async (req, res) => {
 });
 
 
-// router.get('/countries/', async (req, res) => {
-//   let countries = req.query.countries;
-//   const year = req.query.year;
-//   countries = countries.split(',');
-//   const results = [];
-//   const data = await db.readAllYearCountryData(gdpCollName, Number(year), countries);
-//   const geoPosition = await db.readAll(countryCollName);
-//   data.forEach(country => {
-//     geoPosition.forEach(position => {
-//       if (country.country === position.name.toLowerCase()) {
-//         results.push({
-//           country: country.country,
-//           code: country.code,
-//           year: country.year,
-//           gdp: country.gdp,
-//           position: [position.latitude, position.longitude]
-//         });
-//       }
-//     });
-//   });
-//   gdpUtils.sendData(res, 200, { results : results });
-// });
-
 router.get('/countries/', async (req, res) => {
-  // get all countries given in the query
-  let reqCountries = req.query.countries;
+  let countries = req.query.countries;
   const year = req.query.year;
 
-  gdpUtils.validateYear(res, year, 'year');
-
-  if (reqCountries.length === 0) {
-    gdpUtils.sendError(res, 404, 'No countries specified');
+  countries = countries.split(',');
+  if (countries.length > 10 || countries.length < 1) {
+    gdpCollName.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
     return;
   }
 
-  reqCountries = reqCountries.split(',');
-  if (reqCountries.length > 10 || reqCountries.length < 1) {
-    gdpUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
-    return;
-  }
-  //check if countries is in AllCountries
-  const countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), reqCountries);
+  countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), countries);
   if (countries.length === 0) {
-    gdpUtils.sendError(res, 404, `Countries ${reqCountries} not found`);
+    gdpUtils.sendError(res, 404, `Countries ${countries} not found`);
     return;
   }
-
   const results = [];
-  for (const country in countries) {
-    // eslint-disable-next-line no-await-in-loop
-    const data = await db.getCountryYearData(gdpCollName, countries[country], year);
-    // eslint-disable-next-line no-await-in-loop
-    const latLongData = await db.getCountryCountryData('country', countries[country]);
-    data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
-    results.push(data[0]);
-  }
-
-  gdpUtils.sendData (res, 200,
-    {results : results}
-  );
+  const data = await db.readAllYearCountryData(gdpCollName, Number(year), countries);
+  const geoPosition = await db.readAllYearCountryGeo(countries);
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          gdp: country.gdp,
+          position: [position.latitude, position.longitude]
+        });
+      }
+    });
+  });  
+  gdpUtils.sendData(res, 200, { results : results });
 });
 
 module.exports = router;
