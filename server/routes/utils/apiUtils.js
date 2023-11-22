@@ -285,7 +285,6 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
 /**
  * Get the x highest or lowest gdps or protein intakes across all countries
  *
- * @route GET /countries/top/:top
  * @param {Object} req - The express request object
  * @param {Object} res - The express response object
  * @param {Object} db - The database object containing db function queries
@@ -338,6 +337,77 @@ async function getTopCountries(req, res, db, collName, countryCollName, dataType
   sendData(res, 200, { results : results });
 }
 
+/**
+ * Get the gdp or protein intake for multiple countries and a specific year
+ *
+ * @param {Object} req - The express request object
+ * @param {Object} res - The express response object
+ * @param {Object} db - The database object containing db function queries
+ * @param {string} collName - The db collection name which to get the data from
+ * @param {dataType} dataType - Value for which to get the data. Either 'gdp' or 'gppd'
+ * @returns {object} 200 - An object containing gdp or protein data
+ * for the specified countries and year
+ * @returns {object} 404 - If no data is found for those countries and that year
+ * @throws {string} 400 - If the 'year' param is not a number,
+ * the 'countries' param was not provided, or if more than 10 countries were provided
+ */
+async function getDataMultipleCountries(req, res, db, collName, dataType) {
+  let countries = req.query.countries;
+
+  if (!countries) {
+    sendError(res, 400, 'No countries specified');
+    return;
+  }
+
+  let year = req.query.year;
+  [year] = getDefaultYearParams(year, null, 'year', null);
+
+  try{
+    validateIntParam(res, year, 'year');
+  } catch {
+    return;
+  }
+
+  countries = countries.split(',');
+
+  if (countries.length < 1 || countries.length > 10) {
+    sendError(res, 400, 'Countries length can not be less then 1 or greater then 10');
+    return; 
+  }
+
+  countries = validateCountries(await db.getAllCountries(collName), countries);
+
+  if (!countries.length) {
+    sendError(res, 404, `Countries ${req.query.countries} not found`);
+    return;
+  }
+
+  const results = [];
+  const data = await db.readAllYearCountryData(collName, Number(year), countries);
+  const geoPosition = await db.readAllYearCountryGeo(countries);
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          [dataType]: country[dataType],
+          position: [position.latitude, position.longitude]
+        });
+      }
+    });
+  });  
+
+  if (!results.length) {
+    const error = `No data found for countries '${req.query.countries}' during the year ${year}`;
+    sendError(res, 404, error);
+    return; 
+  }
+
+  sendData(res, 200, { results : results });
+}
+
 module.exports = {
   sendData,
   sendError,
@@ -352,5 +422,6 @@ module.exports = {
   getDefaultProteinParams,
   getDataSpecificCountry,
   getVariationSpecificCountry,
-  getTopCountries
+  getTopCountries,
+  getDataMultipleCountries
 };

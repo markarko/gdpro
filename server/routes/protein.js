@@ -18,7 +18,7 @@ const countryCollName = 'country';
  * @param {Object} res - Express response object
  * @param {Function} next - Next middleware function
  * @param {string} top - The 'top' parameter value extracted from the route path.
- * @throws {string} 400 - If 'top' is not a number or is not between 1 and 10.
+ * @returns {object} 400 - If 'top' is not a number or is not between 1 and 10.
  */
 router.param('top', (req, res, next, top) => {
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
@@ -42,7 +42,7 @@ router.param('top', (req, res, next, top) => {
  * protein intake. Values: 'highest', 'lowest'
  * @returns {object} 200 - An object containing protein data for the specified year and sorting.
  * @returns {object} 404 - If no data is found for that year (really means there is no data at all)
- * @throws {string} 400 - If the 'year' param is not a number or the 'orderBy' param is not a valid
+ * @returns {object} 400 - If the 'year' param is not a number or the 'orderBy' param is not a valid
  * value
  */ 
 router.get('/countries/top/:top', async (req, res) => {
@@ -78,7 +78,7 @@ router.param('country', (req, res, next, country) => {
  * @param {number} req.query.endYear - The ending year of the year range to get the data for
  * @returns {object} 200 - An object containing the data for the specified year range and country
  * @returns {object} 404 - If no data is found for that country and year range
- * @throws {string} 400 - If the 'startYear' or 'endYear' params are not numbers or if 'startYear'
+ * @returns {object} 400 - If the 'startYear' or 'endYear' params are not numbers or if 'startYear'
  * is greater than the 'endYear'
  */ 
 router.get('/countries/:country', async (req, res) => {
@@ -95,7 +95,7 @@ router.get('/countries/:country', async (req, res) => {
  * @returns {object} 200 - An object containing the variation of protein intake (in %)
  * for the specified year range and country
  * @returns {object} 404 - If no data is found for that country and year range
- * @throws {string} 400 - If the 'startYear' or 'endYear' params are not numbers or if 'startYear'
+ * @returns {object} 400 - If the 'startYear' or 'endYear' params are not numbers or if 'startYear'
  * is greater than the 'endYear'
  */ 
 router.get('/countries/:country/variation', async (req, res) => {
@@ -113,9 +113,9 @@ router.get('/countries/:country/variation', async (req, res) => {
  * to get the data for
  * @returns {object} 200 - An object containing protein data for the specified country and range
  * @returns {object} 404 - If no data is found for the given country and protein range
- * @throws {string} 400 - If the 'startProtein' or 'endProtein' params are not numbers or
+ * @returns {object} 400 - If the 'startProtein' or 'endProtein' params are not numbers or
  * if 'startProtein' is greater than the 'endProtein'
- */ 
+ */
 router.get('/countries/:country/protein-range', async (req, res) => {
   let startProtein = req.query.startProtein;
   let endProtein = req.query.endProtein;
@@ -149,45 +149,21 @@ router.get('/countries/:country/protein-range', async (req, res) => {
     });
 });
 
+/**
+ * Get the protein intake for multiple countries and a specific year
+ *
+ * @route GET /countries/
+ * @param {string} req.query.countries - A comma separated list of country names
+ * to get the data for
+ * @param {number} req.query.year - The year to get the data for
+ * @returns {object} 200 - An object containing gdp or protein data
+ * for the specified countries and year
+ * @returns {object} 404 - If no data is found for those countries and that year
+ * @returns {object} 400 - If the 'year' param is not a number,
+ * the 'countries' param was not provided, or if more than 10 countries were provided
+ */
 router.get('/countries/', async (req, res) => {
-  let countries = [];
-  let year = '';
-  if (req.query.countries) {
-    countries = req.query.countries.toLowerCase().split(',');
-  }
-  if (req.query.year) {
-    year = req.query.year;
-  }else{
-    proteinUtils.sendError(res, 400, 'Year query parameter is required');
-    return;
-  }
-  if (countries.length > 10 || countries.length < 1) {
-    proteinUtils.sendError(res, 400, 'Countries length can not be less then 1 or greater then 10');
-    return;
-  }
-
-  countries = proteinUtils.validateCountries(await db.getAllCountries(proteinCollName), countries);
-  if (countries.length === 0) {
-    proteinUtils.sendError(res, 404, `Countries ${countries} not found`);
-    return;
-  }
-  const results = [];
-  const data = await db.readAllYearCountryData(proteinCollName, Number(year), countries);
-  const geoPosition = await db.readAllYearCountryGeo(countries);
-  data.forEach(country => {
-    geoPosition.forEach(position => {
-      if (country.country === position.name) {
-        results.push({
-          country: country.country,
-          code: country.code,
-          year: country.year,
-          protein: country.gppd,
-          position: [position.latitude, position.longitude]
-        });
-      }
-    });
-  });  
-  proteinUtils.sendData(res, 200, { results : results });
+  await proteinUtils.getDataMultipleCountries(req, res, db, proteinCollName, 'gppd');
 });
   
 module.exports = router;

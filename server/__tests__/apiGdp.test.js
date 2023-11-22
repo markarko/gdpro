@@ -359,7 +359,7 @@ describe('GET /api/v1/gdp/countries/?countries=', () => {
       {'error': 
       'No countries specified'
       });
-    expect(response.statusCode).toEqual(404);
+    expect(response.statusCode).toEqual(400);
   });
 });
 

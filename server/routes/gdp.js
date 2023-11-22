@@ -100,50 +100,7 @@ router.get('/countries/:country/variation', async (req, res) => {
 });
 
 router.get('/countries/', async (req, res) => {
-  let countries = req.query.countries;
-
-  if (!countries) {
-    gdpUtils.sendError(res, 404, 'No countries specified');
-    return;
-  }
-
-  let year = req.query.year;
-  [year] = gdpUtils.getDefaultYearParams(year, null, 'year', null);
-
-  try{
-    gdpUtils.validateIntParam(res, year, 'year');
-  } catch {
-    return;
-  }
-
-  countries = countries.split(',');
-  if (countries.length > 10 || countries.length < 1) {
-    gdpUtils.sendError(res, 400, 'Countries length can not be less then 1 or greater then 10');
-    return;
-  }
-
-  countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), countries);
-  if (countries.length === 0) {
-    gdpUtils.sendError(res, 404, `Countries ${req.query.countries} not found`);
-    return;
-  }
-  const results = [];
-  const data = await db.readAllYearCountryData(gdpCollName, Number(year), countries);
-  const geoPosition = await db.readAllYearCountryGeo(countries);
-  data.forEach(country => {
-    geoPosition.forEach(position => {
-      if (country.country === position.name) {
-        results.push({
-          country: country.country,
-          code: country.code,
-          year: country.year,
-          gdp: country.gdp,
-          position: [position.latitude, position.longitude]
-        });
-      }
-    });
-  });  
-  gdpUtils.sendData(res, 200, { results : results });
+  await gdpUtils.getDataMultipleCountries(req, res, db, gdpCollName, 'gdp');
 });
 
 module.exports = router;
