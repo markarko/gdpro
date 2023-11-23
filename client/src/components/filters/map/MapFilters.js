@@ -10,6 +10,7 @@ export default function MapFilters({
   years,
   validCountries,
   dataLayout,
+  setError
 }) {
   const FilterType = {
     Basic: 'basic',
@@ -50,24 +51,31 @@ export default function MapFilters({
 
   const applyFilters = async e => {
     e.preventDefault();
-    switch (selectedFilterType) {
-    case FilterType.Basic:
-      await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
-    case FilterType.TopCountries:
-      await updateDataWithCountryRankingFilter(
-        setGdp,
-        setProtein,
-        topCountriesFilter,
-        dataLayout);
-      break;
-    case FilterType.DataRange:
-      await updateDataWithDataRangeFilter(
-        setGdp,
-        setProtein,
-        dataRangeFilter,
-        dataLayout);
-    default: break;
+
+    try{
+      switch (selectedFilterType) {
+      case FilterType.Basic:
+        await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
+      case FilterType.TopCountries:
+        await updateDataWithCountryRankingFilter(
+          setGdp,
+          setProtein,
+          topCountriesFilter,
+          dataLayout);
+        break;
+      case FilterType.DataRange:
+        await updateDataWithDataRangeFilter(
+          setGdp,
+          setProtein,
+          dataRangeFilter,
+          dataLayout);
+        break;  
+      default: break;
+      }
+    } catch (err) {
+      setError(err.message);
     }
+    
   };
 
   return(
@@ -139,8 +147,13 @@ async function getDataForCountryRankingFilter(topCountriesFilter) {
   
   const url = `/api/v1/${value}/countries/top/${top}?orderBy=${variation}&year=2020`;
   const response = await fetch(url);
+  const json = await response.json();
 
-  return await response.json();
+  if (!response.ok) {
+    throw new Error(json.error);
+  }
+
+  return json;
 }
 
 async function updateDataWithCountryRankingFilter(
@@ -148,18 +161,15 @@ async function updateDataWithCountryRankingFilter(
   setProtein,
   topCountriesFilter,
   dataLayout) {
-  try {
-    const data = await getDataForCountryRankingFilter(topCountriesFilter);
 
-    if (topCountriesFilter['value'] === 'gdp'){
-      setGdp(data);
-      setProtein(dataLayout);
-    } else if (topCountriesFilter['value'] === 'protein') {
-      setProtein(data);
-      setGdp(dataLayout);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
+  const data = await getDataForCountryRankingFilter(topCountriesFilter);
+
+  if (topCountriesFilter['value'] === 'gdp'){
+    setGdp(data);
+    setProtein(dataLayout);
+  } else if (topCountriesFilter['value'] === 'protein') {
+    setProtein(data);
+    setGdp(dataLayout);
   }
 }  
 
@@ -171,8 +181,13 @@ async function getDataForDataRangeFilter(dataRangeFilter) {
 
   const url = `/api/v1/${dataType}/countries/${dataType}-range?year=${year}&min=${min}&max=${max}`;
   const response = await fetch(url);
+  const json = await response.json();
 
-  return await response.json();
+  if (!response.ok) {
+    throw new Error(json.error);
+  }
+  
+  return json;
 }
 
 async function updateDataWithDataRangeFilter(
@@ -180,17 +195,14 @@ async function updateDataWithDataRangeFilter(
   setProtein,
   dataRangeFilter,
   dataLayout) {
-  try {
-    const data = await getDataForDataRangeFilter(dataRangeFilter);
-    console.log(data);
-    if (dataRangeFilter['dataType'] === 'gdp'){
-      setGdp(data);
-      setProtein(dataLayout);
-    } else if (dataRangeFilter['dataType'] === 'protein') {
-      setProtein(data);
-      setGdp(dataLayout);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
+
+  const data = await getDataForDataRangeFilter(dataRangeFilter);
+
+  if (dataRangeFilter['dataType'] === 'gdp'){
+    setGdp(data);
+    setProtein(dataLayout);
+  } else if (dataRangeFilter['dataType'] === 'protein') {
+    setProtein(data);
+    setGdp(dataLayout);
   }
 }  
