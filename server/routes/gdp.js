@@ -6,6 +6,25 @@ const db = new DB();
 const gdpCollName = 'gdp-per-capita-worldbank';
 const countryCollName = 'country';
 
+/**
+ * Get the gdp for a specific year within a specified gdp range
+ *
+ * @route GET /countries/gdp-range
+ * @param {number} req.query.year - The year to get the data for
+ * @param {number} req.query.min - The starting gdp of the gdp range
+ * to get the data for
+ * @param {number} req.query.max - The ending gdp of the gdp range
+ * to get the data for
+ * @returns {object} 200 - An object containing gdp data for the specified year and range
+ * @returns {object} 404 - If no data is found for the given year and gdp range
+ * @returns {object} 400 - If the 'min' or 'max' params are not numbers or
+ * if 'min' is greater than the 'max'
+ */
+router.get('/countries/gdp-range', async (req, res) => {
+  await gdpUtils.getDataRangeSpecificYear(req, res, db, 
+    gdpCollName, countryCollName, 'gdp');
+});
+
 router.param('top', (req, res, next, top) => {
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
     const error = `The value following top/ must be a number between 1 and 10`;

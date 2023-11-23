@@ -289,6 +289,7 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
  * @param {Object} res - The express response object
  * @param {Object} db - The database object containing db function queries
  * @param {string} collName - The db collection name which to get the data from
+ * @param {string} countryCollName - The db collection name which to get the countries from
  * @param {dataType} dataType - Value for which to get the data. Either 'gdp' or 'gppd'
  * @returns {object} 200 - An object containing protein data for the specified year and sorting.
  * @returns {object} 404 - If no data is found for that year (really means there is no data at all)
@@ -408,6 +409,74 @@ async function getDataMultipleCountries(req, res, db, collName, dataType) {
   sendData(res, 200, { results : results });
 }
 
+/**
+ * Get the gdp or protein intake for a specific year across all countries that fall between
+ * a certain range
+ *
+ * @param {Object} req - The express request object
+ * @param {Object} res - The express response object
+ * @param {Object} db - The database object containing db function queries
+ * @param {string} collName - The db collection name which to get the data from
+ * @param {string} countryCollName - The db collection name which to get the countries from
+ * @param {dataType} dataType - Value for which to get the data. Either 'gdp' or 'gppd'
+ * @returns {object} 200 - An object containing gdp or protein data for the specified year and range
+ * @returns {object} 404 - If no data is found for that year and range
+ * @throws {string} 400 - If the 'year' param is not a number, the 'min' or 'max' params are not 
+ * numbers or if 'min' is greater than 'max'
+ */ 
+async function getDataRangeSpecificYear(req, res, db, collName, countryCollName, dataType) {
+  let min = req.query.min;
+  let max = req.query.max;
+  let year = req.query.year;
+
+  if (dataType === 'gppd') {
+    [min, max] = getDefaultProteinParams(min, max);
+  } else if (dataType === 'gdp') {
+    [min, max] = getDefaultGdpParams(min, max);
+  }
+
+  [year] = getDefaultYearParams(year);
+
+  try {
+    validateIntParam(res, min, 'min');
+    validateIntParam(res, max, 'max');
+    validateRange(res, Number(min), Number(max), 'min', 'max');
+  } catch {
+    return;
+  }
+
+  const results = [];
+  const data = await db.getDataRangeWithYear(collName, year, min, max, dataType);
+
+  if (!data.length) {
+    const error = `No data found for the protein range ${min}-${max} and the year ${year}`;
+    sendError(res, 404, error);
+    return;
+  }
+
+  const geoPosition = await db.readAll(countryCollName);
+
+  data.forEach(country => {
+    geoPosition.forEach(position => {
+      if (country.country === position.name.toLowerCase()) {
+        results.push({
+          country: country.country,
+          code: country.code,
+          year: country.year,
+          [dataType]: country[dataType],
+          position: [position.latitude, position.longitude]
+        });
+      }
+    });
+  });
+
+  sendData (res, 200,
+    {
+      results : results
+    });
+}
+
+
 module.exports = {
   sendData,
   sendError,
@@ -423,5 +492,6 @@ module.exports = {
   getDataSpecificCountry,
   getVariationSpecificCountry,
   getTopCountries,
-  getDataMultipleCountries
+  getDataMultipleCountries,
+  getDataRangeSpecificYear
 };

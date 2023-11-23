@@ -11,51 +11,23 @@ const db = new DB();
 const proteinCollName = 'daily-per-capita-protein-supply';
 const countryCollName = 'country';
 
+/**
+ * Get the protein intake for a specific year within a specified protein range
+ *
+ * @route GET /countries/protein-range
+ * @param {number} req.query.year - The year to get the data for
+ * @param {number} req.query.min - The starting protein of the protein range
+ * to get the data for
+ * @param {number} req.query.max - The ending protein of the protein range
+ * to get the data for
+ * @returns {object} 200 - An object containing protein data for the specified year and range
+ * @returns {object} 404 - If no data is found for the given year and protein range
+ * @returns {object} 400 - If the 'min' or 'max' params are not numbers or
+ * if 'min' is greater than the 'max'
+ */
 router.get('/countries/protein-range', async (req, res) => {
-  let min = req.query.min;
-  let max = req.query.max;
-  let year = req.query.year;
-
-  [min, max] = proteinUtils.getDefaultProteinParams(min, max);
-  [year] = proteinUtils.getDefaultYearParams(year);
-
-  try {
-    proteinUtils.validateIntParam(res, min, 'min');
-    proteinUtils.validateIntParam(res, max, 'max');
-    proteinUtils.validateRange(res, Number(min), Number(max), 'min', 'max');
-  } catch {
-    return;
-  }
-
-  const results = [];
-  const data = await db.getDataRangeWithYear(proteinCollName, year, min, max, 'gppd');
-
-  if (!data.length) {
-    const error = `No data found for the protein range ${min}-${max} and the year ${year}`;
-    proteinUtils.sendError(res, 404, error);
-    return;
-  }
-
-  const geoPosition = await db.readAll(countryCollName);
-
-  data.forEach(country => {
-    geoPosition.forEach(position => {
-      if (country.country === position.name.toLowerCase()) {
-        results.push({
-          country: country.country,
-          code: country.code,
-          year: country.year,
-          gppd: country.gppd,
-          position: [position.latitude, position.longitude]
-        });
-      }
-    });
-  });
-
-  proteinUtils.sendData (res, 200,
-    {
-      results : results
-    });
+  await proteinUtils.getDataRangeSpecificYear(req, res, db, 
+    proteinCollName, countryCollName, 'gppd');
 });
 
 
