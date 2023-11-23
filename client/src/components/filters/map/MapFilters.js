@@ -34,7 +34,7 @@ export default function MapFilters({
     year: 1990,
     dataType: 'gdp',
     min: 0,
-    max: 10
+    max: 10000
   });
 
 
@@ -147,6 +147,7 @@ export default function MapFilters({
           onChange={e => setSelectedFilterType(e.target.value)}
           checked={selectedFilterType === FilterType.DataRange} />
         <DataRangeFilter
+          dataRangeFilter={dataRangeFilter}
           setDataRangeFilter={setDataRangeFilter}
           years={years}
           disable={selectedFilterType !== FilterType.DataRange} />
