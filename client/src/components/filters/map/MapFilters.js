@@ -60,62 +60,15 @@ export default function MapFilters({
         topCountriesFilter,
         dataLayout);
       break;
+    case FilterType.DataRange:
+      await updateDataWithDataRangeFilter(
+        setGdp,
+        setProtein,
+        dataRangeFilter,
+        dataLayout);
     default: break;
     }
   };
-
-  async function getDataForBasicFitlers(dataType, basicFilters) {
-    const countries = basicFilters['countries'].join(',');
-    const year = basicFilters['year'];   
-    const url = `/api/v1/${dataType}/countries?countries=${countries}&year=${year}`;
-    const response = await fetch(url);
-    return await response.json();
-  }
-
-  async function updateDataWithBasicFilters(
-    setGdp,
-    setProtein,
-    basicFilters) {
-    try {
-      const gdpData = await getDataForBasicFitlers('gdp', basicFilters);
-      const proteinData = await getDataForBasicFitlers('protein', basicFilters);
-      setGdp(gdpData);
-      setProtein(proteinData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
-
-  async function getDataForCountryRankingFilter() {
-    const top = topCountriesFilter['top'];
-    const variation = topCountriesFilter['variation'];
-    const value = topCountriesFilter['value'];
-    
-    const url = `/api/v1/${value}/countries/top/${top}?orderBy=${variation}&year=2020`;
-    const response = await fetch(url);
-
-    return await response.json();
-  }
-
-  async function updateDataWithCountryRankingFilter(
-    setGdp,
-    setProtein,
-    topCountriesFilter,
-    dataLayout) {
-    try {
-      const data = await getDataForCountryRankingFilter();
-  
-      if (topCountriesFilter['value'] === 'gdp'){
-        setGdp(data);
-        setProtein(dataLayout);
-      } else if (topCountriesFilter['value'] === 'protein') {
-        setProtein(data);
-        setGdp(dataLayout);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }  
 
   return(
     <form className="MapFilters" onSubmit={applyFilters}>
@@ -156,3 +109,88 @@ export default function MapFilters({
     </form>
   );
 }
+
+async function getDataForBasicFitlers(dataType, basicFilters) {
+  const countries = basicFilters['countries'].join(',');
+  const year = basicFilters['year'];   
+  const url = `/api/v1/${dataType}/countries?countries=${countries}&year=${year}`;
+  const response = await fetch(url);
+  return await response.json();
+}
+
+async function updateDataWithBasicFilters(
+  setGdp,
+  setProtein,
+  basicFilters) {
+  try {
+    const gdpData = await getDataForBasicFitlers('gdp', basicFilters);
+    const proteinData = await getDataForBasicFitlers('protein', basicFilters);
+    setGdp(gdpData);
+    setProtein(proteinData);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+async function getDataForCountryRankingFilter(topCountriesFilter) {
+  const top = topCountriesFilter['top'];
+  const variation = topCountriesFilter['variation'];
+  const value = topCountriesFilter['value'];
+  
+  const url = `/api/v1/${value}/countries/top/${top}?orderBy=${variation}&year=2020`;
+  const response = await fetch(url);
+
+  return await response.json();
+}
+
+async function updateDataWithCountryRankingFilter(
+  setGdp,
+  setProtein,
+  topCountriesFilter,
+  dataLayout) {
+  try {
+    const data = await getDataForCountryRankingFilter(topCountriesFilter);
+
+    if (topCountriesFilter['value'] === 'gdp'){
+      setGdp(data);
+      setProtein(dataLayout);
+    } else if (topCountriesFilter['value'] === 'protein') {
+      setProtein(data);
+      setGdp(dataLayout);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}  
+
+async function getDataForDataRangeFilter(dataRangeFilter) {
+  const year = dataRangeFilter['year'];
+  const dataType = dataRangeFilter['dataType'];
+  const min = dataRangeFilter['min'];
+  const max = dataRangeFilter['max'];
+
+  const url = `/api/v1/${dataType}/countries/${dataType}-range?year=${year}&min=${min}&max=${max}`;
+  const response = await fetch(url);
+
+  return await response.json();
+}
+
+async function updateDataWithDataRangeFilter(
+  setGdp,
+  setProtein,
+  dataRangeFilter,
+  dataLayout) {
+  try {
+    const data = await getDataForDataRangeFilter(dataRangeFilter);
+    console.log(data);
+    if (dataRangeFilter['dataType'] === 'gdp'){
+      setGdp(data);
+      setProtein(dataLayout);
+    } else if (dataRangeFilter['dataType'] === 'protein') {
+      setProtein(data);
+      setGdp(dataLayout);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}  
