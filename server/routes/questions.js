@@ -64,7 +64,7 @@ router.get('/random-questions/:number', async (req, res) => {
       // eslint-disable-next-line no-await-in-loop
       cPro = await db.readAllCountryData(proteinCollName, country.name.toLowerCase());
         
-      if (cGDP && cPro) {
+      if (cGDP.length !== 0 && cPro.length !== 0) {
         found = true;
         break;
       }

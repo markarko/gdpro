@@ -76,11 +76,11 @@ export default function QuizComponent(props) {
     if (answer === null) {
       setMessage('Please select an answer');
       return;
-    } else if (answer === question.Correct) {
+    } else if (answer === question.answer) {
       setScore(score + 1);
       setMessage('That’s right!');
     } else {
-      setMessage('Sorry, the correct answer is ' + question.Correct);
+      setMessage('Sorry, the correct answer is ' + question.answer);
     }
 
     // Disable submit button and enable next button
@@ -133,11 +133,12 @@ export default function QuizComponent(props) {
               <Question data={question['map']} setAnswer={setAnswer}/>
               <button className="submit" onClick={handleSubmit}>Submit</button>
               <button className="next" onClick={handleNextQuestion}>Next Question</button>
+              <Score score={score} message={message}/>
             </div>
           </div>
         </div>
       }
-      <Score score={score} message={message}/>
+      
     </div>
   );
 }       
