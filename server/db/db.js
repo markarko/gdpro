@@ -231,6 +231,19 @@ class DB {
       console.error('Error in getProteinRange:', error);
     }
   }
+
+  async getDataRangeWithYear(collName, year, min, max, dataType) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        year: Number(year),
+        [dataType]: { $gte: Number(min), $lte: Number(max) }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getProteinRange:', error);
+    }
+  }
 }
 
 module.exports = DB;

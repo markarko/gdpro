@@ -95,7 +95,7 @@ function filterByEndInt(end, arr, key) {
  */
 
 function validateIntParam(res, param, paramName) {
-  if (!param || isNaN(param) || Number(param) < 0) {
+  if (param === undefined || isNaN(param) || Number(param) < 0) {
     sendError(res, 400, `The ${paramName} parameter must be a positive number`);
     throw new Error();
   }
