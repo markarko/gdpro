@@ -22,7 +22,10 @@ export default function DataRangeFilter({ years, dataRangeFilter, setDataRangeFi
         ...prevFilters,
         dataType,
       }));
-    }
+      
+      validateMinValue(dataType);
+      validateMaxValue(dataType);
+    }    
   };
 
   /* Explanation for the need of update and validate functions:
@@ -37,20 +40,20 @@ export default function DataRangeFilter({ years, dataRangeFilter, setDataRangeFi
     exited the input field, i.e. on the onBlur event in the ValueInput component.
   */
 
-  const updateMinValue = e => {
-    const min = Number(e.target.value);
+  const updateValue = (e, key) => {
+    const value = Number(e.target.value);
 
     setDataRangeFilter((prevFilters) => ({
       ...prevFilters,
-      min
+      [key] : value
     }));
   };
 
-  const validateMinValue = e => {
+  const validateMinValue = dataType => {
     let min = dataRangeFilter.min;
     let max = dataRangeFilter.max;
 
-    min = clampRangeValue(dataRangeFilter.dataType, dataTypeOptions, min);
+    min = clampRangeValue(dataType || dataRangeFilter.dataType, dataTypeOptions, min);
 
     if (min > max) {
       max = min;
@@ -63,20 +66,11 @@ export default function DataRangeFilter({ years, dataRangeFilter, setDataRangeFi
     }));
   };
 
-  const updateMaxValue = e => {
-    const max = Number(e.target.value);
-
-    setDataRangeFilter((prevFilters) => ({
-      ...prevFilters,
-      max,
-    }));
-  };
-
-  const validateMaxValue = e => {
+  const validateMaxValue = dataType => {
     let min = dataRangeFilter.min;
     let max = dataRangeFilter.max;
 
-    max = clampRangeValue(dataRangeFilter.dataType, dataTypeOptions, max);
+    max = clampRangeValue(dataType || dataRangeFilter.dataType, dataTypeOptions, max);
 
     if (max < min) {
       min = max;
@@ -101,14 +95,14 @@ export default function DataRangeFilter({ years, dataRangeFilter, setDataRangeFi
         onChange={e => updateDataType(e)} />
       <ValueInput
         labelText="Min value: "
-        onChange={e => updateMinValue(e)}
-        onBlur={e => validateMinValue(e)}
+        onChange={e => updateValue(e, 'min')}
+        onBlur={e => validateMinValue()}
         value={dataRangeFilter.min}
       />
       <ValueInput
         labelText="Max value: "
-        onChange={e => updateMaxValue(e)}
-        onBlur={e => validateMaxValue(e)}
+        onChange={e => updateValue(e, 'max')}
+        onBlur={e => validateMaxValue()}
         value={dataRangeFilter.max}
       />
     </div>
