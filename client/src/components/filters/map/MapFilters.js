@@ -2,6 +2,7 @@ import '../Filters.css';
 import TopCountriesFilter from './top_countries/TopCountriesFilter';
 import BasicFilters from './basic/BasicFilters';
 import { useState, useEffect } from 'react';
+import DataRangeFilter from './data_range/DataRangeFilter';
 
 export default function MapFilters({
   setGdp,
@@ -12,7 +13,8 @@ export default function MapFilters({
 }) {
   const FilterType = {
     Basic: 'basic',
-    TopCountries: 'top-countries'
+    TopCountries: 'top-countries',
+    DataRange: 'data-range'
   };
 
   const [selectedFilterType, setSelectedFilterType] = useState(FilterType.Basic);
@@ -27,6 +29,14 @@ export default function MapFilters({
     variation: 'highest',
     value: 'gdp'
   });
+
+  const [dataRangeFilter, setDataRangeFilter] = useState({
+    year: 1990,
+    dataType: 'gdp',
+    min: 0,
+    max: 10
+  });
+
 
   useEffect(() => {
     async function fetchDefaultData() {
@@ -131,6 +141,15 @@ export default function MapFilters({
           setTopCountriesFilter={setTopCountriesFilter}
           selectedFilterType={selectedFilterType}
           disable={selectedFilterType !== FilterType.TopCountries} />
+      </div>
+      <div className="filterType">
+        <input type="radio" name="filterType" value={FilterType.DataRange}
+          onChange={e => setSelectedFilterType(e.target.value)}
+          checked={selectedFilterType === FilterType.DataRange} />
+        <DataRangeFilter
+          setDataRangeFilter={setDataRangeFilter}
+          years={years}
+          disable={selectedFilterType !== FilterType.DataRange} />
       </div>
       <button type="submit">Apply</button>
     </form>
