@@ -4,6 +4,7 @@ import PlotDisplay from './PlotDisplay';
 const generateBaseLayout = (title) => {
   return {
     title: title,
+    autosize: true,
     xaxis: {
       title: 'Year',
       showgrid: false,
@@ -16,7 +17,7 @@ const mapProteinData = (data) => {
   const newProtein = {
     x: data.map(row => row.year),
     y: data.map(row => row.gppd),
-    name: 'Protein consumption',
+    name: 'Protein',
     type: 'scatter',
     marker: {color: 'red'},
   };
@@ -36,7 +37,7 @@ const mapGdpData = (data) => {
   return {
     x: data.map(row => row.year),
     y: data.map(row => row.gdp),
-    name: 'GDP per capita',
+    name: 'GDP',
     type: 'scatter',
     yaxis: 'y2',
     marker: {color: 'blue'},

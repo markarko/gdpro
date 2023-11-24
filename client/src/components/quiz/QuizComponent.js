@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Question from './Question';
 import Score from './score';
+import PlotController from '../chart/PlotController';
+import Map from '../Map/Map';
+import './Quiz.css';
 
 /**
  * function to get the next question from the data given and then set the question and the questions
@@ -50,7 +53,7 @@ export default function QuizComponent(props) {
       return;
     }
     clearQuestionComponent();
-    nextQuestion(json.data.questions, setQuestion, setQuestions);
+    nextQuestion(json.data, setQuestion, setQuestions);
   }
 
   useEffect(() => {
@@ -73,11 +76,11 @@ export default function QuizComponent(props) {
     if (answer === null) {
       setMessage('Please select an answer');
       return;
-    } else if (answer === question.Correct) {
+    } else if (answer === question.answer) {
       setScore(score + 1);
       setMessage('That’s right!');
     } else {
-      setMessage('Sorry, the correct answer is ' + question.Correct);
+      setMessage('Sorry, the correct answer is ' + question.answer);
     }
 
     // Disable submit button and enable next button
@@ -112,12 +115,30 @@ export default function QuizComponent(props) {
     <div>
       {question !== null &&
         <div>
-          <Question data={question} setAnswer={setAnswer} />
-          <button className="submit" onClick={handleSubmit}>Submit</button>
-          <button className="next" onClick={handleNextQuestion}>Next Question</button>
+          <Map
+            gdp={question['map']}
+            protein={question['map']}
+          />
+          <div className="bottomBox">
+            <div className="bottomBox-left">
+              <PlotController
+                gdp={question['chart']['gdp']}
+                protein={question['chart']['gppd']}
+                title="Guess the Country"
+              />
+            </div>
+        
+
+            <div className="bottomBox-right">
+              <Question data={question['map']} setAnswer={setAnswer}/>
+              <button className="submit" onClick={handleSubmit}>Submit</button>
+              <button className="next" onClick={handleNextQuestion}>Next Question</button>
+              <Score score={score} message={message}/>
+            </div>
+          </div>
         </div>
       }
-      <Score score={score} message={message}/>
+      
     </div>
   );
 }       
