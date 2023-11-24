@@ -179,7 +179,7 @@ function createChartTitle(gdpSelected, proteinSelected, countryName){
 
   title += gdpSelected ? 'gdp ' : '';
   title += gdpSelected && proteinSelected ? 'and ' : '';
-  title += proteinSelected ? 'daily protein intake ' : '';
+  title += proteinSelected ? 'daily protein intake <br>' : '<br>';
   title += `of ${countryName} `;
 
   return title;

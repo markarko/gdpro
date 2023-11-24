@@ -118,7 +118,7 @@ router.get('/random-questions/:number', async (req, res) => {
 
     cGDP = yearDataMapper(cGDP, 'gdp');
 
-    cPro = yearDataMapper(cPro, 'protein');
+    cPro = yearDataMapper(cPro, 'gppd');
 
     return {
       chart: {
