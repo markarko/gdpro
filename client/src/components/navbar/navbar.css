@@ -1,0 +1,35 @@
+.navbar {
+    display: flex;
+    padding: 1%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.navbar-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.elem {
+    margin: 0 5%;
+    padding: 10%;   
+    font-size: large;
+    text-decoration: none;
+    background-color: lightgray;
+    color: black;
+    border-radius: 5px;
+}
+
+.navbar-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    width: auto ;
+}

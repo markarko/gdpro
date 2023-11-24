@@ -61,6 +61,19 @@ class DB {
       console.error('Error in readAllYearData:', error);
     }
   }
+
+  async readAllYearCountryData(collName, year, countries) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        year: year,
+        country: { $in: countries } },
+      { projection: { _id: 0 } }).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readAllYearData:', error);
+    }
+  }
     
   async readDataByYearRange(collName, startYear, endYear) {
     try {
@@ -71,6 +84,30 @@ class DB {
       return result;
     } catch (error) {
       console.error('Error in readDataByYearRange:', error);
+    }
+  }
+
+  async readTopCountries(collName, topAmount, orderBy, dataType, year) {
+    try {
+      const orderInt = orderBy === 'highest' ? -1 : 1;
+      const collection = await instance.db.collection(collName);
+      if (year) {
+        const result = await collection.
+          find({year: Number(year)}, { projection: { _id: 0 }}).
+          sort({ [dataType] : orderInt }).
+          limit(Number(topAmount)).
+          toArray();
+        return result;
+      }else{
+        const result = await collection.
+          find({}, { projection: { _id: 0 }}).
+          sort({ [dataType] : orderInt }).
+          limit(Number(topAmount)).
+          toArray();
+        return result;
+      }
+    } catch (error) {
+      console.error('Error in readTopCountries:', error);
     }
   }
     
@@ -106,6 +143,67 @@ class DB {
       await collection.createIndex({ country: 1 });
     } catch (error) {
       console.error('Error in index:', error);
+    }
+  }
+
+  async getYearRange(collName, country, startYear, endYear) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        country: country,
+        year: { $gte: Number(startYear), $lte: Number(endYear) }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getYearRange:', error);
+    }
+  }
+
+  async getGDPRange(collName, country, startGdp, endGdp) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        country: country,
+        gdp: { $gte: Number(startGdp), $lte: Number(endGdp) }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getGDPRange:', error);
+    }
+  }
+
+  async getAllCountries(collName) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.distinct('country');
+      return result;
+    } catch (error) {
+      console.error('Error in getAllCountries:', error);
+    }
+  }
+
+  async getCountryYearData(collName, country, year) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        country: country,
+        year: Number(year)
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getCountryYearData:', error);
+    }
+  }
+
+  async getCountryCountryData(collName, country1) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        name: country1
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getCountryCountryData:', error);
     }
   }
 }

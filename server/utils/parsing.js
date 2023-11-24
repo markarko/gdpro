@@ -1,7 +1,6 @@
 const path = require('path');
 const csv = require('csv-parser');
 const fs = require('fs');
-const DB = require('../db/db.js');
 const fsPromises = fs.promises;
 
 /**
@@ -68,28 +67,15 @@ async function datasetToJson(fileName) {
 /**
  * Populates the database with some initial data
  * 
- * @param {string} dbName - The name of the database to be populated
+ * @param {Object} db - The name of the database object
  * @param {string} collectionName - The name of the collection in that database to be populated
  * @param {Array<Object>} data - The json data to be inserted into the collection
  */
-async function seedDatabase(dbName, collectionName, data) {
-  let db;
-  try {
-    const db = new DB();
-    await db.connect(dbName, collectionName);
-    const num = data.length;
-    await db.createMany(collectionName, data);
-    console.log(`Inserted ${num} rows`);
-    await db.index(collectionName);
-  } catch (e) {
-    console.error('Could not seed');
-    console.error(e);
-  } finally {
-    if (db) {
-      db.close();
-    }
-    process.exit();
-  }
+async function seedDatabase(db, collectionName, data) { 
+  const num = data.length;
+  await db.createMany(collectionName, data);
+  console.log(`Inserted ${num} rows`);
+  await db.index(collectionName);
 }
 
 function cleanKey(key) {

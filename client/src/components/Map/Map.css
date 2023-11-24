@@ -1,0 +1,25 @@
+.leaflet-container {
+  height: 85%;
+  width: 100%;
+  min-height: 50vh;
+}
+
+.ui-container {
+  height: 100%;
+  min-height: 50vh;
+  width: 100%;
+  display: flex;
+}
+
+@media (orientation: portrait) {
+  .ui-container {
+    flex-direction: column;
+  }
+  .leaflet-container {
+    width: 100%;
+  }
+}
+
+.ui-controls {
+  flex: 1;
+}
