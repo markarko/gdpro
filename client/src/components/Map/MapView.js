@@ -12,7 +12,7 @@ export default function MapView() {
   const [gdp, setGdp] = useState(dataLayout);
   const [protein, setProtein] = useState(dataLayout);
   const [loading, setLoading] = useState(true);
-  const [error,] = useState(false);
+  const [error, setError] = useState(false);
   const [validYears, setValidYears] = useState([]);
   const [validCountries, setValidCountries] = useState([]);
   
@@ -58,6 +58,7 @@ export default function MapView() {
       setGdp={setGdp}
       setProtein={setProtein}
       dataLayout={dataLayout}
+      setError={setError}
     />
   </>;
 }
