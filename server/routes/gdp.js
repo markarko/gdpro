@@ -6,6 +6,25 @@ const db = new DB();
 const gdpCollName = 'gdp-per-capita-worldbank';
 const countryCollName = 'country';
 
+/**
+ * Get the gdp for a specific year within a specified gdp range
+ *
+ * @route GET /countries/gdp-range
+ * @param {number} req.query.year - The year to get the data for
+ * @param {number} req.query.min - The starting gdp of the gdp range
+ * to get the data for
+ * @param {number} req.query.max - The ending gdp of the gdp range
+ * to get the data for
+ * @returns {object} 200 - An object containing gdp data for the specified year and range
+ * @returns {object} 404 - If no data is found for the given year and gdp range
+ * @returns {object} 400 - If the 'min' or 'max' params are not numbers or
+ * if 'min' is greater than the 'max'
+ */
+router.get('/countries/gdp-range', async (req, res) => {
+  await gdpUtils.getDataRangeSpecificYear(req, res, db, 
+    gdpCollName, countryCollName, 'gdp');
+});
+
 router.param('top', (req, res, next, top) => {
   if (isNaN(top) || Number(top) < 1 || Number(top) > 10){
     const error = `The value following top/ must be a number between 1 and 10`;
@@ -83,6 +102,8 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
     return;
   }
 
+  data.sort((a, b) => a.year - b.year);
+
   gdpUtils.sendData (res, 200,
     {
       country: data[0].country,
@@ -99,71 +120,8 @@ router.get('/countries/:country/variation', async (req, res) => {
   await gdpUtils.getVariationSpecificCountry(req, res, db, gdpCollName, 'gdp');
 });
 
-// router.get('/countries/', async (req, res) => {
-//   let countries = req.query.countries;
-//   const year = req.query.year;
-//   countries = countries.split(',');
-//   const results = [];
-//   const data = await db.readAllYearCountryData(gdpCollName, Number(year), countries);
-//   const geoPosition = await db.readAll(countryCollName);
-//   data.forEach(country => {
-//     geoPosition.forEach(position => {
-//       if (country.country === position.name.toLowerCase()) {
-//         results.push({
-//           country: country.country,
-//           code: country.code,
-//           year: country.year,
-//           gdp: country.gdp,
-//           position: [position.latitude, position.longitude]
-//         });
-//       }
-//     });
-//   });
-//   gdpUtils.sendData(res, 200, { results : results });
-// });
-
 router.get('/countries/', async (req, res) => {
-  // get all countries given in the query
-  let reqCountries = req.query.countries;
-  const year = req.query.year;
-
-  try{
-    gdpUtils.validateIntParam(res, year, 'year');
-  } catch {
-    return;
-  }
-  
- 
-  if (!reqCountries) {
-    gdpUtils.sendError(res, 404, 'No countries specified');
-    return;
-  }
-
-  reqCountries = reqCountries.split(',');
-  if (reqCountries.length > 10 || reqCountries.length < 1) {
-    gdpUtils.sendError(res, 404, 'Countries length can not be less then 1 or greater then 10');
-    return;
-  }
-  //check if countries is in AllCountries
-  const countries = gdpUtils.validateCountries(await db.getAllCountries(gdpCollName), reqCountries);
-  if (countries.length === 0) {
-    gdpUtils.sendError(res, 404, `Countries ${reqCountries} not found`);
-    return;
-  }
-
-  const results = [];
-  for (const country in countries) {
-    // eslint-disable-next-line no-await-in-loop
-    const data = await db.getCountryYearData(gdpCollName, countries[country], year);
-    // eslint-disable-next-line no-await-in-loop
-    const latLongData = await db.getCountryCountryData('country', countries[country]);
-    data[0].position = [latLongData[0].latitude, latLongData[0].longitude];
-    results.push(data[0]);
-  }
-
-  gdpUtils.sendData (res, 200,
-    {results : results}
-  );
+  await gdpUtils.getDataMultipleCountries(req, res, db, gdpCollName, 'gdp');
 });
 
 module.exports = router;

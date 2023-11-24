@@ -13,13 +13,16 @@ export default function ChartView() {
   };
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
 
   const [gdp, setGdp] = useState(dataLayout);
   const [protein, setProtein] = useState(dataLayout);
 
   const [validYears, setValidYears] = useState([]);
   const [validCountries, setValidCountries] = useState([]);
+
+  const [chartTitle, setChartTitle] = useState('Chart representingthe ' + 
+  'gdp and daily protein intake of afghanistan');
 
   useEffect(() => {
     async function getJson(url) {
@@ -57,14 +60,15 @@ export default function ChartView() {
     <PlotController
       gdp={gdp['data']['results']}
       protein={protein['data']['results']}
-      title="Chart for protein and gdp" />
+      title={chartTitle} />
     <ChartFilters
       setGdp={setGdp}
       setProtein={setProtein}
       validYears={validYears}
       validCountries={validCountries}
       dataLayout={dataLayout}
-      setError={setError} />
+      setError={setError}
+      setChartTitle={setChartTitle} />
     { error ? <div>{error}</div> : <div></div> }
   </div>;
 }

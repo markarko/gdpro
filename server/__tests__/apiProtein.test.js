@@ -110,7 +110,7 @@ describe('GET /api/v1/protein/countries/top/1?orderBy=highest&year=2000', () => 
     expect(response.body).toEqual(
       {'data': {
         'results':[{'country':'iceland', 'code':'ISL', 'year':2000,
-          'protein':123.44397, position:['64.963051', '-19.020835']}]
+          'gppd':123.44397, position:['64.963051', '-19.020835']}]
       }
       });
     expect(response.statusCode).toEqual(200);

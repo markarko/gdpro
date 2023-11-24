@@ -74,6 +74,18 @@ class DB {
       console.error('Error in readAllYearData:', error);
     }
   }
+
+  async readAllYearCountryGeo(countries) {
+    try {
+      const collection = await instance.db.collection('country');
+      const result = await collection.find({
+        name: { $in: countries } },
+      { projection: { _id: 0 } }).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in readAllYearData:', error);
+    }
+  }
     
   async readDataByYearRange(collName, startYear, endYear) {
     try {
@@ -187,7 +199,7 @@ class DB {
       const collection = await instance.db.collection(collName);
       const result = await collection.find({
         country: country,
-        year: Number(year)
+        year: year
       }, { projection: { _id: 0 }}).toArray();
       return result;
     } catch (error) {
@@ -213,6 +225,19 @@ class DB {
       const result = await collection.find({
         country: country,
         gppd: { $gte: Number(startProtein), $lte: Number(endProtein) }
+      }, { projection: { _id: 0 }}).toArray();
+      return result;
+    } catch (error) {
+      console.error('Error in getProteinRange:', error);
+    }
+  }
+
+  async getDataRangeWithYear(collName, year, min, max, dataType) {
+    try {
+      const collection = await instance.db.collection(collName);
+      const result = await collection.find({
+        year: Number(year),
+        [dataType]: { $gte: Number(min), $lte: Number(max) }
       }, { projection: { _id: 0 }}).toArray();
       return result;
     } catch (error) {
