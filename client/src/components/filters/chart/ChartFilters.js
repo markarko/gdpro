@@ -32,7 +32,7 @@ export default function ChartFilters({
 
   useEffect(() => {
     async function fetchDefaultData() {
-      await updateDataWithBasicFilters(setGdp, setProtein, basicFilters);
+      await updateDataWithBasicFilters(setGdp, setProtein, basicFilters, setChartTitle);
     }
 
     fetchDefaultData();
@@ -45,7 +45,8 @@ export default function ChartFilters({
     try{
       switch (selectedFilterType) {
       case FilterType.Basic:
-        await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
+        await updateDataWithBasicFilters(setGdp, setProtein, basicFilters, setChartTitle);
+        break;
       case FilterType.CountryRanking:
         await updateDataWithCountryRankingFilter(
           setGdp,
@@ -96,9 +97,10 @@ export default function ChartFilters({
 async function updateDataWithBasicFilters(
   setGdp,
   setProtein,
-  basicFilters) {
+  basicFilters,
+  setChartTitle) {
 
-  async function getDataForBasicFitlers(dataType, basicFilters) {
+  async function getDataForBasicFitlers(dataType, basicFilters, setChartTitle) {
     const country = basicFilters['country'];
     const minYear = basicFilters['minYear'];
     const maxYear = basicFilters['maxYear'];
@@ -111,12 +113,15 @@ async function updateDataWithBasicFilters(
       throw new Error(json.error);
     }
 
+    // currently gets called twice
+    setChartTitle(createChartTitle(true, true, country, minYear, maxYear));
+
     return json;
   }
 
   const [gdpData, proteinData] = await Promise.all([
-    getDataForBasicFitlers('gdp', basicFilters),
-    getDataForBasicFitlers('protein', basicFilters)
+    getDataForBasicFitlers('gdp', basicFilters, setChartTitle),
+    getDataForBasicFitlers('protein', basicFilters, setChartTitle)
   ]);
 
   setGdp(gdpData);
@@ -177,10 +182,9 @@ function createChartTitle(gdpSelected, proteinSelected, countryName, startYear, 
   let title = 'Chart representing the ';
 
   title += gdpSelected ? 'gdp ' : '';
-  title += gdpSelected && proteinSelected ? ' and ' : '';
+  title += gdpSelected && proteinSelected ? 'and ' : '';
   title += proteinSelected ? 'daily protein intake ' : '';
   title += `of ${countryName} `;
-  title += `between the years ${startYear} and ${endYear}`;
 
   return title;
 }

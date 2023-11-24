@@ -22,7 +22,7 @@ export default function ChartView() {
   const [validCountries, setValidCountries] = useState([]);
 
   const [chartTitle, setChartTitle] = useState('Chart representingthe ' + 
-  'gdp and daily protein intake of ukraine between the years 1990 and 2020');
+  'gdp and daily protein intake of afghanistan');
 
   useEffect(() => {
     async function getJson(url) {
