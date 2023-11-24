@@ -104,9 +104,9 @@ jest.mock('../db/db', () => {
 });
   
 
-describe('GET /api/v1/gdp/countries/Canada', () => {
+describe('GET /api/v1/gdp/countries/Canada?endYear=2021', () => {
   test('responds with an array of gdp values', async () => {
-    const url = '/api/v1/gdp/countries/Canada';
+    const url = '/api/v1/gdp/countries/Canada?endYear=2021';
     const response = await request(app).get(url);
     expect(response.body).toEqual(
       {'data': {
@@ -117,9 +117,9 @@ describe('GET /api/v1/gdp/countries/Canada', () => {
   });
 });
 
-describe('GET /api/v1/gdp/countries/Canada?startYear=2000', () => {
+describe('GET /api/v1/gdp/countries/Canada?startYear=2000&endYear=2021', () => {
   test('responds with an array of gdp values filtered by start year', async () => {
-    const url = '/api/v1/gdp/countries/Canada?startYear=2000';
+    const url = '/api/v1/gdp/countries/Canada?startYear=2000&endYear=2021';
     const response = await request(app).get(url);
     expect(response.body).toEqual(
       {'data': {

@@ -198,7 +198,7 @@ async function getDataSpecificCountry(req, res, db, collName, dataType){
   } catch {
     return;
   }
-
+  
   const data = await db.readAllCountryData(collName, req.params.country);
 
   if (!data.length) {
