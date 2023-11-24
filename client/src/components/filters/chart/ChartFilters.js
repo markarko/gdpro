@@ -142,13 +142,23 @@ async function updateDataWithCountryRankingFilter(
     return json;
   }
   
-  const data = await getDataForCountryRankingFilter();
+  const dataSingleYear = await getDataForCountryRankingFilter();
+  const countryName = dataSingleYear.data.results[0].country;
+  const dataType = countryRankingFilter['value'];
+  
+  const url = `/api/v1/${dataType}/countries/${countryName}`;
+  const response = await fetch(url);
+  const json = await response.json();
+
+  if (!response.ok){
+    throw new Error(json.error);
+  }
 
   if (countryRankingFilter['value'] === 'gdp'){
-    setGdp(data);
+    setGdp(json);
     setProtein(dataLayout);
   } else if (countryRankingFilter['value'] === 'protein') {
-    setProtein(data);
+    setProtein(json);
     setGdp(dataLayout);
   }
 }  
