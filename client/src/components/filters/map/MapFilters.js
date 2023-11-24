@@ -122,22 +122,26 @@ async function getDataForBasicFitlers(dataType, basicFilters) {
   const countries = basicFilters['countries'].join(',');
   const year = basicFilters['year'];   
   const url = `/api/v1/${dataType}/countries?countries=${countries}&year=${year}`;
+
   const response = await fetch(url);
-  return await response.json();
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error);
+  }
+
+  return json;
 }
 
 async function updateDataWithBasicFilters(
   setGdp,
   setProtein,
   basicFilters) {
-  try {
-    const gdpData = await getDataForBasicFitlers('gdp', basicFilters);
-    const proteinData = await getDataForBasicFitlers('protein', basicFilters);
-    setGdp(gdpData);
-    setProtein(proteinData);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+
+  const gdpData = await getDataForBasicFitlers('gdp', basicFilters);
+  const proteinData = await getDataForBasicFitlers('protein', basicFilters);
+  setGdp(gdpData);
+  setProtein(proteinData);
 }
 
 async function getDataForCountryRankingFilter(topCountriesFilter) {

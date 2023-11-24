@@ -13,7 +13,7 @@ export default function ChartView() {
   };
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
 
   const [gdp, setGdp] = useState(dataLayout);
   const [protein, setProtein] = useState(dataLayout);
