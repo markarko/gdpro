@@ -6,14 +6,19 @@ header {
 }
 .inner {
     max-width: 1000px;
-    margin: 0 auto;
     padding: 0px 20px;
     position: relative;
 }
 
+nav{
+    display: flex;
+}
+
 nav > ul {
     float: right;
+    list-style-type: none;
 }
+
 nav > ul > li {
     float: left;
     text-align: center;
@@ -24,16 +29,18 @@ nav > ul > li {
 nav ul li:hover {
     cursor: pointer;
     position: relative;
+    font-style: italic;
+    background-color: white;
 }
 
 nav ul li:hover > a {
-    color: #777;
+    color: #181818;
 }
 nav > ul > li > a {
     cursor: pointer;
     display: block;
     outline: none;
-    width: 100%;
+    width: 7em;
     text-decoration: none;
 }
 
