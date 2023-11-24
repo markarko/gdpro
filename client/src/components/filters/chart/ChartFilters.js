@@ -9,8 +9,9 @@ export default function ChartFilters({
   validYears,
   validCountries,
   dataLayout,
-  setError }) {
-    
+  setError,
+  setChartTitle }) {
+
   const FilterType = {
     Basic: 'basic',
     CountryRanking: 'country-ranking'
@@ -50,7 +51,8 @@ export default function ChartFilters({
           setGdp,
           setProtein,
           countryRankingFilter,
-          dataLayout);
+          dataLayout,
+          setChartTitle);
         break;
       default: break;
       }
@@ -125,7 +127,8 @@ async function updateDataWithCountryRankingFilter(
   setGdp,
   setProtein,
   countryRankingFilter,
-  dataLayout) {
+  dataLayout,
+  setChartTitle ) {
 
   async function getDataForCountryRankingFilter() {
     const orderBy = countryRankingFilter['orderBy'];
@@ -154,11 +157,30 @@ async function updateDataWithCountryRankingFilter(
     throw new Error(json.error);
   }
 
+  const arr = json.data.results;
+  const startYear = arr[0].year;
+  const endYear = arr[arr.length - 1].year;
+
   if (countryRankingFilter['value'] === 'gdp'){
     setGdp(json);
     setProtein(dataLayout);
+    setChartTitle(createChartTitle(true, false, countryName, startYear, endYear));
   } else if (countryRankingFilter['value'] === 'protein') {
     setProtein(json);
     setGdp(dataLayout);
+    setChartTitle(createChartTitle(false, true, countryName, startYear, endYear));
   }
-}  
+
+}
+
+function createChartTitle(gdpSelected, proteinSelected, countryName, startYear, endYear){
+  let title = 'Chart representing the ';
+
+  title += gdpSelected ? 'gdp ' : '';
+  title += gdpSelected && proteinSelected ? ' and ' : '';
+  title += proteinSelected ? 'daily protein intake ' : '';
+  title += `of ${countryName} `;
+  title += `between the years ${startYear} and ${endYear}`;
+
+  return title;
+}

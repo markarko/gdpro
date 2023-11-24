@@ -21,6 +21,9 @@ export default function ChartView() {
   const [validYears, setValidYears] = useState([]);
   const [validCountries, setValidCountries] = useState([]);
 
+  const [chartTitle, setChartTitle] = useState('Chart representingthe ' + 
+  'gdp and daily protein intake of ukraine between the years 1990 and 2020');
+
   useEffect(() => {
     async function getJson(url) {
       const response = await fetch(url);
@@ -57,14 +60,15 @@ export default function ChartView() {
     <PlotController
       gdp={gdp['data']['results']}
       protein={protein['data']['results']}
-      title="Chart for protein and gdp" />
+      title={chartTitle} />
     <ChartFilters
       setGdp={setGdp}
       setProtein={setProtein}
       validYears={validYears}
       validCountries={validCountries}
       dataLayout={dataLayout}
-      setError={setError} />
+      setError={setError}
+      setChartTitle={setChartTitle} />
     { error ? <div>{error}</div> : <div></div> }
   </div>;
 }
