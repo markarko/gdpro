@@ -114,7 +114,7 @@ async function updateDataWithBasicFilters(
     }
 
     // currently gets called twice
-    setChartTitle(createChartTitle(true, true, country, minYear, maxYear));
+    setChartTitle(createChartTitle(true, true, country));
 
     return json;
   }
@@ -162,23 +162,19 @@ async function updateDataWithCountryRankingFilter(
     throw new Error(json.error);
   }
 
-  const arr = json.data.results;
-  const startYear = arr[0].year;
-  const endYear = arr[arr.length - 1].year;
-
   if (countryRankingFilter['value'] === 'gdp'){
     setGdp(json);
     setProtein(dataLayout);
-    setChartTitle(createChartTitle(true, false, countryName, startYear, endYear));
+    setChartTitle(createChartTitle(true, false, countryName));
   } else if (countryRankingFilter['value'] === 'protein') {
     setProtein(json);
     setGdp(dataLayout);
-    setChartTitle(createChartTitle(false, true, countryName, startYear, endYear));
+    setChartTitle(createChartTitle(false, true, countryName));
   }
 
 }
 
-function createChartTitle(gdpSelected, proteinSelected, countryName, startYear, endYear){
+function createChartTitle(gdpSelected, proteinSelected, countryName){
   let title = '';
 
   title += gdpSelected ? 'gdp ' : '';
