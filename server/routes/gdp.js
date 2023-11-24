@@ -102,6 +102,8 @@ router.get('/countries/:country/gdp-range', async (req, res) => {
     return;
   }
 
+  data.sort((a, b) => a.year - b.year);
+
   gdpUtils.sendData (res, 200,
     {
       country: data[0].country,

@@ -159,6 +159,8 @@ router.get('/countries/:country/protein-range', async (req, res) => {
     return;
   }
 
+  data.sort((a, b) => a.year - b.year);
+
   proteinUtils.sendData (res, 200,
     {
       country: data[0].country,

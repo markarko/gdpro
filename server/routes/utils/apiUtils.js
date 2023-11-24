@@ -206,7 +206,7 @@ async function getDataSpecificCountry(req, res, db, collName, dataType){
     return;
   }
 
-  let results = data.map(row => { 
+  let results = data.sort((a, b) => a.year - b.year).map(row => { 
     return { year : row.year, [dataType] : row[dataType] };
   });
 
@@ -261,7 +261,7 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
   }
 
   // Compare each year to the previous year and calculate the growth/decline
-  const results = data.map((row, index) => {
+  const results = data.sort((a, b) => a.year - b.year).map((row, index) => {
     if (index === 0) {
       return { year : row.year, growth : 0 };
     }
@@ -318,7 +318,8 @@ async function getTopCountries(req, res, db, collName, countryCollName, dataType
   }
 
   const results = [];
-  const data = await db.readTopCountries(collName, top, orderBy, dataType, year);  
+  const data = await db.readTopCountries(collName, top, orderBy, dataType, year); 
+  data.sort((a, b) => a.year - b.year); 
   const geoPosition = await db.readAll(countryCollName);
 
   data.forEach(country => {
@@ -385,6 +386,7 @@ async function getDataMultipleCountries(req, res, db, collName, dataType) {
 
   const results = [];
   const data = await db.readAllYearCountryData(collName, Number(year), countries);
+  data.sort((a, b) => a.year - b.year);
   const geoPosition = await db.readAllYearCountryGeo(countries);
   data.forEach(country => {
     geoPosition.forEach(position => {
@@ -447,13 +449,14 @@ async function getDataRangeSpecificYear(req, res, db, collName, countryCollName,
 
   const results = [];
   const data = await db.getDataRangeWithYear(collName, year, min, max, dataType);
-
+  
   if (!data.length) {
     const error = `No data found for the protein range ${min}-${max} and the year ${year}`;
     sendError(res, 404, error);
     return;
   }
 
+  data.sort((a, b) => a.year - b.year);
   const geoPosition = await db.readAll(countryCollName);
 
   data.forEach(country => {
