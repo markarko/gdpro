@@ -13,6 +13,25 @@ const proteinCollName = 'daily-per-capita-protein-supply';
 const gdpCollName = 'gdp-per-capita-worldbank';
 const countriesCollName = 'country';
 
+/**
+ * 
+ * Data mapper for the year data
+ * @param {*} rows 
+ * @param {*} dataType 
+ * @returns list of year data with the specific data type
+ */
+function yearDataMapper(rows, dataType) {
+  const yearData = [];
+  for (const row in rows) {
+    const data = rows[row];
+    yearData.push({
+      year: data.year,
+      [dataType]: data[dataType]
+    });
+  }
+  return yearData;
+}
+
 
 /**
  * GET handler for getting the protein intake of a specific country
@@ -97,21 +116,9 @@ router.get('/random-questions/:number', async (req, res) => {
       });
     }
 
-    // filter cGDP to only have {year: 213, gdp: 123}
-    cGDP = cGDP.map((row) => {
-      return {
-        year: row.year,
-        gdp: row.gdp
-      };
-    });
+    cGDP = yearDataMapper(cGDP, 'gdp');
 
-    // filter cPro the same way
-    cPro = cPro.map((row) => {
-      return {
-        year: row.year,
-        gppd: row.gppd
-      };
-    });
+    cPro = yearDataMapper(cPro, 'protein');
 
     return {
       chart: {
