@@ -125,7 +125,7 @@ router.get('/countries/:country/variation', async (req, res) => {
 /**
  * Get the protein intake for a specific country within a specified range
  *
- * @route GET /countries/:country/protein
+ * @route GET /countries/:country/protein-range
  * @param {string} req.params.country - The country to get the data for
  * @param {number} req.query.startProtein - The starting protein of the protein range
  * to get the data for
