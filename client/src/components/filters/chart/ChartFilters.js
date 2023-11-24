@@ -179,7 +179,7 @@ async function updateDataWithCountryRankingFilter(
 }
 
 function createChartTitle(gdpSelected, proteinSelected, countryName, startYear, endYear){
-  let title = 'Chart representing the ';
+  let title = '';
 
   title += gdpSelected ? 'gdp ' : '';
   title += gdpSelected && proteinSelected ? 'and ' : '';
