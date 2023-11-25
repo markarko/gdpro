@@ -34,9 +34,8 @@ function yearDataMapper(rows, dataType) {
 
 
 /**
- * GET handler for getting the protein intake of a specific country
- * TO BE UPDATED
- * 
+ * GET handler for getting 5 random questions that contain map data, chart data, and the answer
+ * it also contains GDP and protein data for the answer country
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
@@ -103,7 +102,6 @@ router.get('/random-questions/:number', async (req, res) => {
     otherCountries.push(country);
 
   
-    // randomize the order of the countries
     otherCountries.sort(() => Math.random() - 0.5);
 
     const mapData = [];
@@ -132,8 +130,5 @@ router.get('/random-questions/:number', async (req, res) => {
 
   apiUtils.sendData(res, 200, questions);
 });
-
-
-
 
 module.exports = router;
