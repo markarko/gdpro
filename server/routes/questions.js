@@ -13,11 +13,29 @@ const proteinCollName = 'daily-per-capita-protein-supply';
 const gdpCollName = 'gdp-per-capita-worldbank';
 const countriesCollName = 'country';
 
+/**
+ * 
+ * Data mapper for the year data
+ * @param {*} rows 
+ * @param {*} dataType 
+ * @returns list of year data with the specific data type
+ */
+function yearDataMapper(rows, dataType) {
+  const yearData = [];
+  for (const row in rows) {
+    const data = rows[row];
+    yearData.push({
+      year: data.year,
+      [dataType]: data[dataType]
+    });
+  }
+  return yearData;
+}
+
 
 /**
- * GET handler for getting the protein intake of a specific country
- * TO BE UPDATED
- * 
+ * GET handler for getting 5 random questions that contain map data, chart data, and the answer
+ * it also contains GDP and protein data for the answer country
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
@@ -63,33 +81,18 @@ router.get('/random-questions/:number', async (req, res) => {
       cGDP = await db.readAllCountryData(gdpCollName, country.name.toLowerCase());
       // eslint-disable-next-line no-await-in-loop
       cPro = await db.readAllCountryData(proteinCollName, country.name.toLowerCase());
-  
-      // Sometimes one dataset has more years than the other
-      try {
-        cGDP = cGDP.find(gdp => cPro.some(pro => pro.year === gdp.year));
-        cPro = cPro.find(pro => pro.year === cGDP.year);
-      } catch {
-        continue;
-      }
-      
-      if (cGDP && cPro) {
+        
+      if (cGDP.length !== 0 && cPro.length !== 0) {
         found = true;
         break;
       }
     }
 
+
     if (!found) {
       apiUtils.sendError(res, 404, 'No questions found');
       return;
     }
-
-    if (cGDP.year === undefined || cPro.year === undefined) {
-      apiUtils.sendError(res, 404, 'No questions found');
-      return;
-    }
-  
-    const Lon = country.longitude;
-    const Lat = country.lattitude;
   
     const otherCountries = [];
     for (let i = 0; i < 2; i++) {
@@ -97,24 +100,35 @@ router.get('/random-questions/:number', async (req, res) => {
       otherCountries.push(otherCountry);
     }
     otherCountries.push(country);
+
   
-    // randomize the order of the countries
     otherCountries.sort(() => Math.random() - 0.5);
 
-    return {'Question': 'Which of the following countries has the',
-      'QData': {'GDP': cGDP.gdp, 'Protein': cPro.gppd, 'Lan': Lat, 'Lon': Lon, 'year': cGDP.year},
-      'Answers': [otherCountries[0].name, otherCountries[1].name, otherCountries[2].name],
-      'Correct': country.name};
-  }
+    const mapData = [];
 
-  const responseBody = {
-    'questions': questions
-  };
+    for (const newCountry in otherCountries) {
+      const countryData = otherCountries[newCountry];
+      mapData.push({
+        country: countryData.name,
+        position: [countryData.latitude, countryData.longitude]
+      });
+    }
 
-  apiUtils.sendData(res, 200, responseBody);
+    cGDP = yearDataMapper(cGDP, 'gdp');
+
+    cPro = yearDataMapper(cPro, 'gppd');
+
+    return {
+      chart: {
+        gdp: cGDP,
+        gppd: cPro
+      },
+      map: mapData,
+      answer: country.name
+    };
+  } 
+
+  apiUtils.sendData(res, 200, questions);
 });
-
-
-
 
 module.exports = router;

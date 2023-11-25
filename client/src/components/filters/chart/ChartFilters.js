@@ -9,8 +9,9 @@ export default function ChartFilters({
   validYears,
   validCountries,
   dataLayout,
-  setError }) {
-    
+  setError,
+  setChartTitle }) {
+
   const FilterType = {
     Basic: 'basic',
     CountryRanking: 'country-ranking'
@@ -31,7 +32,7 @@ export default function ChartFilters({
 
   useEffect(() => {
     async function fetchDefaultData() {
-      await updateDataWithBasicFilters(setGdp, setProtein, basicFilters);
+      await updateDataWithBasicFilters(setGdp, setProtein, basicFilters, setChartTitle);
     }
 
     fetchDefaultData();
@@ -44,13 +45,15 @@ export default function ChartFilters({
     try{
       switch (selectedFilterType) {
       case FilterType.Basic:
-        await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
+        await updateDataWithBasicFilters(setGdp, setProtein, basicFilters, setChartTitle);
+        break;
       case FilterType.CountryRanking:
         await updateDataWithCountryRankingFilter(
           setGdp,
           setProtein,
           countryRankingFilter,
-          dataLayout);
+          dataLayout,
+          setChartTitle);
         break;
       default: break;
       }
@@ -94,9 +97,10 @@ export default function ChartFilters({
 async function updateDataWithBasicFilters(
   setGdp,
   setProtein,
-  basicFilters) {
+  basicFilters,
+  setChartTitle) {
 
-  async function getDataForBasicFitlers(dataType, basicFilters) {
+  async function getDataForBasicFitlers(dataType, basicFilters, setChartTitle) {
     const country = basicFilters['country'];
     const minYear = basicFilters['minYear'];
     const maxYear = basicFilters['maxYear'];
@@ -109,12 +113,15 @@ async function updateDataWithBasicFilters(
       throw new Error(json.error);
     }
 
+    // currently gets called twice
+    setChartTitle(createChartTitle(true, true, country));
+
     return json;
   }
 
   const [gdpData, proteinData] = await Promise.all([
-    getDataForBasicFitlers('gdp', basicFilters),
-    getDataForBasicFitlers('protein', basicFilters)
+    getDataForBasicFitlers('gdp', basicFilters, setChartTitle),
+    getDataForBasicFitlers('protein', basicFilters, setChartTitle)
   ]);
 
   setGdp(gdpData);
@@ -125,7 +132,8 @@ async function updateDataWithCountryRankingFilter(
   setGdp,
   setProtein,
   countryRankingFilter,
-  dataLayout) {
+  dataLayout,
+  setChartTitle ) {
 
   async function getDataForCountryRankingFilter() {
     const orderBy = countryRankingFilter['orderBy'];
@@ -142,13 +150,37 @@ async function updateDataWithCountryRankingFilter(
     return json;
   }
   
-  const data = await getDataForCountryRankingFilter();
+  const dataSingleYear = await getDataForCountryRankingFilter();
+  const countryName = dataSingleYear.data.results[0].country;
+  const dataType = countryRankingFilter['value'];
+  
+  const url = `/api/v1/${dataType}/countries/${countryName}`;
+  const response = await fetch(url);
+  const json = await response.json();
+
+  if (!response.ok){
+    throw new Error(json.error);
+  }
 
   if (countryRankingFilter['value'] === 'gdp'){
-    setGdp(data);
+    setGdp(json);
     setProtein(dataLayout);
+    setChartTitle(createChartTitle(true, false, countryName));
   } else if (countryRankingFilter['value'] === 'protein') {
-    setProtein(data);
+    setProtein(json);
     setGdp(dataLayout);
+    setChartTitle(createChartTitle(false, true, countryName));
   }
-}  
+
+}
+
+function createChartTitle(gdpSelected, proteinSelected, countryName){
+  let title = '';
+
+  title += gdpSelected ? 'gdp ' : '';
+  title += gdpSelected && proteinSelected ? 'and ' : '';
+  title += proteinSelected ? 'daily protein intake <br>' : '<br>';
+  title += `of ${countryName} `;
+
+  return title;
+}

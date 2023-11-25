@@ -14,13 +14,13 @@ export default function AnswerOption({ choices, setAnswer }) {
         <div key={index}>
           <input
             type="radio"
-            id={choice}
+            id={choice['country']}
             name="answer"
-            value={choice}
+            value={choice['country']}
             className="answers"
             onChange={(e) => setAnswer(e.target.value)}
           />
-          <label htmlFor={choice}>{choice}</label>
+          <label htmlFor={choice['country']}>{choice['country']}</label>
         </div>
       )}
     </div>
