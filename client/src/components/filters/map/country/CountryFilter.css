@@ -1,4 +1,13 @@
 .CountryFilter {
     display: flex;
+    align-items: center;
     gap: 1vw;
+    flex-wrap: wrap;
 }
+
+
+.add-button{
+    flex: 0 0 90px;
+    height: 50px;
+    padding: 0.6em;
+  }

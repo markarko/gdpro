@@ -24,7 +24,7 @@ function SelectedCountry({ country, removeCountry }) {
   return (
     <div className="SelectedCountry">
       <div>{country}</div>
-      <button onClick={e => removeCountry(country)}>X</button>
+      <button className = "delete-button" onClick={e => removeCountry(country)}>X</button>
     </div>
   );
 }

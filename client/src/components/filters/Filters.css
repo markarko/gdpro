@@ -3,7 +3,6 @@
     flex-direction: column;
     gap: 1vh;
     padding: 1vh;
-    border: 1px solid black;
 }
 
 .year-slider, .filter-select-country{
@@ -11,7 +10,6 @@
 }
 
 .filterType {
-    border: 1px solid black;
     padding: 1vh;
     gap: 1vw;
 }
