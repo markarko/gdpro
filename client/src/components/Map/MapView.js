@@ -59,5 +59,6 @@ export default function MapView() {
       setError={setError}
     />
     { error ? <div>{error}</div> : <div></div> }
+    <hr />
   </>;
 }

@@ -138,8 +138,9 @@ export default function QuizComponent(props) {
           </div>
         </div>
       }
-      
+      <hr style={{'marginTop' : '2em'}}/>
     </div>
+    
   );
 }       
 

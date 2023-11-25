@@ -6,7 +6,7 @@
 
 body{
   background-color: #101820;
-  color: #FEE715;
+  color: seashell;
 }
 
 .App {
@@ -49,4 +49,15 @@ button{
 
 h1{
   font-size: 15pt;
+}
+
+a {
+  text-decoration: none;
+  color: turquoise;
+}
+
+a:hover{
+  text-decoration: underline;
+  font-style: italic;
+  font-weight: bold;
 }

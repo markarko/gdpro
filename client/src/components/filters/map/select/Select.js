@@ -1,7 +1,8 @@
 export default function Select({ options, labelText, onChange }) {
   return (
     <div>
-      <label>{labelText}</label>
+      <label className = "filter-select-country">{labelText}</label>
+      <br />
       <select onChange={e => {
         if (onChange !== undefined){
           onChange(e);

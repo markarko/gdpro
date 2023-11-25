@@ -4,6 +4,14 @@
     padding: 2vh;
     margin-top: 2vh
 }
+@media only screen and (max-width: 600px) {
+    .Footer {
+        flex-direction: column;
+    }
+    .Footer > * {
+        margin-bottom: 1.5em
+    }
+}
 
 .Footer > * {
     flex: 1;
@@ -14,6 +22,3 @@ h3 {
     margin-top: 0;
 }
 
-a {
-    text-decoration: none;
-}
