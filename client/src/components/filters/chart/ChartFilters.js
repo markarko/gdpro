@@ -63,31 +63,33 @@ export default function ChartFilters({
   };
 
   return(
-    <form className="ChartFilters" onSubmit={applyFilters}>
-      <div className="filterType">
-        <input
-          type="radio"
-          name="filterType"
-          value={FilterType.Basic}
-          onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.Basic} />
-        <BasicFilters
-          years={validYears}
-          validCountries={validCountries}
-          basicFilters={basicFilters}
-          setBasicFilters={setBasicFilters}
-          disable={selectedFilterType !== FilterType.Basic} />
-      </div>
-      <div className="filterType">
-        <input
-          type="radio"
-          name="filterType"
-          value={FilterType.CountryRanking}
-          onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.CountryRanking} />
-        <CountryRankingFilter
-          setCountryRankingFilter={setCountryRankingFilter}
-          disable={selectedFilterType !== FilterType.CountryRanking} />
+    <form  onSubmit={applyFilters}>
+      <div className="ChartFilters">
+        <div className="filterType">
+          <input
+            type="radio"
+            name="filterType"
+            value={FilterType.Basic}
+            onChange={e => setSelectedFilterType(e.target.value)}
+            checked={selectedFilterType === FilterType.Basic} />
+          <BasicFilters
+            years={validYears}
+            validCountries={validCountries}
+            basicFilters={basicFilters}
+            setBasicFilters={setBasicFilters}
+            disable={selectedFilterType !== FilterType.Basic} />
+        </div>
+        <div className="filterType">
+          <input
+            type="radio"
+            name="filterType"
+            value={FilterType.CountryRanking}
+            onChange={e => setSelectedFilterType(e.target.value)}
+            checked={selectedFilterType === FilterType.CountryRanking} />
+          <CountryRankingFilter
+            setCountryRankingFilter={setCountryRankingFilter}
+            disable={selectedFilterType !== FilterType.CountryRanking} />
+        </div>
       </div>
       <button>Apply</button>
     </form>

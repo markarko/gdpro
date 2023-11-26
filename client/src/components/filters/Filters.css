@@ -1,6 +1,6 @@
 .MapFilters, .ChartFilters {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 1vh;
     padding: 1vh;
 }
@@ -10,8 +10,8 @@
 }
 
 .filterType {
-    padding: 1vh;
-    gap: 1vw;
+    padding-right: 18%;
+    border-right: solid;
 }
 
 .MapFilters > *, .ChartFilters > * {

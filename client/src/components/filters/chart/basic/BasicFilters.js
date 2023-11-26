@@ -21,7 +21,7 @@ export default function BasicFilters({
   };
 
   return (
-    <div className={disable ? 'disabled' : ''}>
+    <div className={disable ? 'disabled' : ''} style={{'display':'flex', 'flexDirection':'column'}}>
       <Select
         options={validCountries}
         labelText="Select the country: "
