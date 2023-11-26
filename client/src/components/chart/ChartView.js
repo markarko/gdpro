@@ -70,5 +70,6 @@ export default function ChartView() {
       setError={setError}
       setChartTitle={setChartTitle} />
     { error ? <div>{error}</div> : <div></div> }
+    <hr />
   </div>;
 }

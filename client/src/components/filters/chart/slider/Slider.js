@@ -34,8 +34,10 @@ export default function YearSlider({
 
   return (
     <div>
-      <label>{labelText}</label>
+      <label className="year-slider">{labelText}</label>
+      <br />
       <input
+        id="year-slider"
         type="range"
         min={values[0]}
         max={values[values.length - 1]}

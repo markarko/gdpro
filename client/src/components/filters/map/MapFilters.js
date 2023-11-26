@@ -79,39 +79,41 @@ export default function MapFilters({
   };
 
   return(
-    <form className="MapFilters" onSubmit={applyFilters}>
-      <div className="filterType">
-        <input
-          type="radio"
-          name="filterType"
-          value={FilterType.Basic}
-          onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.Basic} />
-        <BasicFilters
-          years={years}
-          validCountries={validCountries}
-          basicFilters={basicFilters}
-          setBasicFilters={setBasicFilters}
-          disable={selectedFilterType !== FilterType.Basic} />
-      </div>
-      <div className="filterType">
-        <input type="radio" name="filterType" value={FilterType.TopCountries}
-          onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.TopCountries} />
-        <TopCountriesFilter
-          setTopCountriesFilter={setTopCountriesFilter}
-          selectedFilterType={selectedFilterType}
-          disable={selectedFilterType !== FilterType.TopCountries} />
-      </div>
-      <div className="filterType">
-        <input type="radio" name="filterType" value={FilterType.DataRange}
-          onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.DataRange} />
-        <DataRangeFilter
-          dataRangeFilter={dataRangeFilter}
-          setDataRangeFilter={setDataRangeFilter}
-          years={years}
-          disable={selectedFilterType !== FilterType.DataRange} />
+    <form onSubmit={applyFilters}>
+      <div className="MapFilters">
+        <div className="filterType">
+          <input
+            type="radio"
+            name="filterType"
+            value={FilterType.Basic}
+            onChange={e => setSelectedFilterType(e.target.value)}
+            checked={selectedFilterType === FilterType.Basic} />
+          <BasicFilters
+            years={years}
+            validCountries={validCountries}
+            basicFilters={basicFilters}
+            setBasicFilters={setBasicFilters}
+            disable={selectedFilterType !== FilterType.Basic} />
+        </div>
+        <div className="filterType">
+          <input type="radio" name="filterType" value={FilterType.TopCountries}
+            onChange={e => setSelectedFilterType(e.target.value)}
+            checked={selectedFilterType === FilterType.TopCountries} />
+          <TopCountriesFilter
+            setTopCountriesFilter={setTopCountriesFilter}
+            selectedFilterType={selectedFilterType}
+            disable={selectedFilterType !== FilterType.TopCountries} />
+        </div>
+        <div className="filterType">
+          <input type="radio" name="filterType" value={FilterType.DataRange}
+            onChange={e => setSelectedFilterType(e.target.value)}
+            checked={selectedFilterType === FilterType.DataRange} />
+          <DataRangeFilter
+            dataRangeFilter={dataRangeFilter}
+            setDataRangeFilter={setDataRangeFilter}
+            years={years}
+            disable={selectedFilterType !== FilterType.DataRange} />
+        </div>
       </div>
       <button type="submit">Apply</button>
     </form>

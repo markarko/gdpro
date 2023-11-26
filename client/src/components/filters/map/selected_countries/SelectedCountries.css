@@ -9,5 +9,10 @@
 .SelectedCountry {
     display: flex;
     justify-content: space-between;
-    gap: 1vw;
+    min-width: 150px;
+}
+
+.delete-button{
+    flex: 0 0 90px;
+    padding: 0.6em;
 }
