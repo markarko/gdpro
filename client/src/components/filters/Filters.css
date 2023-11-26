@@ -6,7 +6,19 @@
 }
 
 @media only screen and (max-width: 1220px) {
-    .MapFilters {
+    .MapFilters, .ChartFilters {
+      flex-direction: column;
+    }
+
+    .MapFilters > .filterType, .ChartFilters > .filterType {
+        border-bottom: solid;
+        border-right: none;
+        padding: 1em;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .MapFilters > .filterType:nth-child(1) > div {
       flex-direction: column;
     }
     .MapFilters > .filterType {
