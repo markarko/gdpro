@@ -249,6 +249,65 @@ describe('Test get the top x highest or lowest GDP across all countries', () => 
 }
 );
 
+describe('Test get the top x highest or lowest GDP across all countrie', () => {
+  test('responds with error', async () => {
+    const url = '/api/v1/gdp/countries/top/-1?orderBy=highest';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'error': 'The value following top/ must be a number between 1 and 10'}
+    );
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
+describe('Test get the top x highest or lowest GDP across all countrie', () => {
+  test('responds with error', async () => {
+    const url = '/api/v1/gdp/countries/top/100?orderBy=highest';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'error': 'The value following top/ must be a number between 1 and 10'}
+    );
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
+describe('Test get the top x highest or lowest GDP across all countrie', () => {
+  test('responds with error', async () => {
+    const url = '/api/v1/gdp/countries/top/1?orderBy=trash';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'error':
+      'orderBy query parameter can be one of the following values: \'highest\', \'lowest\''}
+    );
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
+describe('Test get the top x highest or lowest GDP across all countrie', () => {
+  test('responds with error', async () => {
+    const url = '/api/v1/gdp/countries/top/1';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'error':
+      'orderBy query parameter can be one of the following values: \'highest\', \'lowest\''}
+    );
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
+describe('Test get the top x highest or lowest GDP across all countrie', () => {
+  test('responds top 1 country with highest gdp', async () => {
+    const url = '/api/v1/gdp/countries/top/1?orderBy=highest&year=2000';
+    const response = await request(app).get(url);
+    expect(response.body).toEqual(
+      {'data': {
+        'results':[{'country':'luxembourg', 'code':'LUX', 'year':2000,
+          'gdp':99301.52, position:['49.815273', '6.129583']}]
+      }
+      });
+    expect(response.statusCode).toEqual(200);
+  });
+});
 
 describe('Test getting all countries', () => {
   test('responds with an array of countries', async () => {
@@ -379,7 +438,7 @@ describe('Test Get the growth / decline of GDP for a specific country over the y
   });
 });
 
-describe('GET /api/v1/gdp/countries/canada/variation?startYear=2020&endYear=2050', () => {
+describe('Test Get the growth / decline of GDP for a specific country over the years', () => {
   test('responds with an array of gdp values filtered by start year', async () => {
     const url = '/api/v1/gdp/countries/canada/variation?startYear=2020&endYear=2050';
     const response = await request(app).get(url);
@@ -407,7 +466,7 @@ describe('GET /api/v1/gdp/countries/canada/variation?startYear=2020&endYear=2050
   });
 });
 
-describe('GET /api/v1/gdp/countries/canada/variation?startYear=2050&endYear=2020', () => {
+describe('Test Get the growth / decline of GDP for a specific country over the years', () => {
   test('responds with year range error', async () => {
     const url = '/api/v1/gdp/countries/canada/variation?startYear=2050&endYear=2020';
     const response = await request(app).get(url);
@@ -418,7 +477,7 @@ describe('GET /api/v1/gdp/countries/canada/variation?startYear=2050&endYear=2020
   });
 });
 
-describe('GET /api/v1/gdp/countries/Random/variation?startYear=2020&endYear=2050', () => {
+describe('Test Get the growth / decline of GDP for a specific country over the years', () => {
   test('responds with an empty array', async () => {
     const url = '/api/v1/gdp/countries/Random/variation?startYear=2020&endYear=2050';
     const response = await request(app).get(url);
@@ -430,8 +489,7 @@ describe('GET /api/v1/gdp/countries/Random/variation?startYear=2020&endYear=2050
   });
 });
 
-
-describe('GET /api/v1/gdp/countries/canada/gdp-range?startGdp=1&endGdp=100000', () => {
+describe('Test Get the GDP for a specific country within a specified range', () => {
   test('responds with an array of gdp values filtered by start gdp', async () => {
     const url = '/api/v1/gdp/countries/canada/gdp-range?startGdp=1&endGdp=100000';
     const response = await request(app).get(url);
@@ -444,7 +502,7 @@ describe('GET /api/v1/gdp/countries/canada/gdp-range?startGdp=1&endGdp=100000', 
   });
 });
 
-describe('GET /api/v1/gdp/countries/canada/gdp-range?startGdp=100000&endGdp=1', () => {
+describe('Test Get the GDP for a specific country within a specified range', () => {
   test('responds with gdp range error', async () => {
     const url = '/api/v1/gdp/countries/canada/gdp-range?startGdp=100000&endGdp=1';
     const response = await request(app).get(url);
@@ -455,7 +513,7 @@ describe('GET /api/v1/gdp/countries/canada/gdp-range?startGdp=100000&endGdp=1', 
   });
 });
 
-describe('GET /api/v1/gdp/countries/Random/gdp-range?startGdp=1&endGdp=100000', () => {
+describe('Test Get the GDP for a specific country within a specified range', () => {
   test('responds with an empty array', async () => {
     const url = '/api/v1/gdp/countries/Random/gdp-range?startGdp=1&endGdp=100000';
     const response = await request(app).get(url);
@@ -467,9 +525,7 @@ describe('GET /api/v1/gdp/countries/Random/gdp-range?startGdp=1&endGdp=100000', 
   });
 });
 
-
-
-describe('GET /api/v1/gdp/countries/?countries=canada,germany,france', () => {
+describe('Test Get the GDP for multiple countries and a specific year', () => {
   test('responds with an array of gdp values filtered by countries', async () => {
     const url = '/api/v1/gdp/countries/?countries=canada,germany,france';
     const response = await request(app).get(url);
@@ -513,21 +569,9 @@ describe('GET /api/v1/gdp/countries/?countries=canada,germany,france', () => {
   });
 });
 
-describe('GET /api/v1/gdp/countries/top/1?orderBy=highest', () => {
-  test('responds top 1 country with highest gdp', async () => {
-    const url = '/api/v1/gdp/countries/top/1?orderBy=highest&year=2000';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual(
-      {'data': {
-        'results':[{'country':'luxembourg', 'code':'LUX', 'year':2000,
-          'gdp':99301.52, position:['49.815273', '6.129583']}]
-      }
-      });
-    expect(response.statusCode).toEqual(200);
-  });
-});
 
-describe('GET /api/v1/gdp/countries/?countries=random,random,random', () => {
+
+describe('Test Get the GDP for multiple countries and a specific year', () => {
   test('responds with an empty array', async () => {
     const url = '/api/v1/gdp/countries/?countries=random,random,random';
     const response = await request(app).get(url);
@@ -539,7 +583,7 @@ describe('GET /api/v1/gdp/countries/?countries=random,random,random', () => {
   });
 });
 
-describe('GET /api/v1/gdp/countries/?countries=', () => {
+describe('Test Get the GDP for multiple countries and a specific year', () => {
   test('responds with an empty array', async () => {
     const url = '/api/v1/gdp/countries/?countries=';
     const response = await request(app).get(url);
@@ -551,7 +595,7 @@ describe('GET /api/v1/gdp/countries/?countries=', () => {
   });
 });
 
-describe('GET /api/v1/gdp/countries/?countries=1,2,3,4,5,6,7,8,9,0,1,2,3,4', () => {
+describe('Test Get the GDP for multiple countries and a specific year', () => {
   test('responds with an empty array', async () => {
     const url = '/api/v1/gdp/countries/?countries=1,2,3,4,5,6,7,8,9,0,1,2,3,4';
     const response = await request(app).get(url);
@@ -559,52 +603,6 @@ describe('GET /api/v1/gdp/countries/?countries=1,2,3,4,5,6,7,8,9,0,1,2,3,4', () 
       {'error': 
       'Countries length can not be less then 1 or greater then 10'
       });
-    expect(response.statusCode).toEqual(400);
-  });
-});
-
-describe('GET /api/v1/gdp/countries/top/-1?orderBy=highest', () => {
-  test('responds with error', async () => {
-    const url = '/api/v1/gdp/countries/top/-1?orderBy=highest';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual(
-      {'error': 'The value following top/ must be a number between 1 and 10'}
-    );
-    expect(response.statusCode).toEqual(400);
-  });
-});
-
-describe('GET /api/v1/gdp/countries/top/100?orderBy=highest', () => {
-  test('responds with error', async () => {
-    const url = '/api/v1/gdp/countries/top/100?orderBy=highest';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual(
-      {'error': 'The value following top/ must be a number between 1 and 10'}
-    );
-    expect(response.statusCode).toEqual(400);
-  });
-});
-
-describe('GET /api/v1/gdp/countries/top/1?orderBy=trash', () => {
-  test('responds with error', async () => {
-    const url = '/api/v1/gdp/countries/top/1?orderBy=trash';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual(
-      {'error':
-      'orderBy query parameter can be one of the following values: \'highest\', \'lowest\''}
-    );
-    expect(response.statusCode).toEqual(400);
-  });
-});
-
-describe('GET /api/v1/gdp/countries/top/1', () => {
-  test('responds with error', async () => {
-    const url = '/api/v1/gdp/countries/top/1';
-    const response = await request(app).get(url);
-    expect(response.body).toEqual(
-      {'error':
-      'orderBy query parameter can be one of the following values: \'highest\', \'lowest\''}
-    );
     expect(response.statusCode).toEqual(400);
   });
 });
