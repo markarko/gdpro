@@ -1,3 +1,5 @@
+import './AnswerOption.css';
+
 /**
  * AnswerOptions component used for displaying the answer options in form of radio buttons
  * @param {*} props 
@@ -9,7 +11,7 @@ export default function AnswerOption({ choices, setAnswer }) {
   }
 
   return (
-    <div>
+    <div className="AnswerOption">
       {choices.map((choice, index) => 
         <div key={index}>
           <input
