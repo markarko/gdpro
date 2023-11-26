@@ -22,18 +22,19 @@ export default function Map({gdp, protein}) {
     const matchingProteinItem = protein.find(
       (proteinItem) => proteinItem.country === gdpItem.country
     );
+
+    console.log(matchingProteinItem);
   
     return {
       ...gdpItem,
-      protein: matchingProteinItem ? matchingProteinItem.protein : null,
+      gppd: matchingProteinItem ? matchingProteinItem.gppd : null,
     };
   });
   if (gdp.length > protein.length && protein.length === 0) {
     filterGdp = true;
   }else if(protein.length > gdp.length && gdp.length === 0) {
     filterProtein = true;
-  }
-  
+  }  
 
   return (
     <div className="ui-container">
