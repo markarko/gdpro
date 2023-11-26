@@ -5,11 +5,23 @@
     padding: 1vh;
 }
 
+@media only screen and (max-width: 1220px) {
+    .MapFilters {
+      flex-direction: column;
+    }
+    .MapFilters > .filterType {
+        border-bottom: solid;
+        border-right: none;
+        padding: 1em;
+    }
+}
+
 .year-slider, .filter-select-country{
     margin: 2em 1.5em 0 0;
 }
 
 .filterType {
+    display: flex;
     padding-right: 18%;
     border-right: solid;
 }
@@ -26,4 +38,8 @@
 input[type='radio'] {
     transform: scale(1.5);
     height: 1em;
+}
+
+form{
+    padding: 0.5em;
 }

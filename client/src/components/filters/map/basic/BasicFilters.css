@@ -1,8 +1,20 @@
 .MapFilters > .filterType:nth-child(1) > div {
     display: flex;
+    align-items: flex-start;
     gap: 1vh;
 }
 
+@media only screen and (max-width: 800px) {
+    .MapFilters > .filterType:nth-child(1) > div {
+      flex-direction: column;
+    }
+    .MapFilters > .filterType {
+        border-bottom: solid;
+        border-right: none;
+        padding: 1em;
+    }
+}
+
 .MapFilters > .filterType > div{
-    padding-top: 1em;
+    padding-top: 1.5em;
 }
