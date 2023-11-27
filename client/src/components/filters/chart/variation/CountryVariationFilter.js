@@ -46,13 +46,13 @@ export default function CountryVariationFilter({
         values={years}
         basicFilters={basicFilters}
         setBasicFilters={setCountryVariationFilter}
-        yearType="startYear" />
+        yearType="minYear" />
       <YearSlider
         labelText="End year:"
         values={years}
         basicFilters={basicFilters}
         setBasicFilters={setCountryVariationFilter}
-        yearType="endYear" />
+        yearType="maxYear" />
     </div>
   );
 }

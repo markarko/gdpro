@@ -230,8 +230,8 @@ async function updateDataWithCountryVariationFilter(
 
   async function getDataForCountryVariationFilter() {
     const country = countryVariationFilter['country'];
-    const startYear = countryVariationFilter['startYear'];
-    const endYear = countryVariationFilter['endYear'];
+    const startYear = countryVariationFilter['minYear'];
+    const endYear = countryVariationFilter['maxYear'];
     const value = countryVariationFilter['value'];
     let u = '';
 
