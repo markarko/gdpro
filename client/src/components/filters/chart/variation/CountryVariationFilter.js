@@ -5,7 +5,7 @@ import YearSlider from '../slider/Slider';
 export default function CountryVariationFilter({
   years,
   validCountries,
-  basicFilters,
+  countryVariationFilter,
   setCountryVariationFilter,
   disable }) {
 
@@ -44,14 +44,14 @@ export default function CountryVariationFilter({
       <YearSlider
         labelText="Start year:"
         values={years}
-        basicFilters={basicFilters}
-        setBasicFilters={setCountryVariationFilter}
+        filters={countryVariationFilter}
+        setFilters={setCountryVariationFilter}
         yearType="minYear" />
       <YearSlider
         labelText="End year:"
         values={years}
-        basicFilters={basicFilters}
-        setBasicFilters={setCountryVariationFilter}
+        filters={countryVariationFilter}
+        setFilters={setCountryVariationFilter}
         yearType="maxYear" />
     </div>
   );

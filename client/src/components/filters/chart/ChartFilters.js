@@ -118,7 +118,7 @@ export default function ChartFilters({
           <CountryVariationFilter
             years={validYears}
             validCountries={validCountries}
-            basicFilters={basicFilters}
+            countryVariationFilter={countryVariationFilter}
             setCountryVariationFilter={setCountryVariationFilter}
             disable={selectedFilterType !== FilterType.CountryVariation} />
         </div>
