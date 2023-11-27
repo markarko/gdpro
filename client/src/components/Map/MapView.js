@@ -45,6 +45,7 @@ export default function MapView() {
   }
 
 
+
   return <>
     <Map
       gdp={gdp.data.results} 

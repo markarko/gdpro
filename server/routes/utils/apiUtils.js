@@ -437,6 +437,11 @@ async function getDataRangeSpecificYear(req, res, db, collName, countryCollName,
     [min, max] = getDefaultGdpParams(min, max);
   }
 
+  if (!year || isNaN(year) || Number(year) < 0) {
+    sendError(res, 400, 'The year parameter must be a positive number');
+    return;
+  }
+
   [year] = getDefaultYearParams(year);
 
   try {

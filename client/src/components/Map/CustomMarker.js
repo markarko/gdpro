@@ -7,7 +7,7 @@ const CustomMarker = ({ data, icon }) =>
       <div>
         <p>Country: {data.country}</p>
         {data.gdp && <p>GDP: {data.gdp}</p>}
-        {data.protein && <p>Protein: {data.protein}</p>}
+        {data.gppd && <p>Protein: {data.gppd}</p>}
       </div>
     </Popup>
   </Marker>;
