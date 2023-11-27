@@ -29,14 +29,14 @@ export default function BasicFilters({
       <YearSlider
         labelText="Min year:"
         values={years}
-        basicFilters={basicFilters}
-        setBasicFilters={setBasicFilters}
+        filters={basicFilters}
+        setFilters={setBasicFilters}
         yearType="minYear" />
       <YearSlider
         labelText="Max year:"
         values={years}
-        basicFilters={basicFilters}
-        setBasicFilters={setBasicFilters}
+        filters={basicFilters}
+        setFilters={setBasicFilters}
         yearType="maxYear" />
     </div>
   );

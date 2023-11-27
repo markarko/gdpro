@@ -1,6 +1,7 @@
 import '../Filters.css';
 import BasicFilters from './basic/BasicFilters';
 import CountryRankingFilter from './country_ranking/CountryRankingFilter';
+import CountryVariationFilter from './variation/CountryVariationFilter';
 import { useState, useEffect } from 'react';
 
 export default function ChartFilters({
@@ -14,7 +15,8 @@ export default function ChartFilters({
 
   const FilterType = {
     Basic: 'basic',
-    CountryRanking: 'country-ranking'
+    CountryRanking: 'country-ranking',
+    CountryVariation: 'country-variation'
   };
 
   const [selectedFilterType, setSelectedFilterType] = useState(FilterType.Basic);
@@ -27,6 +29,13 @@ export default function ChartFilters({
 
   const [countryRankingFilter, setCountryRankingFilter] = useState({
     orderBy: 'highest',
+    value: 'gdp'
+  });
+
+  const [countryVariationFilter, setCountryVariationFilter] = useState({
+    country: validCountries[0],
+    minYear: validYears[0],
+    maxYear: validYears[validYears.length - 1],
     value: 'gdp'
   });
 
@@ -52,6 +61,15 @@ export default function ChartFilters({
           setGdp,
           setProtein,
           countryRankingFilter,
+          dataLayout,
+          setChartTitle);
+        break;
+
+      case FilterType.CountryVariation:
+        await updateDataWithCountryVariationFilter(
+          setGdp,
+          setProtein,
+          countryVariationFilter,
           dataLayout,
           setChartTitle);
         break;
@@ -89,6 +107,20 @@ export default function ChartFilters({
           <CountryRankingFilter
             setCountryRankingFilter={setCountryRankingFilter}
             disable={selectedFilterType !== FilterType.CountryRanking} />
+        </div>
+        <div className="filterType">
+          <input
+            type="radio"
+            name="filterType"
+            value={FilterType.CountryVariation}
+            onChange={e => setSelectedFilterType(e.target.value)}
+            checked={selectedFilterType === FilterType.CountryVariation} />
+          <CountryVariationFilter
+            years={validYears}
+            validCountries={validCountries}
+            countryVariationFilter={countryVariationFilter}
+            setCountryVariationFilter={setCountryVariationFilter}
+            disable={selectedFilterType !== FilterType.CountryVariation} />
         </div>
       </div>
       <button>Apply</button>
@@ -185,4 +217,59 @@ function createChartTitle(gdpSelected, proteinSelected, countryName){
   title += `of ${countryName} `;
 
   return title;
+}
+
+
+
+async function updateDataWithCountryVariationFilter(
+  setGdp,
+  setProtein,
+  countryVariationFilter,
+  dataLayout,
+  setChartTitle ) {
+
+  async function getDataForCountryVariationFilter() {
+    const country = countryVariationFilter['country'];
+    const startYear = countryVariationFilter['minYear'];
+    const endYear = countryVariationFilter['maxYear'];
+    const value = countryVariationFilter['value'];
+    let u = '';
+
+    u = `/api/v1/${value}/countries/${country}/variation?startYear=${startYear}&endYear=${endYear}`;
+
+    const response = await fetch(u);
+    const json = await response.json();
+    
+    if (!response.ok){
+      throw new Error(json.error);
+    }
+    
+    const yearData = [];
+    for (const row in json.data['results']) {
+      const data = json.data['results'][row];
+      yearData.push({
+        year: data.year,
+        [value === 'gdp' ? 'gdp' : 'gppd']: data['growth']
+      });
+      
+    }
+
+    return {data: {
+      results: yearData}, country: country};
+  }
+  
+  const dataAllYears = await getDataForCountryVariationFilter();
+  const title = `${countryVariationFilter['value']} % growth and decline 
+  <br> of ${dataAllYears.country}`;
+
+  if (countryVariationFilter['value'] === 'gdp'){
+    setGdp(dataAllYears);
+    setProtein(dataLayout);
+    setChartTitle(title);
+  } else if (countryVariationFilter['value'] === 'protein') {
+    setProtein(dataAllYears);
+    setGdp(dataLayout);
+    setChartTitle(title);
+  }
+
 }

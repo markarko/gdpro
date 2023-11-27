@@ -3,14 +3,14 @@ import React from 'react';
 export default function YearSlider({
   labelText,
   values,
-  basicFilters,
-  setBasicFilters,
+  filters,
+  setFilters,
   yearType,
 }) {
   const updateYear = (e) => {
     const year = parseInt(e.target.value, 10);
 
-    setBasicFilters((prevFilters) => {
+    setFilters((prevFilters) => {
       let newFilters = {
         ...prevFilters,
         [yearType]: year,
@@ -41,12 +41,12 @@ export default function YearSlider({
         type="range"
         min={values[0]}
         max={values[values.length - 1]}
-        value={basicFilters[yearType]}
+        value={filters[yearType]}
         onChange={(e) => {
           updateYear(e);
         }}
       />
-      <span>{basicFilters[yearType]}</span>
+      <span>{filters[yearType]}</span>
     </div>
   );
 }
