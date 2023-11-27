@@ -4,6 +4,7 @@ import Score from './score';
 import PlotController from '../chart/PlotController';
 import Map from '../Map/Map';
 import './Quiz.css';
+import '../Map/Map.css';
 
 /**
  * function to get the next question from the data given and then set the question and the questions
@@ -114,28 +115,26 @@ export default function QuizComponent(props) {
   return (
     <div>
       {question !== null &&
-        <div>
+        <div className="Quiz">
+          <div className="question-container">
+            <Question data={question['map']} setAnswer={setAnswer}/>
+            <div className="actions">
+              <button className="submit" onClick={handleSubmit}>Submit</button>
+              <button className="next" onClick={handleNextQuestion}>Next Question</button>
+            </div>
+            <Score score={score} message={message}/>
+          </div>
+          
+          <PlotController
+            gdp={question['chart']['gdp']}
+            protein={question['chart']['gppd']}
+            title="Guess the Country"
+          />
+  
           <Map
             gdp={question['map']}
             protein={question['map']}
           />
-          <div className="bottomBox">
-            <div className="bottomBox-left">
-              <PlotController
-                gdp={question['chart']['gdp']}
-                protein={question['chart']['gppd']}
-                title="Guess the Country"
-              />
-            </div>
-        
-
-            <div className="bottomBox-right">
-              <Question data={question['map']} setAnswer={setAnswer}/>
-              <button className="submit" onClick={handleSubmit}>Submit</button>
-              <button className="next" onClick={handleNextQuestion}>Next Question</button>
-              <Score score={score} message={message}/>
-            </div>
-          </div>
         </div>
       }
       <hr style={{'marginTop' : '2em'}}/>
