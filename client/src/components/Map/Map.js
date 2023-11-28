@@ -21,10 +21,7 @@ export default function Map({gdp, protein}) {
   const mergedData = gdp.map((gdpItem) => {
     const matchingProteinItem = protein.find(
       (proteinItem) => proteinItem.country === gdpItem.country
-    );
-
-    console.log(matchingProteinItem);
-  
+    );  
     return {
       ...gdpItem,
       gppd: matchingProteinItem ? matchingProteinItem.gppd : null,
