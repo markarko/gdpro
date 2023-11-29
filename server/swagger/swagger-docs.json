@@ -5,11 +5,6 @@
         "version": "0.1.0",
         "description": "GDPro's Express APIs documentation with Swagger."
     },
-    "servers": [
-        {
-            "url": "https://nothecaptain.com"
-        }
-    ],
     "apis": [
         "./server/routes/*.js"
     ],
