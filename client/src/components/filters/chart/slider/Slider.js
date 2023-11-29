@@ -37,7 +37,7 @@ export default function YearSlider({
       <label className="year-slider">{labelText}</label>
       <br />
       <input
-        id="year-slider"
+        className="year-slider"
         type="range"
         min={values[0]}
         max={values[values.length - 1]}
