@@ -4,6 +4,17 @@ import BasicFilters from './basic/BasicFilters';
 import { useState, useEffect } from 'react';
 import DataRangeFilter from './data_range/DataRangeFilter';
 
+/**
+ * Renders the map filters component.
+ *
+ * @param {Object} setGdp - The function to set the GDP value.
+ * @param {Object} setProtein - The function to set the protein value.
+ * @param {Array} years - The array of available years.
+ * @param {Array} validCountries - The array of valid countries.
+ * @param {Object} dataLayout - The data layout object.
+ * @param {Function} setError - The function to set the error message.
+ * @returns {JSX.Element} The map filters component.
+ */
 export default function MapFilters({
   setGdp,
   setProtein,

@@ -5,11 +5,6 @@
         "version": "0.1.0",
         "description": "GDPro's Express APIs documentation with Swagger."
     },
-    "servers": [
-        {
-            "url": "http://localhost:3000"
-        }
-    ],
     "apis": [
         "./server/routes/*.js"
     ],
