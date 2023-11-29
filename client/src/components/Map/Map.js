@@ -22,8 +22,6 @@ export default function Map({gdp, protein}) {
     const matchingProteinItem = protein.find(
       (proteinItem) => proteinItem.country === gdpItem.country
     );
-
-    console.log(matchingProteinItem);
   
     return {
       ...gdpItem,
