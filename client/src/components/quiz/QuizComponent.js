@@ -45,27 +45,53 @@ export default function QuizComponent(props) {
   }
 
   async function getInitialData() {
+    let cachedQuestions = localStorage.getItem('questions');
+
+    if (cachedQuestions && cachedQuestions.length) {
+      cachedQuestions = JSON.parse(cachedQuestions);
+
+      setQuestions(cachedQuestions);
+      clearQuestionComponent();
+      nextQuestion(cachedQuestions, setQuestion, setQuestions);
+      
+      return;
+    }
+
     setMessage('Loading questions...');
+
     const response = await fetch('/api/v1/questions/random-questions/5');
     const json = await response.json();
+
     if (!response.ok) {
       setMessage('Error fetching data');
       console.error(json.error);
       return;
     }
+
+    localStorage.setItem('questions', JSON.stringify(json.data));
+
     clearQuestionComponent();
     nextQuestion(json.data, setQuestion, setQuestions);
   }
-
   
   async function preFetchData() {
     const response = await fetch('/api/v1/questions/random-questions/5');
     const json = await response.json();
+
     if (!response.ok) {
       setMessage('Error fetching data');
       console.error(json.error);
       return;
     }
+
+    let cachedQuestions = localStorage.getItem('questions');
+
+    if (cachedQuestions) {
+      cachedQuestions = await JSON.parse(cachedQuestions);
+      cachedQuestions.push(...json.data);
+      localStorage.setItem('questions', JSON.stringify(cachedQuestions));
+    }
+
     setQuestions(json.data);
   }
 
@@ -124,6 +150,14 @@ export default function QuizComponent(props) {
 
     // re-enable submit button and clear answers
     document.getElementsByClassName('submit')[0].disabled = false;
+
+    let cachedQuestions = localStorage.getItem('questions');
+  
+    if (cachedQuestions) {
+      cachedQuestions = JSON.parse(cachedQuestions);
+      cachedQuestions = cachedQuestions.slice(1);
+      localStorage.setItem('questions', JSON.stringify(cachedQuestions));
+    }
   }
 
   return (

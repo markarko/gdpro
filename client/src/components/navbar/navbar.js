@@ -14,7 +14,7 @@ export default function NavBar({ setCurrentView, views}) {
     <header>
       <div className = "inner">
         <nav>
-          <input type="checkbox" id="nav" /><label for="nav" className="nav-label"></label>
+          <input type="checkbox" id="nav" /><label htmlFor="nav" className="nav-label"></label>
           <ul>
             <li><a href="/#" onClick={() => setCurrentView(views.Map)} className="elem">Map</a></li>
             <li><a href="/#"
