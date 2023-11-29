@@ -1,3 +1,11 @@
+/**
+ * A custom select component.
+ *
+ * @param {Object} options - The options for the select dropdown.
+ * @param {string} labelText - The label text for the select dropdown.
+ * @param {function} onChange - The callback function to be called when the select value changes.
+ * @returns {JSX.Element} The rendered select component.
+ */
 export default function Select({ options, labelText, onChange }) {
   return (
     <div style={{'marginRight' : '20%'}}>
