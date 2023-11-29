@@ -6,6 +6,11 @@ import Footer from './components/footer/Footer';
 import MapView from './components/Map/MapView';
 import { useState, useEffect } from 'react';
 
+
+/**
+ * The main app component that handles the navbar, the views and the footer
+ * @returns JSX App Component
+ */
 function App() {
   const views = {
     Chart : 'chart',
@@ -59,6 +64,18 @@ function App() {
   </div>;
 }
 
+
+/**
+ * The view component that handles the view logic and switches the views
+ * @param {*} currentView - The current view
+ * @param {*} views - The views
+ * @param {*} validYears - The valid years
+ * @param {*} validCountries - The valid countries
+ * @param {*} error - The error
+ * 
+ * @returns JSX View Component
+ * 
+ */
 function View({ currentView, views, validYears, validCountries, error, setError }) {
   switch (currentView){
   case views.Chart:

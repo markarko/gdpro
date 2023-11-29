@@ -102,13 +102,6 @@ export default function QuizComponent(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // // Set points (AKA the coordinates on the map) based on the question coordinates
-  // useEffect(() => {
-  //   if (question !== null) {
-  //     setPoints([[question.coordinates[0], question.coordinates[1]]]);
-  //   }
-  // }, [question, setPoints]);
-
   function handleSubmit(e) {
     e.preventDefault();
 
