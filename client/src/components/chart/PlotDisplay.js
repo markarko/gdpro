@@ -3,8 +3,15 @@
 
 import Plot from 'react-plotly.js';
 
+/**
+ * PlotDisplay component used for displaying the plot
+ * Implements Plot from react-plotly.js
+ * Uses built in resize handler
+ * @param {Object} data - The data
+ * @param {Object} layout - The layout
+ * @returns JSX PlotDisplay Component with the plot
+ */
 export default function PlotDisplay({ data, layout }) {
-
   return (
     <Plot
       data={data}

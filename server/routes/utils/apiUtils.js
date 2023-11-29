@@ -28,7 +28,8 @@ function sendError(res, status, error) {
  * @param {number} status - HTTP status code for the response
  * @param {any} data - Data to send
  */
-function sendData(res, status, data) {
+function sendData(res, status, data, cache = true) {
+  if (cache) res.set('Cache-Control', 'public, max-age=31557600, s-maxage=31557600');
   res.status(status).send({ data: data });
 }
 
@@ -274,7 +275,7 @@ async function getVariationSpecificCountry(req, res, db, collName, dataType) {
       growth : growth
     };
   });
-
+  
   sendData (res, 200,
     {country: data[0].country,
       code: data[0].code,
