@@ -4,7 +4,7 @@ import NavBar from './components/navbar/navbar';
 import ChartView from './components/chart/ChartView';
 import Footer from './components/footer/Footer';
 import MapView from './components/Map/MapView';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
   const views = {
@@ -13,21 +13,66 @@ function App() {
     Quiz : 'quiz'
   };
 
+  const [validYears, setValidYears] = useState([1990, 2020]);
+  const [validCountries, setValidCountries] = useState(['afghanistan']);
+  const [error, setError] = useState('');
+
   const [currentView, setCurrentView] = useState(views.Chart);
+
+  useEffect(() => {
+    async function getJson(url) {
+      const response = await fetch(url);
+      return await response.json();
+    }
+    
+    async function fetchInitialData() {
+      try{
+        const yearsUrl = '/api/v1/gdp/countries/ukraine';
+        const countriesUrl = '/api/v1/gdp/countries/all'; 
+  
+        const fetches = [getJson(yearsUrl), getJson(countriesUrl)];
+        const [yearsData, countriesData] = await Promise.all(fetches);
+      
+        const years = yearsData.data.results.map(x => x.year); 
+        setValidYears(years);
+  
+        const countries = countriesData.data;
+        setValidCountries(countries);
+      } catch(err) {
+        setError(err);
+      }
+    }
+
+    fetchInitialData();
+  }, []);
 
   return <div>
     <NavBar setCurrentView={setCurrentView} views={views} />
-    <View currentView={currentView} views={views} />
+    <View
+      currentView={currentView}
+      views={views}
+      validYears={validYears}
+      validCountries={validCountries}
+      error={error}
+      setError={setError} />
     <Footer />
   </div>;
 }
 
-function View({ currentView, views }) {
+function View({ currentView, views, validYears, validCountries, error, setError }) {
   switch (currentView){
   case views.Chart:
-    return <ChartView />;
+    return <ChartView
+      validYears={validYears}
+      validCountries={validCountries}
+      error={error}
+      setError={setError} />;
   case views.Map:
-    return <MapView />;
+    return <MapView 
+      validYears={validYears}
+      validCountries={validCountries}
+      error={error}
+      setError={setError} />;
   case views.Quiz:
     return <QuizComponent />;
   default:

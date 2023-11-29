@@ -99,7 +99,9 @@ router.get('/random-questions/:number', async (req, res) => {
   
     const otherCountries = [];
     for (let i = 0; i < 2; i++) {
-      const otherCountry = countries[Math.floor(Math.random() * countries.length)];
+      const randomIndex = Math.floor(Math.random() * countries.length);
+      const otherCountry = countries[randomIndex];
+      countries.splice(randomIndex, 1);
       otherCountries.push(otherCountry);
     }
     otherCountries.push(country);
