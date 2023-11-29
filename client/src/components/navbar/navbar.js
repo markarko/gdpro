@@ -1,6 +1,14 @@
 // import navbar css
 import './navbar.css';
 
+
+/**
+ * NavBar component used for displaying the navbar
+ * @param {Function} setCurrentView - The function to set the current view
+ * @param {Object} views - The views
+ * @returns JSX NavBar Component with the navbar
+ */
+
 export default function NavBar({ setCurrentView, views}) {
   return (
     <header>

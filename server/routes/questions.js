@@ -131,7 +131,7 @@ router.get('/random-questions/:number', async (req, res) => {
     };
   } 
 
-  apiUtils.sendData(res, 200, questions);
+  apiUtils.sendData(res, 200, questions, false);
 });
 
 module.exports = router;

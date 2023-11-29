@@ -12,6 +12,18 @@ const customIcon = new Icon({
   iconAnchor: [22, 30],
 });
 
+/**
+ * Map component used for displaying the map
+ * Implements MapContainer from react-leaflet
+ * Tiles from openstreetmap.org
+ * And a CustomMarker component for displaying the markers 
+ *
+ * @param {Object} gdp - The gdp data
+ * @param {Object} protein - The protein data
+ * @returns JSX Map Component with the map
+ */
+
+
 export default function Map({gdp, protein}) {
   const attribution =
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
