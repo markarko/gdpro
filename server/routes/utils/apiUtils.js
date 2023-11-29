@@ -30,7 +30,6 @@ function sendError(res, status, error) {
  */
 function sendData(res, status, data, cache = true) {
   if (cache) res.set('Cache-Control', 'public, max-age=31557600, s-maxage=31557600');
-  else console.log('no cache');
   res.status(status).send({ data: data });
 }
 
