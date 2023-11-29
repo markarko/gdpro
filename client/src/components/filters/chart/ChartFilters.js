@@ -94,45 +94,56 @@ export default function ChartFilters({
   return(
     <form  onSubmit={applyFilters}>
       <div className="ChartFilters">
-        <div className="filterType">
-          <input
-            type="radio"
-            name="filterType"
-            value={FilterType.Basic}
-            onChange={e => setSelectedFilterType(e.target.value)}
-            checked={selectedFilterType === FilterType.Basic} />
-          <BasicFilters
-            years={validYears}
-            validCountries={validCountries}
-            basicFilters={basicFilters}
-            setBasicFilters={setBasicFilters}
-            disable={selectedFilterType !== FilterType.Basic} />
+        <div className="filter-type-wrapper">
+          <h1>Country Range Filter</h1>
+          <div className="filterType">
+            <input
+              type="radio"
+              name="filterType"
+              value={FilterType.Basic}
+              onChange={e => setSelectedFilterType(e.target.value)}
+              checked={selectedFilterType === FilterType.Basic} />
+            <BasicFilters
+              years={validYears}
+              validCountries={validCountries}
+              basicFilters={basicFilters}
+              setBasicFilters={setBasicFilters}
+              disable={selectedFilterType !== FilterType.Basic} />
+          </div>
         </div>
-        <div className="filterType">
-          <input
-            type="radio"
-            name="filterType"
-            value={FilterType.CountryRanking}
-            onChange={e => setSelectedFilterType(e.target.value)}
-            checked={selectedFilterType === FilterType.CountryRanking} />
-          <CountryRankingFilter
-            setCountryRankingFilter={setCountryRankingFilter}
-            disable={selectedFilterType !== FilterType.CountryRanking} />
+        
+        <div className="filter-type-wrapper">
+          <h1>Country Ranking Filter</h1>
+          <div className="filterType">
+            <input
+              type="radio"
+              name="filterType"
+              value={FilterType.CountryRanking}
+              onChange={e => setSelectedFilterType(e.target.value)}
+              checked={selectedFilterType === FilterType.CountryRanking} />
+            <CountryRankingFilter
+              setCountryRankingFilter={setCountryRankingFilter}
+              disable={selectedFilterType !== FilterType.CountryRanking} />
+          </div>
         </div>
-        <div className="filterType">
-          <input
-            type="radio"
-            name="filterType"
-            value={FilterType.CountryVariation}
-            onChange={e => setSelectedFilterType(e.target.value)}
-            checked={selectedFilterType === FilterType.CountryVariation} />
-          <CountryVariationFilter
-            years={validYears}
-            validCountries={validCountries}
-            countryVariationFilter={countryVariationFilter}
-            setCountryVariationFilter={setCountryVariationFilter}
-            disable={selectedFilterType !== FilterType.CountryVariation} />
-        </div>
+        
+        <div className="filter-type-wrapper">
+          <h1>Country Variation Filter</h1>
+          <div className="filterType">
+            <input
+              type="radio"
+              name="filterType"
+              value={FilterType.CountryVariation}
+              onChange={e => setSelectedFilterType(e.target.value)}
+              checked={selectedFilterType === FilterType.CountryVariation} />
+            <CountryVariationFilter
+              years={validYears}
+              validCountries={validCountries}
+              countryVariationFilter={countryVariationFilter}
+              setCountryVariationFilter={setCountryVariationFilter}
+              disable={selectedFilterType !== FilterType.CountryVariation} />
+          </div>
+        </div> 
       </div>
       <button>Apply</button>
     </form>

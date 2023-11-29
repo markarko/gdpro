@@ -5,12 +5,24 @@
     padding: 1vh;
 }
 
+.filter-type-wrapper h1{
+    text-align: center;
+    padding-bottom: 7%;
+}
+
+.filter-type-wrapper{
+    border-right: solid;
+    width: 33%;
+}
+
+
 @media only screen and (max-width: 1220px) {
     .MapFilters, .ChartFilters {
       flex-direction: column;
     }
 
-    .MapFilters > .filterType, .ChartFilters > .filterType {
+    .MapFilters > .filter-type-wrapper, .ChartFilters > .filter-type-wrapper {
+        width: 100%;
         border-bottom: solid;
         border-right: none;
         padding: 1em;
@@ -35,7 +47,6 @@
 .filterType {
     display: flex;
     padding-right: 18%;
-    border-right: solid;
 }
 
 .MapFilters > *, .ChartFilters > * {
@@ -50,6 +61,7 @@
 input[type='radio'] {
     transform: scale(1.5);
     height: 1em;
+    margin-right: 7%;
 }
 
 form{
