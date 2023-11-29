@@ -9,7 +9,7 @@
 .SelectedCountry {
     display: flex;
     justify-content: space-between;
-    min-width: 150px;
+    min-width: 200px;
 }
 
 .delete-button{
