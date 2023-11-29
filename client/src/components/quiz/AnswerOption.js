@@ -2,7 +2,8 @@ import './AnswerOption.css';
 
 /**
  * AnswerOptions component used for displaying the answer options in form of radio buttons
- * @param {*} props 
+ * @param {Object} choices - The answer options
+ * @param {Function} setAnswer - The function to set the answer
  * @returns JSX AnswerOptions Component with the answer options
  */
 export default function AnswerOption({ choices, setAnswer }) {
