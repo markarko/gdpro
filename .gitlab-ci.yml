@@ -12,7 +12,7 @@ stages:
   - lint
   - build
   - test
-  - deploy
+  - release
 
 default:
   cache:  # Cache modules in between jobs for the same branch if package-lock.json file changes
@@ -44,10 +44,6 @@ build-frontend:
   stage: build
   script:
     - cd client && npm run build
-  only:
-    refs:
-      - main
-      - staging
   artifacts:
     expire_in: 1 days
     when: on_success
@@ -59,4 +55,22 @@ test-server:
   script:
    - cd server
    - npm run test
-  allow_failure: true
+  allow_failure: false
+  
+build-app-archive:
+  stage: release
+  variables:
+    RELEASE_FILE: release-$CI_PROJECT_NAME-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA.tar.gz
+  dependencies:
+    - build-frontend
+  rules:
+  - if: $CI_COMMIT_TAG
+  before_script:
+    - npm ci --omit dev
+  script:
+    - tar -zcvf $RELEASE_FILE server/* client/build
+  artifacts:
+    expire_in: 1 weeks
+    when: on_success
+    paths:
+      - release/$RELEASE_FILE
