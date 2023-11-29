@@ -3,6 +3,17 @@ import ChartFilters from '../filters/chart/ChartFilters';
 import PlotController from '../chart/PlotController';
 import { useState } from 'react';
 
+/**
+ * ChartView component used for displaying the chart
+ * Gets the data from the server and passes it to the PlotController & ChartFilters components
+ * @returns JSX ChartView Component with the chart
+ * @param {Object} validYears - The valid years
+ * @param {Object} validCountries - The valid countries
+ * @param {String} error - The error
+ * @param {Function} setError - The setError function
+ * @param {Function} setChartTitle - The setChartTitle function
+ * @returns JSX ChartView Component with the chart
+ */
 export default function ChartView({ validYears, validCountries, error, setError }) {
   const dataLayout = {
     'data': {
