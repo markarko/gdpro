@@ -33,6 +33,12 @@ Optimize the application's performance by implementing server-side rendering and
 # Attributions 
 
 The open data used in this app is provided by Our World in Data. The data is stored in a Mongo Database and is used to create the map chart.
+We are also using Google's country dataset which contains a list of all countries along with their coordinates.
+
+Gdp dataset: https://ourworldindata.org/grapher/gdp-per-capita-worldbank
+Protein dataset: https://ourworldindata.org/grapher/daily-per-capita-protein-supply
+Country dataset: https://developers.google.com/public-data/docs/canonical/countries_csv
+
 
 ## Structure
 
