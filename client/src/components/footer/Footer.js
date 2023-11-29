@@ -1,5 +1,11 @@
 import './Footer.css';
 
+
+/**
+ * Simple Footer component used for displaying the footer
+ * @returns JSX Footer Component with the footer
+ */
+
 export default function Footer() {
   return <footer className="Footer">
     <div>

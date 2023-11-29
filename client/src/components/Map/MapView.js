@@ -2,6 +2,13 @@ import MapFilters from '../filters/map/MapFilters';
 import Map from './Map';
 import { useEffect, useState } from 'react';
 
+
+/**
+ * MapView component used for displaying the map
+ * Gets the data from the server and passes it to the Map & MapFilters components
+ * @returns JSX MapView Component with the map
+ */
+
 export default function MapView() {
   const dataLayout = {
     'data': {
@@ -39,11 +46,9 @@ export default function MapView() {
     fetchInitialData();
   }, []);
   
-  // use suspense
   if (loading) {
     return <div></div>;
   }
-
 
   return <>
     <Map

@@ -1,6 +1,11 @@
 import PlotDisplay from './PlotDisplay';
 
-
+/**
+ * generateBaseLayout function used for generating the base layout
+ * also used for generating the layout for the plot component
+ * @param {String} title - The title
+ * @returns the base layout
+ */
 const generateBaseLayout = (title) => {
   return {
     title: title,
@@ -13,6 +18,11 @@ const generateBaseLayout = (title) => {
   };
 };
 
+/**
+ * mapProteinData function used for mapping the protein data to the year for the chart
+ * @param {Object} data - The data
+ * @returns the mapped protein data
+ */
 const mapProteinData = (data) => {
   const newProtein = {
     x: data.map(row => row.year),
@@ -24,6 +34,10 @@ const mapProteinData = (data) => {
   return newProtein;
 };
 
+/**
+ * generateProteinLayout function used for generating the layout for the protein chart
+ * @returns the layout for the protein chart
+ */
 const generateProteinLayout = () => {
   return {
     yaxis: {
@@ -33,6 +47,11 @@ const generateProteinLayout = () => {
   };
 };
 
+/**
+ * mapGdpData function used for mapping the gdp data to the year for the chart
+ * @param {Object} data - The data
+ * @returns the mapped gdp data
+ */
 const mapGdpData = (data) => {
   return {
     x: data.map(row => row.year),
@@ -44,6 +63,10 @@ const mapGdpData = (data) => {
   };
 };
 
+/**
+ * generateGdpLayout function used for generating the layout for the gdp chart
+ * @returns the layout for the gdp chart
+ */
 const generateGdpLayout = () => {
   return {
     yaxis2: {
@@ -55,6 +78,15 @@ const generateGdpLayout = () => {
   };
 };
 
+
+/**
+ * PlotController component used for displaying the chart
+ * Converts the data to the format required for the chart
+ * @param {Object} gdp - The gdp data
+ * @param {Object} protein - The protein data
+ * @param {String} title - The title
+ * @returns JSX PlotDisplay Component
+ */
 export default function PlotController({ gdp, protein, title }) {
   const data = [];
 

@@ -1,10 +1,19 @@
 import './CountryRankingFilter.css';
 import Select from '../../map/select/Select.js';
 
+/**
+ * Component that groups the input values and their logic for the country
+ * ranking filter
+ * 
+ * @param {Function} setCountryRankingFilter - Function to set the country ranking filter
+ * state variable
+ * @param {boolean} disable - Boolean representing whether the filter should be disabled
+ */
 export default function CountryRankingFilter({ setCountryRankingFilter, disable }) {
   const orderByOptions = ['highest', 'lowest'];
   const values = ['gdp', 'protein'];
   
+  // Updates the filter based on the newly selected variation type
   const updateVariation = e => {
     const orderBy = e.target.value;
     if (orderByOptions.includes(orderBy)) {
@@ -15,6 +24,7 @@ export default function CountryRankingFilter({ setCountryRankingFilter, disable 
     }
   };
   
+  // Updates the filter based on the newly selected data type
   const updateValue = e => {
     const value = e.target.value;
     if (values.includes(value)) {

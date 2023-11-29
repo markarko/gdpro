@@ -84,6 +84,9 @@ router.get('/random-questions/:number', async (req, res) => {
         
       if (cGDP.length !== 0 && cPro.length !== 0) {
         found = true;
+        cGDP.sort((a, b) => a.year - b.year);
+        cPro = cPro.filter(x => x.year > 1990);
+        cPro.sort((a, b) => a.year - b.year);
         break;
       }
     }
@@ -128,7 +131,7 @@ router.get('/random-questions/:number', async (req, res) => {
     };
   } 
 
-  apiUtils.sendData(res, 200, questions);
+  apiUtils.sendData(res, 200, questions, false);
 });
 
 module.exports = router;

@@ -1,0 +1,11 @@
+.AnswerOption{
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.AnswerOption > div{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
