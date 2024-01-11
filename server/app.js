@@ -20,7 +20,7 @@ app.use('/api/v1', mainRouter);
 app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
 
 app.use(
-  '/api-docs',
+  '/docs',
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocs, { explorer: true })
 );

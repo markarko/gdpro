@@ -2,17 +2,31 @@ import '../Filters.css';
 import TopCountriesFilter from './top_countries/TopCountriesFilter';
 import BasicFilters from './basic/BasicFilters';
 import { useState, useEffect } from 'react';
+import DataRangeFilter from './data_range/DataRangeFilter';
 
+/**
+ * Renders the map filters component.
+ *
+ * @param {Object} setGdp - The function to set the GDP value.
+ * @param {Object} setProtein - The function to set the protein value.
+ * @param {Array} years - The array of available years.
+ * @param {Array} validCountries - The array of valid countries.
+ * @param {Object} dataLayout - The data layout object.
+ * @param {Function} setError - The function to set the error message.
+ * @returns {JSX.Element} The map filters component.
+ */
 export default function MapFilters({
   setGdp,
   setProtein,
   years,
   validCountries,
   dataLayout,
+  setError
 }) {
   const FilterType = {
     Basic: 'basic',
-    TopCountries: 'top-countries'
+    TopCountries: 'top-countries',
+    DataRange: 'data-range'
   };
 
   const [selectedFilterType, setSelectedFilterType] = useState(FilterType.Basic);
@@ -28,6 +42,14 @@ export default function MapFilters({
     value: 'gdp'
   });
 
+  const [dataRangeFilter, setDataRangeFilter] = useState({
+    year: 1990,
+    dataType: 'gdp',
+    min: 0,
+    max: 10000
+  });
+
+
   useEffect(() => {
     async function fetchDefaultData() {
       await updateDataWithBasicFilters(setGdp, setProtein, basicFilters);
@@ -40,99 +62,175 @@ export default function MapFilters({
 
   const applyFilters = async e => {
     e.preventDefault();
-    switch (selectedFilterType) {
-    case FilterType.Basic:
-      await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
-    case FilterType.TopCountries:
-      await updateDataWithCountryRankingFilter(
-        setGdp,
-        setProtein,
-        topCountriesFilter,
-        dataLayout);
-      break;
-    default: break;
+
+    try{
+      switch (selectedFilterType) {
+      case FilterType.Basic:
+        await updateDataWithBasicFilters(setGdp, setProtein, basicFilters); break;
+      case FilterType.TopCountries:
+        await updateDataWithCountryRankingFilter(
+          setGdp,
+          setProtein,
+          topCountriesFilter,
+          dataLayout);
+        break;
+      case FilterType.DataRange:
+        await updateDataWithDataRangeFilter(
+          setGdp,
+          setProtein,
+          dataRangeFilter,
+          dataLayout);
+        break;  
+      default: break;
+      }
+    } catch (err) {
+      setError(err.message);
     }
+    
   };
 
-  async function getDataForBasicFitlers(dataType, basicFilters) {
-    const countries = basicFilters['countries'].join(',');
-    const year = basicFilters['year'];   
-    const url = `/api/v1/${dataType}/countries?countries=${countries}&year=${year}`;
-    const response = await fetch(url);
-    return await response.json();
-  }
-
-  async function updateDataWithBasicFilters(
-    setGdp,
-    setProtein,
-    basicFilters) {
-    try {
-      const gdpData = await getDataForBasicFitlers('gdp', basicFilters);
-      const proteinData = await getDataForBasicFitlers('protein', basicFilters);
-      setGdp(gdpData);
-      setProtein(proteinData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
-
-  async function getDataForCountryRankingFilter() {
-    const top = topCountriesFilter['top'];
-    const variation = topCountriesFilter['variation'];
-    const value = topCountriesFilter['value'];
-    
-    const url = `/api/v1/${value}/countries/top/${top}?orderBy=${variation}&year=2020`;
-    const response = await fetch(url);
-
-    return await response.json();
-  }
-
-  async function updateDataWithCountryRankingFilter(
-    setGdp,
-    setProtein,
-    topCountriesFilter,
-    dataLayout) {
-    try {
-      const data = await getDataForCountryRankingFilter();
-  
-      if (topCountriesFilter['value'] === 'gdp'){
-        setGdp(data);
-        setProtein(dataLayout);
-      } else if (topCountriesFilter['value'] === 'protein') {
-        setProtein(data);
-        setGdp(dataLayout);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }  
-
   return(
-    <form className="MapFilters" onSubmit={applyFilters}>
-      <div className="filterType">
-        <input
-          type="radio"
-          name="filterType"
-          value={FilterType.Basic}
-          onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.Basic} />
-        <BasicFilters
-          years={years}
-          validCountries={validCountries}
-          basicFilters={basicFilters}
-          setBasicFilters={setBasicFilters}
-          disable={selectedFilterType !== FilterType.Basic} />
-      </div>
-      <div className="filterType">
-        <input type="radio" name="filterType" value={FilterType.TopCountries}
-          onChange={e => setSelectedFilterType(e.target.value)}
-          checked={selectedFilterType === FilterType.TopCountries} />
-        <TopCountriesFilter
-          setTopCountriesFilter={setTopCountriesFilter}
-          selectedFilterType={selectedFilterType}
-          disable={selectedFilterType !== FilterType.TopCountries} />
+    <form onSubmit={applyFilters}>
+      <div className="MapFilters">
+        <div className="filter-type-wrapper">
+          <h1>Country/Year Filter</h1>
+          <div className="filterType">
+            <input
+              type="radio"
+              name="filterType"
+              value={FilterType.Basic}
+              onChange={e => setSelectedFilterType(e.target.value)}
+              checked={selectedFilterType === FilterType.Basic} />
+            <BasicFilters
+              years={years}
+              validCountries={validCountries}
+              basicFilters={basicFilters}
+              setBasicFilters={setBasicFilters}
+              disable={selectedFilterType !== FilterType.Basic} />
+          </div>
+        </div>
+
+        <div className="filter-type-wrapper">
+          <h1>Country Ranking Filter</h1>
+          <div className="filterType">
+            <input type="radio" name="filterType" value={FilterType.TopCountries}
+              onChange={e => setSelectedFilterType(e.target.value)}
+              checked={selectedFilterType === FilterType.TopCountries} />
+            <TopCountriesFilter
+              setTopCountriesFilter={setTopCountriesFilter}
+              selectedFilterType={selectedFilterType}
+              disable={selectedFilterType !== FilterType.TopCountries} />
+          </div>
+        </div>
+        
+        <div className="filter-type-wrapper">
+          <h1>Data Range Filter</h1>
+          <div className="filterType">
+            <input type="radio" name="filterType" value={FilterType.DataRange}
+              onChange={e => setSelectedFilterType(e.target.value)}
+              checked={selectedFilterType === FilterType.DataRange} />
+            <DataRangeFilter
+              dataRangeFilter={dataRangeFilter}
+              setDataRangeFilter={setDataRangeFilter}
+              years={years}
+              disable={selectedFilterType !== FilterType.DataRange} />
+          </div>
+        </div>
       </div>
       <button type="submit">Apply</button>
     </form>
   );
 }
+
+async function getDataForBasicFitlers(dataType, basicFilters) {
+  const countries = basicFilters['countries'].join(',');
+  const year = basicFilters['year'];   
+  const url = `/api/v1/${dataType}/countries?countries=${countries}&year=${year}`;
+
+  const response = await fetch(url);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error);
+  }
+
+  return json;
+}
+
+async function updateDataWithBasicFilters(
+  setGdp,
+  setProtein,
+  basicFilters) {
+
+  const gdpData = await getDataForBasicFitlers('gdp', basicFilters);
+  const proteinData = await getDataForBasicFitlers('protein', basicFilters);
+  setGdp(gdpData);
+  setProtein(proteinData);
+}
+
+async function getDataForCountryRankingFilter(topCountriesFilter) {
+  const top = topCountriesFilter['top'];
+  const variation = topCountriesFilter['variation'];
+  const value = topCountriesFilter['value'];
+  
+  const url = `/api/v1/${value}/countries/top/${top}?orderBy=${variation}&year=2020`;
+  const response = await fetch(url);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error);
+  }
+
+  return json;
+}
+
+async function updateDataWithCountryRankingFilter(
+  setGdp,
+  setProtein,
+  topCountriesFilter,
+  dataLayout) {
+
+  const data = await getDataForCountryRankingFilter(topCountriesFilter);
+
+  if (topCountriesFilter['value'] === 'gdp'){
+    setGdp(data);
+    setProtein(dataLayout);
+  } else if (topCountriesFilter['value'] === 'protein') {
+    setProtein(data);
+    setGdp(dataLayout);
+  }
+}  
+
+async function getDataForDataRangeFilter(dataRangeFilter) {
+  const year = dataRangeFilter['year'];
+  const dataType = dataRangeFilter['dataType'];
+  const min = dataRangeFilter['min'];
+  const max = dataRangeFilter['max'];
+
+  const url = `/api/v1/${dataType}/countries/${dataType}-range?year=${year}&min=${min}&max=${max}`;
+  const response = await fetch(url);
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.error);
+  }
+  
+  return json;
+}
+
+async function updateDataWithDataRangeFilter(
+  setGdp,
+  setProtein,
+  dataRangeFilter,
+  dataLayout) {
+
+  const data = await getDataForDataRangeFilter(dataRangeFilter);
+
+  if (dataRangeFilter['dataType'] === 'gdp'){
+    setGdp(data);
+    setProtein(dataLayout);
+  } else if (dataRangeFilter['dataType'] === 'protein') {
+    setProtein(data);
+    setGdp(dataLayout);
+  }
+}  

@@ -1,8 +1,15 @@
 .Footer {
     display: flex;
-    border: 1px solid black;
     padding: 2vh;
     margin-top: 2vh
+}
+@media only screen and (max-width: 600px) {
+    .Footer {
+        flex-direction: column;
+    }
+    .Footer > * {
+        margin-bottom: 1.5em
+    }
 }
 
 .Footer > * {
@@ -14,6 +21,3 @@ h3 {
     margin-top: 0;
 }
 
-a {
-    text-decoration: none;
-}

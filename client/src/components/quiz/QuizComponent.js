@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Question from './Question';
 import Score from './score';
+import PlotController from '../chart/PlotController';
+import Map from '../Map/Map';
+import './Quiz.css';
+import '../Map/Map.css';
 
 /**
  * function to get the next question from the data given and then set the question and the questions
@@ -40,32 +44,63 @@ export default function QuizComponent(props) {
     }
   }
 
-  async function getData() {
+  async function getInitialData() {
+    let cachedQuestions = localStorage.getItem('questions');
+
+    if (cachedQuestions && cachedQuestions.length) {
+      cachedQuestions = JSON.parse(cachedQuestions);
+
+      setQuestions(cachedQuestions);
+      clearQuestionComponent();
+      nextQuestion(cachedQuestions, setQuestion, setQuestions);
+      
+      return;
+    }
+
     setMessage('Loading questions...');
+
     const response = await fetch('/api/v1/questions/random-questions/5');
     const json = await response.json();
+
     if (!response.ok) {
       setMessage('Error fetching data');
       console.error(json.error);
       return;
     }
+
+    localStorage.setItem('questions', JSON.stringify(json.data));
+
     clearQuestionComponent();
-    nextQuestion(json.data.questions, setQuestion, setQuestions);
+    nextQuestion(json.data, setQuestion, setQuestions);
+  }
+  
+  async function preFetchData() {
+    const response = await fetch('/api/v1/questions/random-questions/5');
+    const json = await response.json();
+
+    if (!response.ok) {
+      setMessage('Error fetching data');
+      console.error(json.error);
+      return;
+    }
+
+    let cachedQuestions = localStorage.getItem('questions');
+
+    if (cachedQuestions) {
+      cachedQuestions = await JSON.parse(cachedQuestions);
+      cachedQuestions.push(...json.data);
+      localStorage.setItem('questions', JSON.stringify(cachedQuestions));
+    }
+
+    setQuestions(json.data);
   }
 
   useEffect(() => {
     // Sometimes the api takes a long time to respond, so set loading message
-    getData();
+    getInitialData();
   // this is the initial fetch, so no dependencies need to be added
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // // Set points (AKA the coordinates on the map) based on the question coordinates
-  // useEffect(() => {
-  //   if (question !== null) {
-  //     setPoints([[question.coordinates[0], question.coordinates[1]]]);
-  //   }
-  // }, [question, setPoints]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -73,11 +108,11 @@ export default function QuizComponent(props) {
     if (answer === null) {
       setMessage('Please select an answer');
       return;
-    } else if (answer === question.Correct) {
+    } else if (answer === question.answer) {
       setScore(score + 1);
       setMessage('That’s right!');
     } else {
-      setMessage('Sorry, the correct answer is ' + question.Correct);
+      setMessage('Sorry, the correct answer is ' + question.answer);
     }
 
     // Disable submit button and enable next button
@@ -95,30 +130,57 @@ export default function QuizComponent(props) {
     e.preventDefault();
     // Clear and disable button
     clearQuestionComponent();
-    if (questions.length === 0) {
-      getData();
-      // Disable next button for first question
-      document.getElementsByClassName('next')[0].disabled = true;
-    } else {
-      nextQuestion(questions, setQuestion, setQuestions);
+
+    // Fetch the next batch of questions when we get to our last question form the current batch
+    // Avoid the wait period for the user after every 5 questions
+    if (questions.length === 1) {
+      preFetchData();
     }
+
+    nextQuestion(questions, setQuestion, setQuestions);
+
     e.target.disabled = true;
 
     // re-enable submit button and clear answers
     document.getElementsByClassName('submit')[0].disabled = false;
+
+    let cachedQuestions = localStorage.getItem('questions');
+  
+    if (cachedQuestions) {
+      cachedQuestions = JSON.parse(cachedQuestions);
+      cachedQuestions = cachedQuestions.slice(1);
+      localStorage.setItem('questions', JSON.stringify(cachedQuestions));
+    }
   }
 
   return (
     <div>
       {question !== null &&
-        <div>
-          <Question data={question} setAnswer={setAnswer} />
-          <button className="submit" onClick={handleSubmit}>Submit</button>
-          <button className="next" onClick={handleNextQuestion}>Next Question</button>
+        <div className="Quiz">
+          <div className="question-container">
+            <Question data={question['map']} setAnswer={setAnswer}/>
+            <div className="actions">
+              <button className="submit" onClick={handleSubmit}>Submit</button>
+              <button className="next" onClick={handleNextQuestion}>Next Question</button>
+            </div>
+            <Score score={score} message={message}/>
+          </div>
+          
+          <PlotController
+            gdp={question['chart']['gdp']}
+            protein={question['chart']['gppd']}
+            title="Guess the Country"
+          />
+  
+          <Map
+            gdp={question['map']}
+            protein={question['map']}
+          />
         </div>
       }
-      <Score score={score} message={message}/>
+      <hr style={{'marginTop' : '2em'}}/>
     </div>
+    
   );
 }       
 

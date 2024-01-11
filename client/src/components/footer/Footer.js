@@ -1,5 +1,11 @@
 import './Footer.css';
 
+
+/**
+ * Simple Footer component used for displaying the footer
+ * @returns JSX Footer Component with the footer
+ */
+
 export default function Footer() {
   return <footer className="Footer">
     <div>
@@ -19,6 +25,10 @@ export default function Footer() {
       <p>Click
         <a href="https://ourworldindata.org/grapher/daily-per-capita-protein-supply"> here </a>
         to view the protein dataset
+      </p>
+      <p>Click
+        <a href="https://developers.google.com/public-data/docs/canonical/countries_csv"> here </a>
+        to view the countries dataset
       </p>
     </div>
 

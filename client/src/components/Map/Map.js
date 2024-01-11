@@ -12,6 +12,18 @@ const customIcon = new Icon({
   iconAnchor: [22, 30],
 });
 
+/**
+ * Map component used for displaying the map
+ * Implements MapContainer from react-leaflet
+ * Tiles from openstreetmap.org
+ * And a CustomMarker component for displaying the markers 
+ *
+ * @param {Object} gdp - The gdp data
+ * @param {Object} protein - The protein data
+ * @returns JSX Map Component with the map
+ */
+
+
 export default function Map({gdp, protein}) {
   const attribution =
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -21,19 +33,17 @@ export default function Map({gdp, protein}) {
   const mergedData = gdp.map((gdpItem) => {
     const matchingProteinItem = protein.find(
       (proteinItem) => proteinItem.country === gdpItem.country
-    );
-  
+    );  
     return {
       ...gdpItem,
-      protein: matchingProteinItem ? matchingProteinItem.protein : null,
+      gppd: matchingProteinItem ? matchingProteinItem.gppd : null,
     };
   });
   if (gdp.length > protein.length && protein.length === 0) {
     filterGdp = true;
   }else if(protein.length > gdp.length && gdp.length === 0) {
     filterProtein = true;
-  }
-  
+  }  
 
   return (
     <div className="ui-container">

@@ -1,18 +1,28 @@
 // import navbar css
 import './navbar.css';
 
+
+/**
+ * NavBar component used for displaying the navbar
+ * @param {Function} setCurrentView - The function to set the current view
+ * @param {Object} views - The views
+ * @returns JSX NavBar Component with the navbar
+ */
+
 export default function NavBar({ setCurrentView, views}) {
   return (
-    <div>
-      <nav className="navbar">
-        <div className="nav-left">
-          <a href="/#" onClick={() => setCurrentView(views.Map)} className="elem">Map</a>
-          <a href="/#" onClick={() => setCurrentView(views.Chart)} className="elem">Chart</a>
-          <a href="/#" onClick={() => setCurrentView(views.Quiz)} className="elem">Quiz</a>
-        </div>
-        {/* <div className="nav-right">
-          <a href="Light" className="elem">Light</a>
-        </div> */}
-      </nav>
-    </div>  );
+    <header>
+      <div className = "inner">
+        <nav>
+          <input type="checkbox" id="nav" /><label htmlFor="nav" className="nav-label"></label>
+          <ul>
+            <li><a href="/#" onClick={() => setCurrentView(views.Map)} className="elem">Map</a></li>
+            <li><a href="/#"
+              onClick={() => setCurrentView(views.Chart)} className="elem">Chart</a></li>
+            <li><a href="/#" onClick={()=>setCurrentView(views.Quiz)} className="elem">Quiz</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+  );
 }
